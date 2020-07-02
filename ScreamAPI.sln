@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ScreamAPI", "ScreamAPI\ScreamAPI.vcxproj", "{0D4A0026-B5E4-4414-B448-FF0511DB25BB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Config", "Config\Config.vcxproj", "{4E27BFFB-B98B-4B7A-BC13-460805A70F4A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Logger", "Logger\Logger.vcxproj", "{88727DFA-8C25-4D63-9836-F8F2EFB753EA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E63D752F-62BD-4082-A650-4018D6463A5E}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+		ScreamAPI.ini = ScreamAPI.ini
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0D4A0026-B5E4-4414-B448-FF0511DB25BB}.Debug|x64.ActiveCfg = Debug|x64
+		{0D4A0026-B5E4-4414-B448-FF0511DB25BB}.Debug|x64.Build.0 = Debug|x64
+		{0D4A0026-B5E4-4414-B448-FF0511DB25BB}.Debug|x86.ActiveCfg = Debug|Win32
+		{0D4A0026-B5E4-4414-B448-FF0511DB25BB}.Debug|x86.Build.0 = Debug|Win32
+		{0D4A0026-B5E4-4414-B448-FF0511DB25BB}.Release|x64.ActiveCfg = Release|x64
+		{0D4A0026-B5E4-4414-B448-FF0511DB25BB}.Release|x64.Build.0 = Release|x64
+		{0D4A0026-B5E4-4414-B448-FF0511DB25BB}.Release|x86.ActiveCfg = Release|Win32
+		{0D4A0026-B5E4-4414-B448-FF0511DB25BB}.Release|x86.Build.0 = Release|Win32
+		{4E27BFFB-B98B-4B7A-BC13-460805A70F4A}.Debug|x64.ActiveCfg = Debug|x64
+		{4E27BFFB-B98B-4B7A-BC13-460805A70F4A}.Debug|x64.Build.0 = Debug|x64
+		{4E27BFFB-B98B-4B7A-BC13-460805A70F4A}.Debug|x86.ActiveCfg = Debug|Win32
+		{4E27BFFB-B98B-4B7A-BC13-460805A70F4A}.Debug|x86.Build.0 = Debug|Win32
+		{4E27BFFB-B98B-4B7A-BC13-460805A70F4A}.Release|x64.ActiveCfg = Release|x64
+		{4E27BFFB-B98B-4B7A-BC13-460805A70F4A}.Release|x64.Build.0 = Release|x64
+		{4E27BFFB-B98B-4B7A-BC13-460805A70F4A}.Release|x86.ActiveCfg = Release|Win32
+		{4E27BFFB-B98B-4B7A-BC13-460805A70F4A}.Release|x86.Build.0 = Release|Win32
+		{88727DFA-8C25-4D63-9836-F8F2EFB753EA}.Debug|x64.ActiveCfg = Debug|x64
+		{88727DFA-8C25-4D63-9836-F8F2EFB753EA}.Debug|x64.Build.0 = Debug|x64
+		{88727DFA-8C25-4D63-9836-F8F2EFB753EA}.Debug|x86.ActiveCfg = Debug|Win32
+		{88727DFA-8C25-4D63-9836-F8F2EFB753EA}.Debug|x86.Build.0 = Debug|Win32
+		{88727DFA-8C25-4D63-9836-F8F2EFB753EA}.Release|x64.ActiveCfg = Release|x64
+		{88727DFA-8C25-4D63-9836-F8F2EFB753EA}.Release|x64.Build.0 = Release|x64
+		{88727DFA-8C25-4D63-9836-F8F2EFB753EA}.Release|x86.ActiveCfg = Release|Win32
+		{88727DFA-8C25-4D63-9836-F8F2EFB753EA}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A50028C5-96FB-4390-8D64-219C554AA507}
+	EndGlobalSection
+EndGlobal
