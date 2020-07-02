@@ -2,6 +2,7 @@
 #pragma once
 
 #include "eos_common.h"
+#include "eos_ui_types.h"
 
 #pragma pack(push, 8)
 
@@ -102,7 +103,7 @@ EOS_STRUCT(EOS_LobbyDetails_Info, (
 EOS_DECLARE_FUNC(void) EOS_LobbyDetails_Info_Release(EOS_LobbyDetails_Info* LobbyDetailsInfo);
 
 /** The most recent version of the EOS_Lobby_CreateLobby API. */
-#define EOS_LOBBY_CREATELOBBY_API_LATEST 1
+#define EOS_LOBBY_CREATELOBBY_API_LATEST 2
 
 /**
  * Input parameters for the EOS_Lobby_CreateLobby Function.
@@ -116,6 +117,11 @@ EOS_STRUCT(EOS_Lobby_CreateLobbyOptions, (
 	uint32_t MaxLobbyMembers;
 	/** The initial permission level of the lobby */
 	EOS_ELobbyPermissionLevel PermissionLevel;
+	/** 
+	 * If true then this lobby will be used as the one lobby associated with presence.
+	 * Only one lobby at a time can have this flag true.
+	 */
+	EOS_Bool bPresenceEnabled;
 ));
 
 /**
@@ -171,7 +177,7 @@ EOS_DECLARE_CALLBACK(EOS_Lobby_OnDestroyLobbyCallback, const EOS_Lobby_DestroyLo
 
 
 /** The most recent version of the EOS_Lobby_JoinLobby API. */
-#define EOS_LOBBY_JOINLOBBY_API_LATEST 1
+#define EOS_LOBBY_JOINLOBBY_API_LATEST 2
 
 /**
  * Input parameters for the EOS_Lobby_JoinLobby Function.
@@ -183,6 +189,11 @@ EOS_STRUCT(EOS_Lobby_JoinLobbyOptions, (
 	EOS_HLobbyDetails LobbyDetailsHandle;
 	/** Local user joining the lobby */
 	EOS_ProductUserId LocalUserId;
+	/** 
+	 * If true then this lobby will be used as the one lobby associated with presence.
+	 * Only one lobby at a time can have this flag true.
+	 */
+	EOS_Bool bPresenceEnabled;
 ));
 
 /**
@@ -372,7 +383,7 @@ EOS_STRUCT(EOS_Lobby_LobbyUpdateReceivedCallbackInfo, (
 ));
 
 /**
- * Function prototype definition for notifications that come from EOS_Lobby_AddNotifyLobbyUpdateReceived
+ * Function prototype definition for notifications that comes from EOS_Lobby_AddNotifyLobbyUpdateReceived
  *
  * @param Data A EOS_Lobby_LobbyUpdateReceivedCallbackInfo containing the output information and result
  */
@@ -399,7 +410,7 @@ EOS_STRUCT(EOS_Lobby_LobbyMemberUpdateReceivedCallbackInfo, (
 ));
 
 /**
- * Function prototype definition for notifications that come from EOS_Lobby_AddNotifyLobbyMemberUpdateReceived
+ * Function prototype definition for notifications that comes from EOS_Lobby_AddNotifyLobbyMemberUpdateReceived
  *
  * @param Data A EOS_Lobby_LobbyMemberUpdateReceivedCallbackInfo containing the output information and result
  */
@@ -462,11 +473,76 @@ EOS_STRUCT(EOS_Lobby_LobbyInviteReceivedCallbackInfo, (
 ));
 
 /**
- * Function prototype definition for notifications that come from EOS_Lobby_AddNotifyLobbyInviteReceived
+ * Function prototype definition for notifications that comes from EOS_Lobby_AddNotifyLobbyInviteReceived
  *
  * @param Data A EOS_Lobby_LobbyInviteReceivedCallbackInfo containing the output information and result
  */
 EOS_DECLARE_CALLBACK(EOS_Lobby_OnLobbyInviteReceivedCallback, const EOS_Lobby_LobbyInviteReceivedCallbackInfo* Data);
+
+/** The most recent version of the EOS_Lobby_AddNotifyLobbyInviteAccepted API. */
+#define EOS_LOBBY_ADDNOTIFYLOBBYINVITEACCEPTED_API_LATEST 1
+
+EOS_STRUCT(EOS_Lobby_AddNotifyLobbyInviteAcceptedOptions, (
+	/** Version of the API */
+	int32_t ApiVersion;
+));
+
+/**
+ * Output parameters for the EOS_Lobby_OnLobbyInviteAcceptedCallback Function.
+ */
+EOS_STRUCT(EOS_Lobby_LobbyInviteAcceptedCallbackInfo, (
+	/** Context that was passed into EOS_Lobby_AddNotifyLobbyInviteAccepted */
+	void* ClientData;
+	/** The invite id */
+	const char* InviteId;
+	/** User that received the invite */
+	EOS_ProductUserId LocalUserId;
+	/** Target user that sent the invite */
+	EOS_ProductUserId TargetUserId;
+));
+
+/**
+ * Function prototype definition for notifications that comes from EOS_Lobby_AddNotifyLobbyInviteAccepted
+ *
+ * @param Data A EOS_Lobby_LobbyInviteAcceptedCallbackInfo containing the output information and result
+ */
+EOS_DECLARE_CALLBACK(EOS_Lobby_OnLobbyInviteAcceptedCallback, const EOS_Lobby_LobbyInviteAcceptedCallbackInfo* Data);
+
+/** The most recent version of the EOS_Lobby_AddNotifyJoinGameAccepted API. */
+#define EOS_LOBBY_ADDNOTIFYJOINLOBBYACCEPTED_API_LATEST 1
+EOS_STRUCT(EOS_Lobby_AddNotifyJoinLobbyAcceptedOptions, (
+	/** Version of the API */
+	int32_t ApiVersion;
+));
+
+/**
+ * Output parameters for the EOS_Lobby_OnJoinLobbyAcceptedCallback Function.
+ */
+EOS_STRUCT(EOS_Lobby_JoinLobbyAcceptedCallbackInfo, (
+	/** Context that was passed into EOS_Lobby_AddNotifyJoinLobbyAccepted */
+	void* ClientData;
+	/** User that initialized the join game */
+	EOS_ProductUserId LocalUserId;
+	/** 
+	 * The UI Event associated with this Join Game event.
+	 * This should be used with EOS_Lobby_CopyLobbyDetailsHandleByUiEventId to get a handle to be used
+	 * when calling EOS_Lobby_JoinLobby.
+	 */
+	EOS_UI_EventId UiEventId;
+));
+
+/**
+ * Function prototype definition for notifications that comes from EOS_Lobby_AddNotifyJoinLobbyAccepted
+ *
+ * @param Data A EOS_Lobby_JoinLobbyAcceptedCallbackInfo containing the output information and result
+ *
+ * @note The lobby for the join game must be joined.
+ *
+ * @see EOS_Lobby_CopyLobbyDetailsHandleByUiEventId
+ * @see EOS_Lobby_JoinLobby
+ */
+EOS_DECLARE_CALLBACK(EOS_Lobby_OnJoinLobbyAcceptedCallback, const EOS_Lobby_JoinLobbyAcceptedCallbackInfo* Data);
+
 
 /** The most recent version of the EOS_Lobby_CopyLobbyDetailsHandleByInviteId API. */
 #define EOS_LOBBY_COPYLOBBYDETAILSHANDLEBYINVITEID_API_LATEST 1
@@ -479,6 +555,19 @@ EOS_STRUCT(EOS_Lobby_CopyLobbyDetailsHandleByInviteIdOptions, (
 	int32_t ApiVersion;
 	/** Lobby invite id */
 	const char* InviteId;
+));
+
+/** The most recent version of the EOS_Lobby_CopyLobbyDetailsHandleByUiEventId API. */
+#define EOS_LOBBY_COPYLOBBYDETAILSHANDLEBYUIEVENTID_API_LATEST 1
+
+/**
+ * Input parameters for the EOS_Lobby_CopyLobbyDetailsHandleByUiEventId Function.
+ */
+EOS_STRUCT(EOS_Lobby_CopyLobbyDetailsHandleByUiEventIdOptions, (
+	/** Version of the API */
+	int32_t ApiVersion;
+	/** UI Event associated with the session */
+	EOS_UI_EventId UiEventId;
 ));
 
 /** The most recent version of the EOS_Lobby_CreateLobbySearch API. */

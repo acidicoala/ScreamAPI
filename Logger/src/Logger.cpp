@@ -3,17 +3,19 @@
 #include <mutex>
 #include <fstream>
 
-enum class LogLevel{ ERR, WARN, INFO, DEBUG };
-const char* const strLogLevels[] = {"ERROR", "WARN", "INFO", "DEBUG"};
+enum class LogLevel{ DLC, ERR, WARN, INFO, DEBUG };
+const char* const strLogLevels[] = {"DLC", "ERROR", "WARN", "INFO", "DEBUG"};
 
 std::mutex logMutex;
-bool isEnabled = true;
+bool isEnabled = false;
+bool isLoggingDLCqueries = false;
 LogLevel logLevel = LogLevel::INFO;
 std::string logFilepath = "ScreamAPI.log";
 
-void Logger::init(bool logging, std::string level, std::string filepath){
+void Logger::init(bool logging, bool loggingDLC, std::string level, std::string filepath){
 	// Enable logging?
 	isEnabled = logging;
+	isLoggingDLCqueries = loggingDLC;
 
 	// Convert the log level from string to Enum
 	if(level == "DEBUG")
@@ -61,7 +63,7 @@ void log(LogLevel level, const char* const message, va_list args){
 		file.open(logFilepath, std::ofstream::out | std::ofstream::app);
 		if(!file.is_open())
 			return; // Should not be the case, normally
-		
+
 		file << "[" << strLogLevels[(int) level] << "]\t";
 		file << buffer << "\n";
 
@@ -97,3 +99,12 @@ void Logger::error(const char* const message, ...){
 	log(LogLevel::ERR, message, args);
 	va_end(args);
 }
+
+void Logger::dlc(const char* const message, ...){
+	va_list args;
+	va_start(args, message);
+	if(isLoggingDLCqueries)
+		log(LogLevel::DLC, message, args);
+	va_end(args);
+}
+

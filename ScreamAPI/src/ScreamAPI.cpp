@@ -33,7 +33,7 @@ void ScreamAPI::init(HMODULE hModule){
 
 	// Initialize logger
 	auto logPath = getDLLparentDir(hModule) / Config::getLogFilename();
-	Logger::init(Config::isLogEnabled(), Config::getLogLevel(), logPath.generic_string());
+	Logger::init(Config::isLogEnabled(), Config::isLoggingDLCQueries(), Config::getLogLevel(), logPath.generic_string());
 
 	Logger::info("ScreamAPI v" SCREAM_API_VERSION);
 
@@ -54,21 +54,5 @@ void ScreamAPI::checkSdkVersion(const int32_t apiVersion, const int32_t maxVersi
 			Logger::warn("Game uses newer EOS SDK (%d) than what ScreamAPI is built for (%d)!", apiVersion, maxVersion);
 			warned = true;
 		}
-	}
-}
-
-void ScreamAPI::addCallback(std::function<void()> func){
-	std::lock_guard<std::mutex> guard(callbackMutex);
-	callbacks.push_back(func);
-}
-
-void ScreamAPI::runCallbacks(){
-	std::unique_lock<std::mutex> lock(callbackMutex);
-	while(!callbacks.empty()){
-		auto callbackFunction = callbacks.front();
-		callbacks.pop_front();
-		lock.unlock(); // unlock before running callback, so callback is able to modify callback vector
-		callbackFunction();
-		lock.lock(); // relock afterward
 	}
 }

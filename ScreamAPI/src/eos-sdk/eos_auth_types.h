@@ -2,6 +2,7 @@
 #pragma once
 
 #include "eos_common.h"
+#include "eos_connect_types.h"
 
 #pragma pack(push, 8)
 
@@ -64,7 +65,9 @@ EOS_ENUM(EOS_ELoginCredentialType,
 	/** Refresh token */
 	EOS_LCT_RefreshToken = 5,
 	/** Initiate a login through the account portal. Cannot be used on consoles. */
-	EOS_LCT_AccountPortal = 6
+	EOS_LCT_AccountPortal = 6,
+	/** Initiate a login via an external provider (e.g. Steam, PSN, XBL, Nintendo). */
+	EOS_LCT_ExternalAuth = 7
 );
 
 /** The most recent version of the EOS_Auth_Token struct. */
@@ -137,17 +140,22 @@ EOS_STRUCT(EOS_Auth_Token, (
 EOS_DECLARE_FUNC(void) EOS_Auth_Token_Release(EOS_Auth_Token* AuthToken);
 
 /** The most recent version of the EOS_Auth_Credentials struct. */
-#define EOS_AUTH_CREDENTIALS_API_LATEST 2
+#define EOS_AUTH_CREDENTIALS_API_LATEST 3
 
 /**
  * A structure that contains login credentials. What is required is dependent on the type of login being initiated.
  * 
- * This is part of the input structure EOS_Auth_LoginOptions and related to device auth
+ * This is part of the input structure EOS_Auth_LoginOptions and related to device auth.
  *
- * EOS_LCT_Password - (id/token) required with email/password
- * EOS_LCT_ExchangeCode - (token) exchange code
- * EOS_LCT_PersistentAuth - (Desktop & Mobile: N/A, Console: token) login using previously stored persistent access credentials for the local user of the device
- * EOS_LCT_DeviceCode - (N/A) initiate a pin grant completed via an external device
+ * Use of the Id and Token fields differs based on the Type. They should be null, unless specified:
+ * EOS_LCT_Password - Id is the email address, and Token is the password.
+ * EOS_LCT_ExchangeCode - Token is the exchange code.
+ * EOS_LCT_PersistentAuth - If targeting console platforms, Token is the long lived refresh token. Otherwise N/A.
+ * EOS_LCT_DeviceCode - N/A.
+ * EOS_LCT_Developer - Id is the host (e.g. 127.0.0.1:10000), and Token is the credential name.
+ * EOS_LCT_RefreshToken - Token is the refresh token.
+ * EOS_LCT_AccountPortal - SystemAuthCredentialsOptions may be required if targeting mobile platforms. Otherwise N/A.
+ * EOS_LCT_ExternalAuth - Token is the external auth token specified by ExternalType.
  *
  * @see EOS_ELoginCredentialType
  * @see EOS_Auth_Login
@@ -162,6 +170,18 @@ EOS_STRUCT(EOS_Auth_Credentials, (
 	const char* Token;
 	/** Type of login. Needed to identify the auth method to use */
 	EOS_ELoginCredentialType Type;
+	/** 
+	 * This field is for system specific options if any.
+	 *
+	 * If provided then the structure will be located in <System>/eos_<system>.h.
+	 * The structure will be named EOS_<System>_Auth_CredentialsOptions.
+	 */
+	void* SystemAuthCredentialsOptions;
+	/**
+	 * Type of external login. Needed to identify the external auth method to use.
+	 * Used when login type is set to EOS_LCT_ExternalAuth, ignored for other EOS_ELoginCredentialType methods.
+	 */
+	EOS_EExternalCredentialType ExternalType;
 ));
 
 /** The most recent version of the EOS_Auth_PinGrantInfo struct. */

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "eos_common.h"
+#include "eos_ui_types.h"
 
 #pragma pack(push, 8)
 
@@ -1021,8 +1022,49 @@ EOS_STRUCT(EOS_Sessions_SessionInviteAcceptedCallbackInfo, (
  * Function prototype definition for notifications that come from EOS_Sessions_AddNotifySessionInviteAccepted
  *
  * @param Data A EOS_Sessions_SessionInviteAcceptedCallbackInfo containing the output information and result
+ *
+ * @note The session for the invite must be joined.
+ *
+ * @see EOS_Sessions_CopySessionHandleByInviteId
+ * @see EOS_Sessions_JoinSession
  */
 EOS_DECLARE_CALLBACK(EOS_Sessions_OnSessionInviteAcceptedCallback, const EOS_Sessions_SessionInviteAcceptedCallbackInfo* Data);
+
+/** The most recent version of the EOS_Sessions_AddNotifyJoinSessionAccepted API. */
+#define EOS_SESSIONS_ADDNOTIFYJOINSESSIONACCEPTED_API_LATEST 1
+EOS_STRUCT(EOS_Sessions_AddNotifyJoinSessionAcceptedOptions, (
+	/** Version of the API */
+	int32_t ApiVersion;
+));
+
+/**
+ * Output parameters for the EOS_Sessions_OnJoinSessionAcceptedCallback Function.
+ */
+EOS_STRUCT(EOS_Sessions_JoinSessionAcceptedCallbackInfo, (
+	/** Context that was passed into EOS_Sessions_AddNotifyJoinSessionAccepted */
+	void* ClientData;
+	/** User that initialized the join game */
+	EOS_ProductUserId LocalUserId;
+	/** 
+	 * The UI Event associated with this Join Game event.
+	 * This should be used with EOS_Sessions_CopySessionHandleByUiEventId to get a handle to be used
+	 * when calling EOS_Sessions_JoinSession.
+	 */
+	EOS_UI_EventId UiEventId;
+));
+
+/**
+ * Function prototype definition for notifications that come from EOS_Sessions_AddNotifyJoinSessionAccepted
+ *
+ * @param Data A EOS_Sessions_JoinSessionAcceptedCallbackInfo containing the output information and result
+ *
+ * @note The session for the join game must be joined.
+ *
+ * @see EOS_Sessions_CopySessionHandleByUiEventId
+ * @see EOS_Sessions_JoinSession
+ */
+EOS_DECLARE_CALLBACK(EOS_Sessions_OnJoinSessionAcceptedCallback, const EOS_Sessions_JoinSessionAcceptedCallbackInfo* Data);
+
 
 /** The most recent version of the EOS_Sessions_CopySessionHandleByInviteId API. */
 #define EOS_SESSIONS_COPYSESSIONHANDLEBYINVITEID_API_LATEST 1
@@ -1035,6 +1077,19 @@ EOS_STRUCT(EOS_Sessions_CopySessionHandleByInviteIdOptions, (
 	int32_t ApiVersion;
 	/** Invite id for which to retrieve a session handle */
 	const char* InviteId;
+));
+
+/** The most recent version of the EOS_Sessions_CopySessionHandleByUiEventId API. */
+#define EOS_SESSIONS_COPYSESSIONHANDLEBYUIEVENTID_API_LATEST 1
+
+/**
+ * Input parameters for the EOS_Sessions_CopySessionHandleByUiEventId Function.
+ */
+EOS_STRUCT(EOS_Sessions_CopySessionHandleByUiEventIdOptions, (
+	/** Version of the API */
+	int32_t ApiVersion;
+	/** UI Event associated with the session */
+	EOS_UI_EventId UiEventId;
 ));
 
 /** The most recent version of the EOS_Sessions_CopySessionHandleForPresence API. */

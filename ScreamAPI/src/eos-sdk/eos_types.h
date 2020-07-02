@@ -21,7 +21,7 @@ EOS_STRUCT(EOS_Platform_ClientCredentials, (
 #define EOS_LOCALECODE_MAX_LENGTH 9
 #define EOS_LOCALECODE_MAX_BUFFER_LEN (EOS_LOCALECODE_MAX_LENGTH + 1)
 
-#define EOS_PLATFORM_OPTIONS_API_LATEST 7
+#define EOS_PLATFORM_OPTIONS_API_LATEST 8
 
 /* Platform Creation Flags used in EOS_Platform_Create */
 

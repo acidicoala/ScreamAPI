@@ -12,4 +12,3 @@
 
 #include "eos-sdk/eos_base.h"
 #include "eos-sdk/eos_ecom.h" // for dlc
-#include "eos-sdk/eos_sdk.h" // for ticks

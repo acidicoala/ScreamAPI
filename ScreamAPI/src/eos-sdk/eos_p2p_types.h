@@ -11,10 +11,11 @@ EXTERN_C typedef struct EOS_P2PHandle* EOS_HP2P;
 /**
  * A packet's maximum size in bytes
  */
-#define EOS_P2P_MAX_PACKET_SIZE 1200
+#define EOS_P2P_MAX_PACKET_SIZE 1170
 
 /**
- * The maximum amount of unique Socket ID connections that can be opened with each remote user. As this limit is per remote user, you may have more than this number of Socket IDs across multiple remote users.
+ * The maximum amount of unique Socket ID connections that can be opened with each remote user. As this limit is only per remote user, you may have more
+ * than this number of Socket IDs across multiple remote users.
  */
 #define EOS_P2P_MAX_CONNECTIONS 32
 
@@ -51,15 +52,29 @@ EOS_STRUCT(EOS_P2P_SocketId, (
 	char SocketName[33];
 ));
 
+/**
+ * Types of packet reliability.
+ *
+ * Ordered packets will only be ordered relative to other ordered packets. Reliable/unreliable and ordered/unordered communication
+ * can be sent on the same Socket ID and Channel.
+ */
+EOS_ENUM(EOS_EPacketReliability,
+	/** Packets will only be sent once and may be received out of order */
+	EOS_PR_UnreliableUnordered = 0,
+	/** Packets may be sent multiple times and may be received out of order */
+	EOS_PR_ReliableUnordered = 1,
+	/** Packets may be sent multiple times and will be received in order */
+	EOS_PR_ReliableOrdered = 2
+);
 
-#define EOS_P2P_SENDPACKET_API_LATEST 1
+#define EOS_P2P_SENDPACKET_API_LATEST 2
 /**
  * Structure containing information about the data being sent and to which player
  */
 EOS_STRUCT(EOS_P2P_SendPacketOptions, (
 	/** API Version of the EOS_P2P_SendPacketOptions structure */
 	int32_t ApiVersion;
-	/** Local User ID */
+	/** Local User ID who is sending this packet */
 	EOS_ProductUserId LocalUserId;
 	/** The ID of the Peer you would like to send a packet to */
 	EOS_ProductUserId RemoteUserId;
@@ -73,6 +88,8 @@ EOS_STRUCT(EOS_P2P_SendPacketOptions, (
 	const void* Data;
 	/** If false and we do not already have an established connection to the peer, this data will be dropped */
 	EOS_Bool bAllowDelayedDelivery;
+	/** Setting to control the delivery reliability of this packet */
+	EOS_EPacketReliability Reliability;
 ));
 
 
@@ -282,6 +299,66 @@ EOS_DECLARE_CALLBACK(EOS_P2P_OnQueryNATTypeCompleteCallback, const EOS_P2P_OnQue
  */
 EOS_STRUCT(EOS_P2P_GetNATTypeOptions, (
 	/** API Version of the EOS_P2P_GetNATTypeOptions structure */
+	int32_t ApiVersion;
+));
+
+/**
+ * Setting for controlling whether relay servers are used
+ */
+EOS_ENUM(EOS_ERelayControl,
+	/** Peer connections will never attempt to use relay servers. Clients with restrictive NATs may not be able to connect to peers. */
+	EOS_RC_NoRelays = 0,
+	/** Peer connections will attempt to use relay servers, but only after direct connection attempts fail. This is the default value if not changed. */
+	EOS_RC_AllowRelays = 1,
+	/** Peer connections will only ever use relay servers. This will add latency to all connections, but will hide IP Addresses from peers. */
+	EOS_RC_ForceRelays = 2
+);
+
+#define EOS_P2P_SETRELAYCONTROL_API_LATEST 1
+/**
+ * Structure containing information about new relay configurations.
+ */
+EOS_STRUCT(EOS_P2P_SetRelayControlOptions, (
+	/** API Version of the EOS_P2P_SetRelayControlOptions structure */
+	int32_t ApiVersion;
+	/**
+	 * The requested level of relay servers for P2P connections. This setting is only applied to new P2P connections, or when existing P2P connections
+	 * reconnect during a temporary connectivity outage. Peers with an incompatible setting to the local setting will not be able to connnect.
+	 */
+	EOS_ERelayControl RelayControl;
+));
+
+#define EOS_P2P_GETRELAYCONTROL_API_LATEST 1
+/**
+ * Structure containing information about getting the relay control setting.
+ */
+EOS_STRUCT(EOS_P2P_GetRelayControlOptions, (
+	/** API Version of the EOS_P2P_GetRelayControlOptions structure */
+	int32_t ApiVersion;
+));
+
+#define EOS_P2P_SETPORTRANGE_API_LATEST 1
+/**
+ * Structure containing information about new port range settings.
+ */
+EOS_STRUCT(EOS_P2P_SetPortRangeOptions, (
+	/** API Version of the EOS_P2P_SetPortRangeOptions structure */
+	int32_t ApiVersion;
+	/** The ideal port to use for P2P traffic. The default value is 7777. If set to 0, the OS will choose a port. If set to 0, MaxAdditionalPortsToTry must be set to 0. */
+	uint16_t Port;
+	/**
+	 * The maximum amount of additional ports to try if Port is unavailable. Ports will be tried from Port to Port + MaxAdditionalPortsToTry
+	 * inclusive, until one is available or we run out of ports. If no ports are available, P2P connections will fail. The default value is 99.
+	 */
+	uint16_t MaxAdditionalPortsToTry;
+));
+
+#define EOS_P2P_GETPORTRANGE_API_LATEST 1
+/**
+ * Structure containing information about getting the configured port range settings.
+ */
+EOS_STRUCT(EOS_P2P_GetPortRangeOptions, (
+	/** API Version of the EOS_P2P_GetPortRangeOptions structure */
 	int32_t ApiVersion;
 ));
 

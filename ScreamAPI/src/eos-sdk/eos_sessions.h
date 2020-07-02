@@ -264,6 +264,25 @@ EOS_DECLARE_FUNC(EOS_NotificationId) EOS_Sessions_AddNotifySessionInviteAccepted
 EOS_DECLARE_FUNC(void) EOS_Sessions_RemoveNotifySessionInviteAccepted(EOS_HSessions Handle, EOS_NotificationId InId);
 
 /**
+ * Register to receive notifications when a user accepts a session join game via the social overlay.
+ * @note must call RemoveNotifyJoinSessionAccepted to remove the notification
+ *
+ * @param Options Structure containing information about the request.
+ * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate.
+ * @param Notification A callback that is fired when a a notification is received.
+ *
+ * @return handle representing the registered callback
+ */
+EOS_DECLARE_FUNC(EOS_NotificationId) EOS_Sessions_AddNotifyJoinSessionAccepted(EOS_HSessions Handle, const EOS_Sessions_AddNotifyJoinSessionAcceptedOptions* Options, void* ClientData, const EOS_Sessions_OnJoinSessionAcceptedCallback NotificationFn);
+
+/**
+ * Unregister from receiving notifications when a user accepts a session join game via the social overlay.
+ *
+ * @param InId Handle representing the registered callback
+ */
+EOS_DECLARE_FUNC(void) EOS_Sessions_RemoveNotifyJoinSessionAccepted(EOS_HSessions Handle, EOS_NotificationId InId);
+
+/**
  * EOS_Sessions_CopySessionHandleByInviteId is used to immediately retrieve a handle to the session information from after notification of an invite
  * If the call returns an EOS_Success result, the out parameter, OutSessionHandle, must be passed to EOS_SessionDetails_Release to release the memory associated with it.
  *
@@ -279,6 +298,23 @@ EOS_DECLARE_FUNC(void) EOS_Sessions_RemoveNotifySessionInviteAccepted(EOS_HSessi
  * @see EOS_SessionDetails_Release
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_Sessions_CopySessionHandleByInviteId(EOS_HSessions Handle, const EOS_Sessions_CopySessionHandleByInviteIdOptions* Options, EOS_HSessionDetails* OutSessionHandle);
+
+/**
+ * EOS_Sessions_CopySessionHandleByUiEventId is used to immediately retrieve a handle to the session information from after notification of a join game event.
+ * If the call returns an EOS_Success result, the out parameter, OutSessionHandle, must be passed to EOS_SessionDetails_Release to release the memory associated with it.
+ *
+ * @param Options Structure containing the input parameters
+ * @param OutSessionHandle out parameter used to receive the session handle
+ *
+ * @return EOS_Success if the information is available and passed out in OutSessionHandle
+ *         EOS_InvalidParameters if you pass an invalid invite id or a null pointer for the out parameter
+ *         EOS_IncompatibleVersion if the API version passed in is incorrect
+ *         EOS_NotFound if the invite id cannot be found
+ *
+ * @see EOS_Sessions_CopySessionHandleByUiEventIdOptions
+ * @see EOS_SessionDetails_Release
+ */
+EOS_DECLARE_FUNC(EOS_EResult) EOS_Sessions_CopySessionHandleByUiEventId(EOS_HSessions Handle, const EOS_Sessions_CopySessionHandleByUiEventIdOptions* Options, EOS_HSessionDetails* OutSessionHandle);
 
 /**
  * EOS_Sessions_CopySessionHandleForPresence is used to immediately retrieve a handle to the session information which was marked with bPresenceEnabled on create or join.
@@ -561,7 +597,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_SessionSearch_SetSessionId(EOS_HSessionSearch 
 EOS_DECLARE_FUNC(EOS_EResult) EOS_SessionSearch_SetTargetUserId(EOS_HSessionSearch Handle, const EOS_SessionSearch_SetTargetUserIdOptions* Options);
 
 /**
- * Add a parameter to an array of search criteria combined via an AND operator.  Setting SessionId or TargetUserId will result in EOS_SessionSearch_Find failing
+ * Add a parameter to an array of search criteria combined via an implicit AND operator.  Setting SessionId or TargetUserId will result in EOS_SessionSearch_Find failing
  *
  * @param Options a search parameter and its comparison op
  *

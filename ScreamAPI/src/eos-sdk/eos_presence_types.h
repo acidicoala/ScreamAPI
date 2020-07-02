@@ -256,6 +256,8 @@ EOS_STRUCT(EOS_Presence_JoinGameAcceptedCallbackInfo, (
  * Function prototype definition for notifications that come from EOS_Presence_AddNotifyJoinGameAccepted
  *
  * @param Data A EOS_Presence_JoinGameAcceptedCallbackInfo containing the output information and result
+ * 
+ * @note EOS_UI_AcknowledgeEventId must be called with any valid UiEventId passed via the data.
  */
 EOS_DECLARE_CALLBACK(EOS_Presence_OnJoinGameAcceptedCallback, const EOS_Presence_JoinGameAcceptedCallbackInfo* Data);
 

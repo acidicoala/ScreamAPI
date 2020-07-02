@@ -331,6 +331,8 @@ EOS_RESULT_VALUE(EOS_Lobby_DeploymentAtCapacity, 9015)
 EOS_RESULT_VALUE(EOS_Lobby_NotAllowed, 9016)
 /** While restoring a lost connection lobby ownership changed and only local member data was updated */
 EOS_RESULT_VALUE(EOS_Lobby_MemberUpdateOnly, 9017)
+/** Presence lobby already exists for the client */
+EOS_RESULT_VALUE(EOS_Lobby_PresenceLobbyExists, 9018)
 
 /** An unexpected error that we cannot identify has occurred. */
 EOS_RESULT_VALUE_LAST(EOS_UnexpectedError, 0x7FFFFFFF)

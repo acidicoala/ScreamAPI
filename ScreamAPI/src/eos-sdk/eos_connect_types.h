@@ -245,7 +245,7 @@ EOS_DECLARE_CALLBACK(EOS_Connect_OnLinkAccountCallback, const EOS_Connect_LinkAc
 /** The most recent version of the EOS_Connect_CreateDeviceId API. */
 #define EOS_CONNECT_CREATEDEVICEID_API_LATEST 1
 
-/** Max length of a display name, not including the terminating null */
+/** Max length of a device model name, not including the terminating null */
 #define EOS_CONNECT_CREATEDEVICEID_DEVICEMODEL_MAX_LENGTH 64
 
 /**

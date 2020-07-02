@@ -4,19 +4,20 @@
 #include "eos_p2p_types.h"
 
 /**
- * P2P functions to help manage sending and receiving of messages to peers
+ * P2P functions to help manage sending and receiving of messages to peers.
  *
- * These functions will attempt to perform NAT-punching, but will fallback to relays if a direct connection cannot be established
+ * These functions will attempt to punch through NATs, but will fallback to using Epic relay servers if a direct connection cannot be established.
  */
 
 /**
  * Send a packet to a peer at the specified address. If there is already an open connection to this peer, it will be
- * sent immediately. If there is no open connection, an attempt to connect to the peer will be made. A EOS_Success
- * result does not guarantee the packet will be delivered to the peer, as data is sent unreliably.
+ * sent immediately. If there is no open connection, an attempt to connect to the peer will be made. An EOS_Success
+ * result only means the data was accepted to be sent, not that it has been successfully delivered to the peer.
  *
  * @param Options Information about the data being sent, by who, to who
  * @return EOS_EResult::EOS_Success           - If packet was queued to be sent successfully
  *         EOS_EResult::EOS_InvalidParameters - If input was invalid
+ *         EOS_EResult::EOS_LimitExceeded     - If amount of data being sent is too large
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_P2P_SendPacket(EOS_HP2P Handle, const EOS_P2P_SendPacketOptions* Options);
 
@@ -112,7 +113,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_P2P_CloseConnections(EOS_HP2P Handle, const EO
 /**
  * Query the current NAT-type of our connection.
  *
- * @param Options Information about what version of the EOS_P2P_QueryNATType API they support
+ * @param Options Information about what version of the EOS_P2P_QueryNATType API is supported
  * @param NATTypeQueriedHandler The callback to be fired when we finish querying our NAT type
  */
 EOS_DECLARE_FUNC(void) EOS_P2P_QueryNATType(EOS_HP2P Handle, const EOS_P2P_QueryNATTypeOptions* Options, void* ClientData, const EOS_P2P_OnQueryNATTypeCompleteCallback NATTypeQueriedHandler);
@@ -120,10 +121,49 @@ EOS_DECLARE_FUNC(void) EOS_P2P_QueryNATType(EOS_HP2P Handle, const EOS_P2P_Query
 /**
  * Get our last-queried NAT-type, if it has been successfully queried.
  *
- * @param Options Information about what version of the EOS_P2P_GetNATType API they support
+ * @param Options Information about what version of the EOS_P2P_GetNATType API is supported
  * @param OutNATType The queried NAT Type, or unknown if unknown
  * @return EOS_EResult::EOS_Success - if we have cached data
  *         EOS_EResult::EOS_NotFound - If we do not have queried data cached
- *         EOS_EResult::EOS_IncompatibleVersion - If the provided version is unknown
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_P2P_GetNATType(EOS_HP2P Handle, const EOS_P2P_GetNATTypeOptions* Options, EOS_ENATType* OutNATType);
+
+/**
+ * Set how relay servers are to be used. This setting does not immediately apply to existing connections, but may apply to existing
+ * connections if the connection requires renegotiation.
+ *
+ * @param Options Information about relay server config options
+ * @return EOS_EResult::EOS_Success - if the options were set successfully
+ *         EOS_EResult::EOS_InvalidParameters - if the options are invalid in some way
+ */
+EOS_DECLARE_FUNC(EOS_EResult) EOS_P2P_SetRelayControl(EOS_HP2P Handle, const EOS_P2P_SetRelayControlOptions* Options);
+
+/**
+ * Get the current relay control setting.
+ *
+ * @param Options Information about what version of the EOS_P2P_GetRelayControl API is supported
+ * @param OutRelayControl The relay control setting currently configured
+ * @return EOS_EResult::EOS_Success - if the input was valid
+ *         EOS_EResult::EOS_InvalidParameters - if the input was invalid in some way
+ */
+EOS_DECLARE_FUNC(EOS_EResult) EOS_P2P_GetRelayControl(EOS_HP2P Handle, const EOS_P2P_GetRelayControlOptions* Options, EOS_ERelayControl* OutRelayControl);
+
+/**
+ * Set configuration options related to network ports.
+ *
+ * @param Options Information about network ports config options
+ * @return EOS_EResult::EOS_Success - if the options were set successfully
+ *         EOS_EResult::EOS_InvalidParameters - if the options are invalid in some way
+ */
+EOS_DECLARE_FUNC(EOS_EResult) EOS_P2P_SetPortRange(EOS_HP2P Handle, const EOS_P2P_SetPortRangeOptions* Options);
+
+/**
+ * Get the current chosen port and the amount of other ports to try above the chosen port if the chosen port is unavailable.
+ *
+ * @param Options Information about what version of the EOS_P2P_GetPortRange API is supported
+ * @param OutPort The port that will be tried first
+ * @param OutNumAdditionalPortsToTry The amount of ports to try above the value in OutPort, if OutPort is unavailable
+ * @return EOS_EResult::EOS_Success - if the input options were valid
+ *         EOS_EResult::EOS_InvalidParameters - if the input was invalid in some way
+ */
+EOS_DECLARE_FUNC(EOS_EResult) EOS_P2P_GetPortRange(EOS_HP2P Handle, const EOS_P2P_GetPortRangeOptions* Options, uint16_t* OutPort, uint16_t* OutNumAdditionalPortsToTry);

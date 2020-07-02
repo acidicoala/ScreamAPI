@@ -273,6 +273,44 @@ EOS_DECLARE_FUNC(EOS_NotificationId) EOS_Lobby_AddNotifyLobbyInviteReceived(EOS_
 EOS_DECLARE_FUNC(void) EOS_Lobby_RemoveNotifyLobbyInviteReceived(EOS_HLobby Handle, EOS_NotificationId InId);
 
 /**
+ * Register to receive notifications about lobby invites accepted by local user via the overlay.
+ * @note must call RemoveNotifyLobbyInviteAccepted to remove the notification
+ *
+ * @param Options Structure containing information about the request.
+ * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate.
+ * @param Notification A callback that is fired when a a notification is received.
+ *
+ * @return handle representing the registered callback
+ */
+EOS_DECLARE_FUNC(EOS_NotificationId) EOS_Lobby_AddNotifyLobbyInviteAccepted(EOS_HLobby Handle, const EOS_Lobby_AddNotifyLobbyInviteAcceptedOptions* Options, void* ClientData, const EOS_Lobby_OnLobbyInviteAcceptedCallback NotificationFn);
+
+/**
+ * Unregister from receiving notifications when a user accepts a lobby invitation via the overlay.
+ *
+ * @param InId Handle representing the registered callback
+ */
+EOS_DECLARE_FUNC(void) EOS_Lobby_RemoveNotifyLobbyInviteAccepted(EOS_HLobby Handle, EOS_NotificationId InId);
+
+/**
+ * Register to receive notifications about lobby join game accepted by local user via the overlay.
+ * @note must call RemoveNotifyJoinLobbyAccepted to remove the notification
+ *
+ * @param Options Structure containing information about the request.
+ * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate.
+ * @param Notification A callback that is fired when a a notification is received.
+ *
+ * @return handle representing the registered callback
+ */
+EOS_DECLARE_FUNC(EOS_NotificationId) EOS_Lobby_AddNotifyJoinLobbyAccepted(EOS_HLobby Handle, const EOS_Lobby_AddNotifyJoinLobbyAcceptedOptions* Options, void* ClientData, const EOS_Lobby_OnJoinLobbyAcceptedCallback NotificationFn);
+
+/**
+ * Unregister from receiving notifications when a user accepts a lobby invitation via the overlay.
+ *
+ * @param InId Handle representing the registered callback
+ */
+EOS_DECLARE_FUNC(void) EOS_Lobby_RemoveNotifyJoinLobbyAccepted(EOS_HLobby Handle, EOS_NotificationId InId);
+
+/**
  * EOS_Lobby_CopyLobbyDetailsHandleByInviteId is used to immediately retrieve a handle to the lobby information from after notification of an invite
  * If the call returns an EOS_Success result, the out parameter, OutLobbyDetailsHandle, must be passed to EOS_LobbyDetails_Release to release the memory associated with it.
  *
@@ -288,6 +326,23 @@ EOS_DECLARE_FUNC(void) EOS_Lobby_RemoveNotifyLobbyInviteReceived(EOS_HLobby Hand
  * @see EOS_LobbyDetails_Release
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_Lobby_CopyLobbyDetailsHandleByInviteId(EOS_HLobby Handle, const EOS_Lobby_CopyLobbyDetailsHandleByInviteIdOptions* Options, EOS_HLobbyDetails* OutLobbyDetailsHandle);
+
+/**
+ * EOS_Lobby_CopyLobbyDetailsHandleByUiEventId is used to immediately retrieve a handle to the lobby information from after notification of an join game
+ * If the call returns an EOS_Success result, the out parameter, OutLobbyDetailsHandle, must be passed to EOS_LobbyDetails_Release to release the memory associated with it.
+ *
+ * @param Options Structure containing the input parameters
+ * @param OutLobbyDetailsHandle out parameter used to receive the lobby handle
+ *
+ * @return EOS_Success if the information is available and passed out in OutLobbyDetailsHandle
+ *         EOS_InvalidParameters if you pass an invalid ui event id
+ *         EOS_IncompatibleVersion if the API version passed in is incorrect
+ *         EOS_NotFound If the invite id cannot be found
+ *
+ * @see EOS_Lobby_CopyLobbyDetailsHandleByUiEventIdOptions
+ * @see EOS_LobbyDetails_Release
+ */
+EOS_DECLARE_FUNC(EOS_EResult) EOS_Lobby_CopyLobbyDetailsHandleByUiEventId(EOS_HLobby Handle, const EOS_Lobby_CopyLobbyDetailsHandleByUiEventIdOptions* Options, EOS_HLobbyDetails* OutLobbyDetailsHandle);
 
 /**
  * Create a handle to an existing lobby.
@@ -565,10 +620,30 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_LobbySearch_SetLobbyId(EOS_HLobbySearch Handle
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_LobbySearch_SetTargetUserId(EOS_HLobbySearch Handle, const EOS_LobbySearch_SetTargetUserIdOptions* Options);
 
-/** NYI */
+/**
+ * Add a parameter to an array of search criteria combined via an implicit AND operator.  Setting LobbyId or TargetUserId will result in EOS_LobbySearch_Find failing
+ *
+ * @param Options a search parameter and its comparison op
+ *
+ * @return EOS_Success if setting this search parameter was successful
+ *         EOS_InvalidParameters if the search criteria is invalid or null
+ *         EOS_IncompatibleVersion if the API version passed in is incorrect
+ *
+ * @see EOS_Lobby_AttributeData
+ * @see EOS_EComparisonOp
+ */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_LobbySearch_SetParameter(EOS_HLobbySearch Handle, const EOS_LobbySearch_SetParameterOptions* Options);
 
-/** NYI */
+/**
+ * Remove a parameter from the array of search criteria.
+ *
+ * @params Options a search parameter key name to remove
+ *
+ * @return EOS_Success if removing this search parameter was successful
+ *         EOS_InvalidParameters if the search key is invalid or null
+ *		   EOS_NotFound if the parameter was not a part of the search criteria
+ *         EOS_IncompatibleVersion if the API version passed in is incorrect
+ */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_LobbySearch_RemoveParameter(EOS_HLobbySearch Handle, const EOS_LobbySearch_RemoveParameterOptions* Options);
 
 /**

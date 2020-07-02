@@ -11,14 +11,14 @@ private:
 public:
 	static void init(HMODULE hModule);
 	static void checkSdkVersion(const int32_t apiVersion, const int32_t maxVersion);
-	static void addCallback(std::function<void()> func);
-	static void runCallbacks();
 
-	// Have to define template in header (-_-)
+	// Have to define template function in header (-_-)
 	template<typename signature>
 	static std::function<signature> proxyFunction(LPCSTR functionName){
 		auto funcPtr = GetProcAddress(originalDLL, functionName);
-		if(!funcPtr)
+		if(funcPtr)
+			Logger::debug("Successfully proxied function: %s", functionName);
+		else
 			Logger::error("Failed to proxy function: %s", functionName);
 		return std::function<signature>(reinterpret_cast<signature*>(funcPtr));
 	}
