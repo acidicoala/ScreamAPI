@@ -12,3 +12,10 @@
 
 #include "eos-sdk/eos_base.h"
 #include "eos-sdk/eos_ecom.h" // for dlc
+
+// Include the linker exports based on the target architecture (32 vs 64)
+#ifdef _WIN64
+#include "LinkerExports64.h"
+#else
+#include "LinkerExports32.h"
+#endif

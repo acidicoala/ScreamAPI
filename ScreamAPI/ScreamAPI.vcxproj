@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="src\Constants.h" />
     <ClInclude Include="src\eos-sdk\eos_achievements.h" />
     <ClInclude Include="src\eos-sdk\eos_achievements_types.h" />
@@ -60,7 +61,8 @@
     <ClInclude Include="src\eos-sdk\eos_userinfo_types.h" />
     <ClInclude Include="src\eos-sdk\eos_version.h" />
     <ClInclude Include="src\framework.h" />
-    <ClInclude Include="src\LinkerExports.h" />
+    <ClInclude Include="src\LinkerExports32.h" />
+    <ClInclude Include="src\LinkerExports64.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\ScreamAPI.h" />
   </ItemGroup>
@@ -87,6 +89,9 @@
     <ProjectReference Include="..\Logger\Logger.vcxproj">
       <Project>{88727dfa-8c25-4d63-9836-f8f2efb753ea}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resources\ScreamAPI.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

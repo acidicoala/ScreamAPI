@@ -52,8 +52,8 @@ void Config::init(const std::wstring iniPath){
 
 	if(parseResult > 0)
 		showError(L"Error reading " + iniPath + L"\nError on line: " + std::to_wstring(parseResult) + L"\nUsing defaults");
-	else if(parseResult < 0)
-		;//showError(L"Error opening " + iniPath + L"\nUsing defaults");
+	//else if(parseResult < 0)
+		//showError(L"Error opening " + iniPath + L"\nUsing defaults");
 }
 
 bool Config::ownAllDLC(){

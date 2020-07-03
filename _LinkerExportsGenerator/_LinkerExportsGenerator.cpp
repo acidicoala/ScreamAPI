@@ -1,0 +1,119 @@
+// Windows headers
+#include <windows.h>
+#include <shobjidl.h> 
+
+// C++ std lib headers
+#include <cassert>
+#include <string>
+#include <vector>
+#include <fstream>
+
+void showError(std::wstring message){
+	MessageBox(NULL, message.c_str(), L"DLL Exports Reader Error", MB_ICONERROR | MB_OK);
+}
+
+// Adapted from: https://docs.microsoft.com/en-us/windows/win32/learnwin32/example--the-open-dialog-box
+// I have removed most of the error checking, since this executable is not meant to be used in production.
+std::wstring getDLLpath(){
+	PWSTR pszFilePath;
+	CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+
+	IFileOpenDialog* pFileOpen;
+
+	// Create the FileOpenDialog object.
+	CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL,
+					 IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
+
+	// Restrict the FileOpenDialog to dll files only 
+	COMDLG_FILTERSPEC rgSpec[] =
+	{
+		{ L"Dynamic-Link Libraries", L"*.dll" }
+	};
+	pFileOpen->SetFileTypes(1, rgSpec);
+
+	// Show the Open dialog box.
+	if(FAILED(pFileOpen->Show(NULL))){
+		// Quit the app if nothing was selected
+		exit(0);
+	}
+
+	// Get the file name from the dialog box.
+	IShellItem* pItem;
+	pFileOpen->GetResult(&pItem);
+	pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+
+	// Copy the filename to string
+	auto dllPath = std::wstring(pszFilePath);
+	CoTaskMemFree(pszFilePath);
+	pItem->Release();
+	pFileOpen->Release();
+	CoUninitialize();
+
+	return dllPath;
+}
+
+// Adapted from: https://github.com/mborne/dll2def/blob/master/dll2def.cpp
+std::vector<std::string> getExportFunctions(std::wstring dllPath){
+	auto exportFunctions = std::vector<std::string>();
+
+	HMODULE lib = LoadLibraryEx(dllPath.c_str(), NULL, DONT_RESOLVE_DLL_REFERENCES);
+	if(!lib){
+		showError(L"Can't open " + dllPath);
+		exit(1);
+	}
+	assert(((PIMAGE_DOS_HEADER) lib)->e_magic == IMAGE_DOS_SIGNATURE);
+	PIMAGE_NT_HEADERS header = (PIMAGE_NT_HEADERS) ((BYTE*) lib + ((PIMAGE_DOS_HEADER) lib)->e_lfanew);
+	assert(header->Signature == IMAGE_NT_SIGNATURE);
+	assert(header->OptionalHeader.NumberOfRvaAndSizes > 0);
+	PIMAGE_EXPORT_DIRECTORY exports = (PIMAGE_EXPORT_DIRECTORY) (
+		(BYTE*) lib + header->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress
+		);
+	PVOID names = (BYTE*) lib + exports->AddressOfNames;
+
+	// Iterate over the names and add them to the vector
+	for(unsigned int i = 0; i < exports->NumberOfNames; i++){
+		auto name = (char*) lib + ((DWORD*) names)[i];
+		exportFunctions.emplace_back(name);
+	}
+
+	return exportFunctions;
+}
+
+enum class Architecture{ Win32, Win64 };
+void generateHeader(std::wstring dllPath, Architecture arch, std::vector<std::string> functionNames){
+	auto exportLinkDLL = arch == Architecture::Win64 ? "EOSSDK-Win64-Shipping_o" : "EOSSDK-Win32-Shipping_o";
+	auto headerName = arch == Architecture::Win64 ? L"LinkerExports64.h" : L"LinkerExports32.h";
+
+	// Generate header path
+	std::wstring headerPath = dllPath.substr(0, dllPath.rfind('\\') + 1) + headerName;
+
+	// Try opening the output file
+	std::ofstream file;
+	file.open(headerPath, std::ofstream::out | std::ofstream::trunc);
+	if(!file.is_open()){
+		showError(L"Error opening file: " + headerPath);
+		exit(1);
+	}
+
+	// Add header guard
+	file << "#pragma once\n\n";
+
+	// Finally, output all the exports to the header file
+	for(auto const& name : functionNames){
+		// Comment-out the functions that we are intercepting
+		if(name == "EOS_Ecom_QueryOwnership"){
+			file << "// ";
+		}
+
+		file << "#pragma comment(linker, \"/export:" << name << "=" << exportLinkDLL << "." << name << "\")" << std::endl;
+	}
+
+	file.close();
+}
+
+int main(){
+	auto dllPath = getDLLpath();
+	auto functions = getExportFunctions(dllPath);
+	generateHeader(dllPath, Architecture::Win32, functions);
+	generateHeader(dllPath, Architecture::Win64, functions);
+}

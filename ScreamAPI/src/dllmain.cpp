@@ -1,5 +1,4 @@
 #include "pch.h"
-#include "LinkerExports.h"
 #include "ScreamAPI.h"
 
 // Defines the entry point for the DLL application.

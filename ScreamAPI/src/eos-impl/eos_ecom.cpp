@@ -6,8 +6,9 @@ struct ClientDataContainer{
 	EOS_Ecom_OnQueryOwnershipCallback originalCompletionDelegate;
 };
 
-EOS_CALL void ScreamAPIcompletionDelegate(const EOS_Ecom_QueryOwnershipCallbackInfo* Data){
+void EOS_CALL ScreamAPIcompletionDelegate(const EOS_Ecom_QueryOwnershipCallbackInfo* Data){
 	auto container = reinterpret_cast<ClientDataContainer*>(Data->ClientData);
+
 	// get non-const pointer to data
 	auto modifiedData = const_cast <EOS_Ecom_QueryOwnershipCallbackInfo*>(Data);
 
@@ -18,7 +19,7 @@ EOS_CALL void ScreamAPIcompletionDelegate(const EOS_Ecom_QueryOwnershipCallbackI
 
 	// Modify ownership status of items.
 	// This is where the magic happens ;)
-	for(int i = 0; i < modifiedData->ItemOwnershipCount; i++){
+	for(unsigned int i = 0; i < modifiedData->ItemOwnershipCount; i++){
 		// Search the id in DLC list from the config
 		bool isInOwnedList = std::find(Config::getOwnedItemIDs().begin(),
 									   Config::getOwnedItemIDs().end(),
@@ -27,16 +28,16 @@ EOS_CALL void ScreamAPIcompletionDelegate(const EOS_Ecom_QueryOwnershipCallbackI
 		bool owned = Config::ownAllDLC() || isInOwnedList;
 
 		// Get non-const pointer to ownership struct
-		auto itemOwnership = const_cast <EOS_Ecom_ItemOwnership*>(modifiedData->ItemOwnership + i);
+		auto item = const_cast <EOS_Ecom_ItemOwnership*>(modifiedData->ItemOwnership + i);
 
 		// Finally, change the ownership status
-		itemOwnership->OwnershipStatus = owned ? EOS_EOwnershipStatus::EOS_OS_Owned : EOS_EOwnershipStatus::EOS_OS_NotOwned;
+		item->OwnershipStatus = owned ? EOS_EOwnershipStatus::EOS_OS_Owned : EOS_EOwnershipStatus::EOS_OS_NotOwned;
 
-		auto ownershipStatusString = itemOwnership->OwnershipStatus == EOS_EOwnershipStatus::EOS_OS_Owned ? "Owned" : "NotOwned";
-		Logger::dlc(" - Item ID: %s\t[%s]", itemOwnership->Id, ownershipStatusString);
+		auto ownershipStatusString = item->OwnershipStatus == EOS_EOwnershipStatus::EOS_OS_Owned ? "Owned" : "NotOwned";
+		Logger::dlc(" - Item ID: %s\t[%s]", item->Id, ownershipStatusString);
 	}
 
-	// Call original completion delegated with our modified data
+	// Call original completion delegate with our modified data
 	container->originalCompletionDelegate(modifiedData);
 
 	// Free the heap
