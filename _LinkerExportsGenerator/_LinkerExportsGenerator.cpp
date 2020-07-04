@@ -111,6 +111,12 @@ void generateHeader(std::wstring dllPath, Architecture arch, std::vector<std::st
 	file.close();
 }
 
+/*
+This small program is a development utility for the ScreamAPI project.
+When you run it, it asks you to select a DLL file. It then reads the PE header
+of the DLL and generates appropriate 32 & 64 bit linker export headers.
+These header files are then saved in the same directory as the provided DLL.
+*/
 int main(){
 	auto dllPath = getDLLpath();
 	auto functions = getExportFunctions(dllPath);
