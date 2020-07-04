@@ -1,5 +1,6 @@
 #include "pch.h"
 #include <ScreamAPI.h>
+#include "eos-sdk/eos_ecom.h"
 
 struct ClientDataContainer{
 	void* originalClientData;

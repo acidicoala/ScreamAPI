@@ -10,7 +10,6 @@
 #include <deque>
 
 #include "eos-sdk/eos_base.h"
-#include "eos-sdk/eos_ecom.h" // for dlc
 
 // Include the linker exports based on the target architecture (32 vs 64)
 // LegacyExports are special linker exports aimed to support older versions of EOS SDK
