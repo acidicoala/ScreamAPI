@@ -1,6 +1,5 @@
 #pragma once
 
-#define SCREAM_API_VERSION "1.7.0-2" // format: <EOSSDK version>-<ScreamAPI version for that EOSSDK>
 #define SCREAM_API_CONFIG "ScreamAPI.ini"
 
 // Define original dll path based on the target architecture (32 vs 64)

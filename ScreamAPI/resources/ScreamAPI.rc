@@ -69,7 +69,7 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Acidicoala"
             VALUE "FileDescription", "Free DLC for everyone \\(^.^)/"
-            VALUE "FileVersion", "1.7.0.2"
+            VALUE "FileVersion", "1.7.0-2"
             VALUE "InternalName", "ScreamAPI.dll"
             VALUE "LegalCopyright", "Fuck the copyright >:D"
             VALUE "OriginalFilename", "ScreamAPI.dll"

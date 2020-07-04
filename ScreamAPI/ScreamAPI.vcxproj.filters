@@ -155,14 +155,14 @@
     <ClInclude Include="src\LinkerExports64.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\LegacyExports64.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\LegacyExports32.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resources\resource.h">
+      <Filter>Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -187,6 +187,9 @@
       <Filter>Header Files\eos-sdk</Filter>
     </None>
     <None Include="ScreamAPI.ini">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="resources\ScreamAPI.props">
       <Filter>Resources</Filter>
     </None>
   </ItemGroup>

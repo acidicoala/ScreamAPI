@@ -59,6 +59,6 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryOwnership(EOS_HEcom Handle, const EOS_Ecom_
 		ScreamAPI::checkSdkVersion(Options->ApiVersion, EOS_ECOM_QUERYOWNERSHIP_API_LATEST);
 
 	auto container = new ClientDataContainer{ClientData, CompletionDelegate}; // Don't forget to delete
-	static auto proxy = ScreamAPI::proxyFunction<decltype(EOS_Ecom_QueryOwnership)>(__FUNCTION__);
+	static auto proxy = ScreamAPI::proxyFunction<decltype(EOS_Ecom_QueryOwnership)>(__func__);
 	proxy(Handle, Options, container, ScreamAPIcompletionDelegate);
 }
