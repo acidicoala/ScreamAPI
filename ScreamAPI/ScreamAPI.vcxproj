@@ -61,6 +61,8 @@
     <ClInclude Include="src\eos-sdk\eos_userinfo_types.h" />
     <ClInclude Include="src\eos-sdk\eos_version.h" />
     <ClInclude Include="src\framework.h" />
+    <ClInclude Include="src\LegacyExports32.h" />
+    <ClInclude Include="src\LegacyExports64.h" />
     <ClInclude Include="src\LinkerExports32.h" />
     <ClInclude Include="src\LinkerExports64.h" />
     <ClInclude Include="src\pch.h" />
@@ -244,8 +246,9 @@
       </Command>
     </CustomBuildStep>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>powershell Compress-Archive -Update ^
+-Path $(TargetPath),$(ProjectDir)ScreamAPI.ini ^
+-DestinationPath build\ScreamAPI.zip</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -269,8 +272,9 @@
       <EnableUAC>false</EnableUAC>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>powershell Compress-Archive -Update ^
+-Path $(TargetPath),$(ProjectDir)ScreamAPI.ini ^
+-DestinationPath build\ScreamAPI.zip</Command>
     </PostBuildEvent>
     <CustomBuildStep>
       <Command>
