@@ -4,7 +4,7 @@
 class Config{
 public:
 	static void init(const std::wstring iniPath);
-	static bool ownAllDLC();
+	static bool isUnlockingAllDLC();
 	static bool isLogEnabled();
 	static bool isLoggingDLCQueries();
 	static std::string getLogLevel();

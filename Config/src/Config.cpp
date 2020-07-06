@@ -15,7 +15,7 @@ int iniHandler(void* user, const char* section_raw, const char* name_raw, const 
 
 	try{
 		if(section == "ScreamAPI"){
-			if(name == "OwnAllDLC")
+			if(name == "UnlockAllDLC")
 				unlockAllDLC = stringToBool(value);
 			else
 				throw InvalidSectionName(section_raw, name_raw);
@@ -56,7 +56,7 @@ void Config::init(const std::wstring iniPath){
 		//showError(L"Error opening " + iniPath + L"\nUsing defaults");
 }
 
-bool Config::ownAllDLC(){
+bool Config::isUnlockingAllDLC(){
 	return unlockAllDLC;
 }
 bool Config::isLogEnabled(){

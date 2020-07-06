@@ -1,5 +1,5 @@
 #include "pch.h"
-#include <ScreamAPI.h>
+#include "ScreamAPI.h"
 #include "eos-sdk/eos_ecom.h"
 
 struct ClientDataContainer{
@@ -25,16 +25,17 @@ void EOS_CALL ScreamAPIcompletionDelegate(const EOS_Ecom_QueryOwnershipCallbackI
 		bool isInOwnedList = std::find(Config::getOwnedItemIDs().begin(),
 									   Config::getOwnedItemIDs().end(),
 									   modifiedData->ItemOwnership[i].Id) != Config::getOwnedItemIDs().end();
-		// Determine if it is owned
-		bool owned = Config::ownAllDLC() || isInOwnedList;
 
 		// Get non-const pointer to ownership struct
 		auto item = const_cast <EOS_Ecom_ItemOwnership*>(modifiedData->ItemOwnership + i);
 
-		// Finally, change the ownership status
-		item->OwnershipStatus = owned ? EOS_EOwnershipStatus::EOS_OS_Owned : EOS_EOwnershipStatus::EOS_OS_NotOwned;
+		// Determine if this DLC should be unlocked
+		bool unlocked = Config::isUnlockingAllDLC() || isInOwnedList;
 
-		auto ownershipStatusString = item->OwnershipStatus == EOS_EOwnershipStatus::EOS_OS_Owned ? "Owned" : "NotOwned";
+		// Finally, change the ownership status
+		item->OwnershipStatus = unlocked ? EOS_EOwnershipStatus::EOS_OS_Owned : EOS_EOwnershipStatus::EOS_OS_NotOwned;
+
+		auto ownershipStatusString = item->OwnershipStatus == EOS_EOwnershipStatus::EOS_OS_Owned ? "Owned" : "Not Owned";
 		Logger::dlc(" - Item ID: %s\t[%s]", item->Id, ownershipStatusString);
 	}
 
