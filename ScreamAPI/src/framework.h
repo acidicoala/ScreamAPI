@@ -6,8 +6,7 @@
 // ScreamAPI.h & ScreamAPI.cpp
 #include <filesystem>
 #include <functional>
-#include <mutex>
-#include <deque>
+#include <sstream>
 
 #include "eos-sdk/eos_base.h"
 

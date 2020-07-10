@@ -101,7 +101,11 @@ void generateHeader(std::wstring dllPath, Architecture arch, std::vector<std::st
 	// Finally, output all the exports to the header file
 	for(auto const& name : functionNames){
 		// Comment-out the functions that we are intercepting
-		if(name == "EOS_Ecom_QueryOwnership"){
+		if(name == "EOS_Ecom_QueryOwnership" || name == "_EOS_Ecom_QueryOwnership@16" ||
+		   name == "EOS_Ecom_QueryEntitlements" || name == "_EOS_Ecom_QueryEntitlements@16" ||
+		   name == "EOS_Ecom_GetEntitlementsCount" || name == "_EOS_Ecom_GetEntitlementsCount@8" ||
+		   name == "EOS_Ecom_CopyEntitlementByIndex" || name == "_EOS_Ecom_CopyEntitlementByIndex@12" ||
+		   name == "EOS_Ecom_Entitlement_Release" || name == "_EOS_Ecom_Entitlement_Release@4"){
 			file << "// ";
 		}
 
@@ -114,12 +118,18 @@ void generateHeader(std::wstring dllPath, Architecture arch, std::vector<std::st
 /*
 This small program is a development utility for the ScreamAPI project.
 When you run it, it asks you to select a DLL file. It then reads the PE header
-of the DLL and generates appropriate 32 & 64 bit linker export headers.
+of the DLL and generates appropriate 32 or 64 bit linker export headers.
 These header files are then saved in the same directory as the provided DLL.
+To generate 32-bit exports, you must run the 32-bit version of this utility.
+Similarly, run 64-bit version to generate 64-bit exports.
 */
 int main(){
 	auto dllPath = getDLLpath();
 	auto functions = getExportFunctions(dllPath);
-	generateHeader(dllPath, Architecture::Win32, functions);
+
+#ifdef _WIN64
 	generateHeader(dllPath, Architecture::Win64, functions);
+#else
+	generateHeader(dllPath, Architecture::Win32, functions);
+#endif
 }

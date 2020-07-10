@@ -5,8 +5,6 @@
 // Initialize static variables
 bool ScreamAPI::isDLLinitialized = false;
 HMODULE ScreamAPI::originalDLL = nullptr;
-std::mutex ScreamAPI::callbackMutex;
-std::deque<std::function<void()>> ScreamAPI::callbacks;
 
 // Utility variables & functions
 
