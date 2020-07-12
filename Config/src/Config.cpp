@@ -5,6 +5,7 @@
 bool unlockAllDLC = true;
 bool logIsEnabled = false;
 bool logDLCQueries = false;
+bool proxyEntitlements = false;
 std::string logLevel = "INFO";
 std::string logFilename = "ScreamAPI.log";
 std::vector<std::string> ownedItemIDs;
@@ -17,6 +18,8 @@ int iniHandler(void* user, const char* section_raw, const char* name_raw, const 
 		if(section == "ScreamAPI"){
 			if(name == "UnlockAllDLC")
 				unlockAllDLC = stringToBool(value);
+			else if(name == "ProxyEntitlements")
+				proxyEntitlements = stringToBool(value);
 			else
 				throw InvalidSectionName(section_raw, name_raw);
 		} else if(section == "Logging"){
@@ -59,6 +62,11 @@ void Config::init(const std::wstring iniPath){
 bool Config::isUnlockingAllDLC(){
 	return unlockAllDLC;
 }
+
+bool Config::isProxyingEntitlements(){
+	return proxyEntitlements;
+}
+
 bool Config::isLogEnabled(){
 	return logIsEnabled;
 }

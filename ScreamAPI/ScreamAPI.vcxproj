@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -67,10 +67,12 @@
     <ClInclude Include="src\LinkerExports64.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\ScreamAPI.h" />
+    <ClInclude Include="src\util.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\dllmain.cpp" />
-    <ClCompile Include="src\eos-impl\eos_ecom.cpp" />
+    <ClCompile Include="src\eos-impl\eos_ecom_entitlements.cpp" />
+    <ClCompile Include="src\eos-impl\eos_ecom_ownership.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
