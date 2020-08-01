@@ -79,6 +79,15 @@ std::vector<std::string> getExportFunctions(std::wstring dllPath){
 	return exportFunctions;
 }
 
+std::vector<std::string> overrideFunctions{
+	"EOS_Ecom_QueryOwnership",
+	"EOS_Ecom_QueryEntitlements",
+	"EOS_Ecom_GetEntitlementsCount",
+	"EOS_Ecom_CopyEntitlementByIndex",
+	"EOS_Ecom_Entitlement_Release",
+	"EOS_Ecom_Checkout"
+};
+
 enum class Architecture{ Win32, Win64 };
 void generateHeader(std::wstring dllPath, Architecture arch, std::vector<std::string> functionNames){
 	auto exportLinkDLL = arch == Architecture::Win64 ? "EOSSDK-Win64-Shipping_o" : "EOSSDK-Win32-Shipping_o";
@@ -100,13 +109,16 @@ void generateHeader(std::wstring dllPath, Architecture arch, std::vector<std::st
 
 	// Finally, output all the exports to the header file
 	for(auto const& name : functionNames){
-		// Comment-out the functions that we are intercepting
-		if(name == "EOS_Ecom_QueryOwnership" || name == "_EOS_Ecom_QueryOwnership@16" ||
-		   name == "EOS_Ecom_QueryEntitlements" || name == "_EOS_Ecom_QueryEntitlements@16" ||
-		   name == "EOS_Ecom_GetEntitlementsCount" || name == "_EOS_Ecom_GetEntitlementsCount@8" ||
-		   name == "EOS_Ecom_CopyEntitlementByIndex" || name == "_EOS_Ecom_CopyEntitlementByIndex@12" ||
-		   name == "EOS_Ecom_Entitlement_Release" || name == "_EOS_Ecom_Entitlement_Release@4"){
-			file << "// ";
+		// Iterate over overriden names and check if it is there
+		for(const auto& overrideFunction : overrideFunctions){
+			bool isOverriding;
+#ifdef _WIN64
+			isOverriding = name == overrideFunction;
+#else
+			isOverriding = name.find("_" + overrideFunction + "@") != std::string::npos;
+#endif
+			if(isOverriding)
+				file << "// ";
 		}
 
 		file << "#pragma comment(linker, \"/export:" << name << "=" << exportLinkDLL << "." << name << "\")" << std::endl;

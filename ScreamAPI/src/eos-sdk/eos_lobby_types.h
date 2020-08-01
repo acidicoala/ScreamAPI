@@ -45,7 +45,7 @@ EXTERN_C typedef const char* EOS_LobbyId;
 /** Maximum number of attributes allowed on the lobby */
 #define EOS_LOBBYMODIFICATION_MAX_ATTRIBUTES 64
 /** Maximum length of the name of the attribute associated with the lobby */
-#define EOS_LOBBYMODIFICATION_MAX_ATTRIBUTE_LENGTH 32
+#define EOS_LOBBYMODIFICATION_MAX_ATTRIBUTE_LENGTH 64
 
 /** Permission level gets more restrictive further down */
 EOS_ENUM(EOS_ELobbyPermissionLevel,
@@ -725,6 +725,11 @@ EOS_STRUCT(EOS_Lobby_CopyLobbyDetailsHandleOptions, (
 	/** Local user making the request */
 	EOS_ProductUserId LocalUserId;
 ));
+
+/** Search for lobbies that contain at least this number of members (value is int)  */
+#define EOS_LOBBY_SEARCH_MINCURRENTMEMBERS "mincurrentmembers"
+/** Search for a match with min free space (value is int) */
+#define EOS_LOBBY_SEARCH_MINSLOTSAVAILABLE "minslotsavailable"
 
 /** The most recent version of the EOS_Lobby_AttributeData struct. */
 #define EOS_LOBBY_ATTRIBUTEDATA_API_LATEST 1

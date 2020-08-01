@@ -50,7 +50,13 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyEntitlementByIndex(EOS_HEcom Handle, 
 	if(Config::isProxyingEntitlements()){
 		static auto proxy = ScreamAPI::proxyFunction(&EOS_Ecom_CopyEntitlementByIndex, __func__);
 		auto result = proxy(Handle, Options, OutEntitlement);
-		Logger::debug(" - Proxy CopyEntitlementByIndex: %s", (*OutEntitlement)->EntitlementId);
+		Logger::dlc("Proxy CopyEntitlementByIndex:");
+		Logger::dlc(" - EntitlementId: %s", (*OutEntitlement)->EntitlementId);
+		Logger::dlc(" - CatalogItemId: %s", (*OutEntitlement)->CatalogItemId);
+		Logger::dlc(" - EntitlementName: %s", (*OutEntitlement)->EntitlementName);
+		Logger::dlc(" - bRedeemed: %d", (*OutEntitlement)->bRedeemed);
+		Logger::dlc(" - ServerIndex: %d", (*OutEntitlement)->ServerIndex);
+		Logger::dlc(" - EndTimestamp: %ll", (*OutEntitlement)->EndTimestamp);
 		return result;
 	}
 
@@ -61,11 +67,11 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyEntitlementByIndex(EOS_HEcom Handle, 
 		return EOS_EResult::EOS_InvalidParameters;
 	}
 
-	size_t idLength = entitlementIDs.at(Options->EntitlementIndex).length();
+	size_t idLength = entitlementIDs.at(Options->EntitlementIndex).length() + 1;
 	const char* idRaw = entitlementIDs.at(Options->EntitlementIndex).c_str();
 
-	char* id = new char[idLength + 1];  // Don't forget to free the heap
-	strcpy_s(id, idLength + 1, idRaw);
+	char* id = new char[idLength];  // Don't forget to free the heap
+	strcpy_s(id, idLength, idRaw);
 
 	auto entitlement = new EOS_Ecom_Entitlement(); // Don't forget to free the heap
 	entitlement->ApiVersion = EOS_ECOM_ENTITLEMENT_API_LATEST;

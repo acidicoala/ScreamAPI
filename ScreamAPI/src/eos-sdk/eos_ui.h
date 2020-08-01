@@ -4,7 +4,7 @@
 #include "eos_ui_types.h"
 
 /**
- * The UI Interface is used to access the overlay UI.  Each UI component will have a function for
+ * The UI Interface is used to access the Social Overlay UI.  Each UI component will have a function for
  * opening it.  All UI Interface calls take a handle of type EOS_HUI as the first parameter.
  * This handle can be retrieved from a EOS_HPlatform handle by using the EOS_Platform_GetUIInterface function.
  *
@@ -12,41 +12,61 @@
  */
 
 /**
- * Opens the overlay with a request to show the friends list.
+ * Opens the Social Overlay with a request to show the friends list.
  *
  * @param Options Structure containing the account id of the friends list to show.
  * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate.
- * @param CompletionDelegate A callback that is fired when the request to show the friends list has been sent to the overlay, or on an error.
+ * @param CompletionDelegate A callback that is fired when the request to show the friends list has been sent to the Social Overlay, or on an error.
  *
- * @return EOS_Success If the overlay has been notified about the request.
+ * @return EOS_Success If the Social Overlay has been notified about the request.
  *         EOS_InvalidParameters If any of the options are incorrect.
- *         EOS_NotConfigured If the overlay is not properly configured.
- *         EOS_NoChange If the overlay is already visible.
+ *         EOS_NotConfigured If the Social Overlay is not properly configured.
+ *         EOS_NoChange If the Social Overlay is already visible.
  */
 EOS_DECLARE_FUNC(void) EOS_UI_ShowFriends(EOS_HUI Handle, const EOS_UI_ShowFriendsOptions* Options, void* ClientData, const EOS_UI_OnShowFriendsCallback CompletionDelegate);
 
 /**
- * Hides the active overlay.
+ * Hides the active Social Overlay.
  *
  * @param Options Structure containing the account id of the browser to close.
  * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate.
  * @param CompletionDelegate A callback that is fired when the request to hide the friends list has been processed, or on an error.
  *
- * @return EOS_Success If the overlay has been notified about the request.
+ * @return EOS_Success If the Social Overlay has been notified about the request.
  *         EOS_InvalidParameters If any of the options are incorrect.
- *         EOS_NotConfigured If the overlay is not properly configured.
- *         EOS_NoChange If the overlay is already hidden.
+ *         EOS_NotConfigured If the Social Overlay is not properly configured.
+ *         EOS_NoChange If the Social Overlay is already hidden.
  */
 EOS_DECLARE_FUNC(void) EOS_UI_HideFriends(EOS_HUI Handle, const EOS_UI_HideFriendsOptions* Options, void* ClientData, const EOS_UI_OnHideFriendsCallback CompletionDelegate);
 
 /**
  * Gets the friends overlay visibility.
  *
- * @param Options Structure containing the account id of the overlay owner.
+ * @param Options Structure containing the account id of the friends Social Overlay owner.
  *
  * @return EOS_TRUE If the overlay is visible.
  */
 EOS_DECLARE_FUNC(EOS_Bool) EOS_UI_GetFriendsVisible(EOS_HUI Handle, const EOS_UI_GetFriendsVisibleOptions* Options);
+
+/**
+ * Register to receive notifications when the overlay display settings are updated.
+ * Newly registered handlers will always be called the next tick with the current state.
+ * @note must call RemoveNotifyDisplaySettingsUpdated to remove the notification.
+ *
+ * @param Options Structure containing information about the request.
+ * @param ClientData Arbitrary data that is passed back to you in the NotificationFn.
+ * @param Notification A callback that is fired when the overlay display settings are updated.
+ *
+ * @return handle representing the registered callback
+ */
+EOS_DECLARE_FUNC(EOS_NotificationId) EOS_UI_AddNotifyDisplaySettingsUpdated(EOS_HUI Handle, const EOS_UI_AddNotifyDisplaySettingsUpdatedOptions* Options, void* ClientData, const EOS_UI_OnDisplaySettingsUpdatedCallback NotificationFn);
+
+/**
+ * Unregister from receiving notifications when the overlay display settings are updated.
+ *
+ * @param InId Handle representing the registered callback
+ */
+EOS_DECLARE_FUNC(void) EOS_UI_RemoveNotifyDisplaySettingsUpdated(EOS_HUI Handle, EOS_NotificationId Id);
 
 /**
  * Updates the current Toggle Friends Key.  This key can be used by the user to toggle the friends

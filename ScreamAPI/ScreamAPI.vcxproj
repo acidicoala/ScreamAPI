@@ -72,7 +72,9 @@
   <ItemGroup>
     <ClCompile Include="src\dllmain.cpp" />
     <ClCompile Include="src\eos-impl\eos_ecom_entitlements.cpp" />
+    <ClCompile Include="src\eos-impl\eos_ecom_offers.cpp" />
     <ClCompile Include="src\eos-impl\eos_ecom_ownership.cpp" />
+    <ClCompile Include="src\eos-impl\eos_ecom_transactions.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

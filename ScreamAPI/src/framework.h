@@ -11,6 +11,7 @@
 // Ecom
 #include "eos-sdk/eos_base.h"
 #include <vector>
+#include <string>
 
 // Include the linker exports based on the target architecture (32 vs 64)
 // LegacyExports are special linker exports aimed to support older versions of EOS SDK

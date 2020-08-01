@@ -88,6 +88,35 @@ EOS_STRUCT(EOS_UI_GetFriendsVisibleOptions, (
 	EOS_EpicAccountId LocalUserId;
 ));
 
+/** The most recent version of the EOS_UI_AddNotifyDisplaySettingsUpdated API. */
+#define EOS_UI_ADDNOTIFYDISPLAYSETTINGSUPDATED_API_LATEST 1
+
+/**
+ * Input parameters for the EOS_UI_AddNotifyDisplaySettingsUpdated Function.
+ */
+EOS_STRUCT(EOS_UI_AddNotifyDisplaySettingsUpdatedOptions, (
+	/** Version of the API */
+	int32_t ApiVersion;
+));
+
+EOS_STRUCT(EOS_UI_OnDisplaySettingsUpdatedCallbackInfo, (
+	/** Context that was passed into EOS_UI_AddNotifyDisplaySettingsUpdated */
+	void* ClientData;
+	/** True when any portion of the overlay is visible. */
+	EOS_Bool bIsVisible;
+	/** 
+	 * True when the overlay has switched to exclusive input mode. 
+	 * While in exclusive input mode, no keyboard or mouse input will be sent to the game.
+	 */
+	EOS_Bool bIsExclusiveInput;
+));
+
+/**
+ * Function prototype definition for callbacks passed to EOS_UI_AddNotifyDisplaySettingsUpdated 
+ * @param Data A EOS_UI_OnDisplaySettingsUpdatedCallbackInfo containing the current display state.
+ */
+EOS_DECLARE_CALLBACK(EOS_UI_OnDisplaySettingsUpdatedCallback, const EOS_UI_OnDisplaySettingsUpdatedCallbackInfo* Data);
+
 /** 
  * Enum flags for storing a key combination. The low 16 bits are the key type, and modifiers are 
  * stored in the next significant bits 

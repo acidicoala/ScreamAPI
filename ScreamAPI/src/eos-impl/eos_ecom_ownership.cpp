@@ -12,7 +12,7 @@ void EOS_CALL OwnershipCompletionDelegate(const EOS_Ecom_QueryOwnershipCallbackI
 	auto container = reinterpret_cast<OwnershipContainer*>(Data->ClientData);
 
 	// get non-const pointer to data
-	auto modifiedData = const_cast <EOS_Ecom_QueryOwnershipCallbackInfo*>(Data);
+	auto modifiedData = const_cast<EOS_Ecom_QueryOwnershipCallbackInfo*>(Data);
 
 	// Restore original client data
 	modifiedData->ClientData = container->originalClientData;
@@ -22,12 +22,12 @@ void EOS_CALL OwnershipCompletionDelegate(const EOS_Ecom_QueryOwnershipCallbackI
 	// Modify ownership status of items.
 	// This is where the magic happens ;)
 	for(unsigned int i = 0; i < modifiedData->ItemOwnershipCount; i++){
+		// Get non-const pointer to ownership struct
+		auto item = const_cast <EOS_Ecom_ItemOwnership*>(modifiedData->ItemOwnership + i);
+
 		// Search the id in DLC list from the config
 		bool isInOwnedList = Util::vectorContains<std::string>(Config::getOwnedItemIDs(),
 															   modifiedData->ItemOwnership[i].Id);
-
-		// Get non-const pointer to ownership struct
-		auto item = const_cast <EOS_Ecom_ItemOwnership*>(modifiedData->ItemOwnership + i);
 
 		// Determine if this DLC should be unlocked
 		bool unlocked = Config::isUnlockingAllDLC() || isInOwnedList;

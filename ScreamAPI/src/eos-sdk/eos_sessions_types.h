@@ -107,7 +107,7 @@ EOS_ENUM(EOS_ESessionAttributeAdvertisementType,
 /** Maximum number of attributes allowed on the session */
 #define EOS_SESSIONMODIFICATION_MAX_SESSION_ATTRIBUTES 64
 /** Maximum length of the name of the attribute associated with the session */
-#define EOS_SESSIONMODIFICATION_MAX_SESSION_ATTRIBUTE_LENGTH 32
+#define EOS_SESSIONMODIFICATION_MAX_SESSION_ATTRIBUTE_LENGTH 64
 
 /** The most recent version of the EOS_Sessions_CreateSessionModification API. */
 #define EOS_SESSIONS_CREATESESSIONMODIFICATION_API_LATEST 2

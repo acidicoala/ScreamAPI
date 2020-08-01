@@ -51,8 +51,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,7,0,4
- PRODUCTVERSION 1,7,0,4
+ FILEVERSION 1,7,1,1
+ PRODUCTVERSION 1,7,1,1
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -69,12 +69,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Acidicoala"
             VALUE "FileDescription", "Free DLC for everyone \\(^.^)/"
-            VALUE "FileVersion", "1.7.0-4"
+            VALUE "FileVersion", "1.7.1-1"
             VALUE "InternalName", "ScreamAPI.dll"
             VALUE "LegalCopyright", "Fuck the copyright >:D"
             VALUE "OriginalFilename", "ScreamAPI.dll"
             VALUE "ProductName", "ScreamAPI"
-            VALUE "ProductVersion", "1.7.0-4"
+            VALUE "ProductVersion", "1.7.1-1"
         END
     END
     BLOCK "VarFileInfo"
