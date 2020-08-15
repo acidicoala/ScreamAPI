@@ -3,7 +3,7 @@
 
 class Logger{
 public:
-	static void init(bool logging, bool loggingDLC, std::string level, std::string logFilepath);
+	static void init(bool logging, bool loggingDLC, std::string level, std::wstring logFilepath);
 
 	static void debug(const char* const message, ...);
 	static void info(const char* const message, ...);

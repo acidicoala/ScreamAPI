@@ -10,9 +10,9 @@ std::mutex logMutex;
 bool isEnabled = false;
 bool isLoggingDLCqueries = false;
 LogLevel logLevel = LogLevel::INFO;
-std::string logFilepath = "ScreamAPI.log";
+std::wstring logFilepath = L"ScreamAPI.log";
 
-void Logger::init(bool logging, bool loggingDLC, std::string level, std::string filepath){
+void Logger::init(bool logging, bool loggingDLC, std::string level, std::wstring filepath){
 	// Enable logging?
 	isEnabled = logging;
 	isLoggingDLCqueries = loggingDLC;

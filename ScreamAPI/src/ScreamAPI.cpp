@@ -9,11 +9,11 @@ HMODULE ScreamAPI::originalDLL = nullptr;
 // Utility variables & functions
 
 static std::filesystem::path getDLLparentDir(HMODULE hModule){
-	WCHAR ModulePathStr[4096]; // TODO: figure out buffer size dynamically?
-	GetModuleFileNameW(hModule, ModulePathStr, 4096);
+	WCHAR modulePathBuffer[4096];
+	GetModuleFileName(hModule, modulePathBuffer, 4096);
 
-	std::filesystem::path ModulePath = ModulePathStr;
-	return ModulePath.parent_path();
+	std::filesystem::path modulePath = modulePathBuffer;
+	return modulePath.parent_path();
 }
 
 // Public functions
@@ -31,13 +31,13 @@ void ScreamAPI::init(HMODULE hModule){
 
 	// Initialize logger
 	auto logPath = getDLLparentDir(hModule) / Config::getLogFilename();
-	Logger::init(Config::isLogEnabled(), Config::isLoggingDLCQueries(), Config::getLogLevel(), logPath.generic_string());
+	Logger::init(Config::isLogEnabled(), Config::isLoggingDLCQueries(), Config::getLogLevel(), logPath.generic_wstring());
 
 	Logger::info("ScreamAPI v" SCREAM_API_VERSION);
 
 	// Load original library
 	auto orinalDLLpath = getDLLparentDir(hModule) / SCREAM_API_ORIG_DLL;
-	originalDLL = LoadLibrary(orinalDLLpath.c_str());
+	originalDLL = LoadLibrary(orinalDLLpath.generic_wstring().c_str());
 	if(originalDLL)
 		Logger::info("Successfully loaded original EOS SDK: %s", SCREAM_API_ORIG_DLL);
 	else
