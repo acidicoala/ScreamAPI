@@ -85,7 +85,25 @@ std::vector<std::string> overrideFunctions{
 	"EOS_Ecom_GetEntitlementsCount",
 	"EOS_Ecom_CopyEntitlementByIndex",
 	"EOS_Ecom_Entitlement_Release",
-	"EOS_Ecom_Checkout"
+	"EOS_Ecom_Checkout",
+	// Achievements
+	"EOS_Achievements_QueryDefinitions",
+	"EOS_Achievements_GetAchievementDefinitionCount",
+	"EOS_Achievements_CopyAchievementDefinitionV2ByIndex",
+	"EOS_Achievements_CopyAchievementDefinitionV2ByAchievementId",
+	"EOS_Achievements_QueryPlayerAchievements",
+	"EOS_Achievements_GetPlayerAchievementCount",
+	"EOS_Achievements_CopyPlayerAchievementByIndex",
+	"EOS_Achievements_CopyPlayerAchievementByAchievementId",
+	"EOS_Achievements_UnlockAchievements",
+	"EOS_Achievements_AddNotifyAchievementsUnlockedV2",
+	"EOS_Achievements_RemoveNotifyAchievementsUnlocked"
+	// Achievements (Deprecated)
+	/*"EOS_Achievements_CopyAchievementDefinitionByIndex",
+	"EOS_Achievements_GetUnlockedAchievementCount",
+	"EOS_Achievements_CopyUnlockedAchievementByIndex",
+	"EOS_Achievements_CopyUnlockedAchievementByAchievementId",
+	"EOS_Achievements_AddNotifyAchievementsUnlocked"*/
 };
 
 enum class Architecture{ Win32, Win64 };

@@ -27,7 +27,7 @@ void EOS_CALL CheckoutCompletionDelegate(const EOS_Ecom_CheckoutCallbackInfo* Da
 }
 
 EOS_DECLARE_FUNC(void) EOS_Ecom_Checkout(EOS_HEcom Handle, const EOS_Ecom_CheckoutOptions* Options, void* ClientData, const EOS_Ecom_OnCheckoutCallback CompletionDelegate){
-	Logger::debug("EOS_Ecom_Checkout fake");
+	Logger::debug(__func__);
 	auto container = new CheckoutContainer{ClientData, CompletionDelegate}; // Don't forget to free the heap
 	static auto proxy = ScreamAPI::proxyFunction(&EOS_Ecom_Checkout, __func__);
 	proxy(Handle, Options, container, CheckoutCompletionDelegate);

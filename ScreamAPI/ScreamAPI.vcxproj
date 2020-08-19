@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resources\resource.h" />
-    <ClInclude Include="src\Constants.h" />
+    <ClInclude Include="src\constants.h" />
     <ClInclude Include="src\eos-sdk\eos_achievements.h" />
     <ClInclude Include="src\eos-sdk\eos_achievements_types.h" />
     <ClInclude Include="src\eos-sdk\eos_auth.h" />
@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\dllmain.cpp" />
+    <ClCompile Include="src\eos-impl\eos_achievements.cpp" />
     <ClCompile Include="src\eos-impl\eos_ecom_entitlements.cpp" />
     <ClCompile Include="src\eos-impl\eos_ecom_offers.cpp" />
     <ClCompile Include="src\eos-impl\eos_ecom_ownership.cpp" />
@@ -185,7 +186,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>EOS_BUILD_DLL;SCREAM_API_VERSION="$(ScreamApiVersion)";WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>EOS_BUILD_DLL;TEST_VAR="$(TestVar)";SCREAM_API_VERSION="$(ScreamApiVersion)";WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -210,7 +211,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>EOS_BUILD_DLL;SCREAM_API_VERSION="$(ScreamApiVersion)";_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>EOS_BUILD_DLL;TEST_VAR="$(TestVar)";SCREAM_API_VERSION="$(ScreamApiVersion)";_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -237,7 +238,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>EOS_BUILD_DLL;SCREAM_API_VERSION="$(ScreamApiVersion)";WIN32;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>EOS_BUILD_DLL;TEST_VAR="$(TestVar)";SCREAM_API_VERSION="$(ScreamApiVersion)";WIN32;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -267,7 +268,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>EOS_BUILD_DLL;SCREAM_API_VERSION="$(ScreamApiVersion)";NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>EOS_BUILD_DLL;TEST_VAR="$(TestVar)";SCREAM_API_VERSION="$(ScreamApiVersion)";NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>

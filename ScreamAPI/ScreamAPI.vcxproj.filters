@@ -146,9 +146,6 @@
     <ClInclude Include="src\ScreamAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Constants.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\LinkerExports32.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -165,6 +162,9 @@
       <Filter>Resources</Filter>
     </ClInclude>
     <ClInclude Include="src\util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -188,6 +188,9 @@
       <Filter>Source Files\eos-impl</Filter>
     </ClCompile>
     <ClCompile Include="src\eos-impl\eos_ecom_transactions.cpp">
+      <Filter>Source Files\eos-impl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\eos-impl\eos_achievements.cpp">
       <Filter>Source Files\eos-impl</Filter>
     </ClCompile>
   </ItemGroup>

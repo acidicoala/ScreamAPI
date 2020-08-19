@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "ScreamAPI.h"
-#include "Constants.h"
+#include "constants.h"
 
 // Initialize static variables
 bool ScreamAPI::isDLLinitialized = false;

@@ -47,6 +47,8 @@ void EOS_CALL OwnershipCompletionDelegate(const EOS_Ecom_QueryOwnershipCallbackI
 }
 
 EOS_DECLARE_FUNC(void) EOS_Ecom_QueryOwnership(EOS_HEcom Handle, const EOS_Ecom_QueryOwnershipOptions* Options, void* ClientData, const EOS_Ecom_OnQueryOwnershipCallback CompletionDelegate){
+	Logger::debug(__func__);
+	
 	// Log item IDs
 	if(Options){
 		Logger::dlc("Game requested ownership of %d items:", Options->CatalogItemIdCount);

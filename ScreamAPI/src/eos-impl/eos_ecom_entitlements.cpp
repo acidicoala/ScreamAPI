@@ -6,6 +6,8 @@
 std::vector<std::string> entitlementIDs;
 
 EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlements(EOS_HEcom Handle, const EOS_Ecom_QueryEntitlementsOptions* Options, void* ClientData, const EOS_Ecom_OnQueryEntitlementsCallback CompletionDelegate){
+	Logger::debug(__func__);
+
 	// Log item IDs
 	if(Options){
 		// Verify SDK version
@@ -28,6 +30,8 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlements(EOS_HEcom Handle, const EOS_Ec
 }
 
 EOS_DECLARE_FUNC(uint32_t) EOS_Ecom_GetEntitlementsCount(EOS_HEcom Handle, const EOS_Ecom_GetEntitlementsCountOptions* Options){
+	Logger::debug(__func__);
+	
 	if(Options){
 		ScreamAPI::checkSdkVersion(Options->ApiVersion, EOS_ECOM_GETENTITLEMENTSCOUNT_API_LATEST);
 	} else{
@@ -47,6 +51,8 @@ EOS_DECLARE_FUNC(uint32_t) EOS_Ecom_GetEntitlementsCount(EOS_HEcom Handle, const
 }
 
 EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyEntitlementByIndex(EOS_HEcom Handle, const EOS_Ecom_CopyEntitlementByIndexOptions* Options, EOS_Ecom_Entitlement** OutEntitlement){
+	Logger::debug(__func__);
+
 	if(Config::isProxyingEntitlements()){
 		static auto proxy = ScreamAPI::proxyFunction(&EOS_Ecom_CopyEntitlementByIndex, __func__);
 		auto result = proxy(Handle, Options, OutEntitlement);
@@ -89,7 +95,9 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyEntitlementByIndex(EOS_HEcom Handle, 
 }
 
 EOS_DECLARE_FUNC(void) EOS_Ecom_Entitlement_Release(EOS_Ecom_Entitlement* Entitlement){
-	Logger::debug(" - EOS_Ecom_Entitlement_Release: %s", Entitlement->EntitlementId);
+	Logger::debug(__func__);
+
+	Logger::debug(" - Releasing Entitlement with ID: %s", Entitlement->EntitlementId);
 
 	if(Config::isProxyingEntitlements()){
 		static auto proxy = ScreamAPI::proxyFunction(&EOS_Ecom_Entitlement_Release, __func__);
