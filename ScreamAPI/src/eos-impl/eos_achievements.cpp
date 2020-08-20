@@ -1,6 +1,7 @@
 #include "pch.h"
-#include "ScreamAPI.h"
 #include "eos-sdk/eos_achievements.h"
+#include <ScreamAPI.h>
+#include <Overlay.h>
 
 
 EOS_DECLARE_FUNC(void) EOS_Achievements_QueryDefinitions(EOS_HAchievements Handle, const EOS_Achievements_QueryDefinitionsOptions* Options, void* ClientData, const EOS_Achievements_OnQueryDefinitionsCompleteCallback CompletionDelegate){
@@ -86,6 +87,10 @@ EOS_DECLARE_FUNC(uint32_t) EOS_Achievements_GetPlayerAchievementCount(EOS_HAchie
 	auto result = proxy(Handle, Options);
 
 	Logger::debug(" - Player Achievement Count: %d", result);
+	
+	// TODO: Move this init to a better place?
+	Overlay::init();
+
 
 	return result;
 }
