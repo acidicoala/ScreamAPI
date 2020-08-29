@@ -80,6 +80,17 @@ std::vector<std::string> getExportFunctions(std::wstring dllPath){
 }
 
 std::vector<std::string> overrideFunctions{
+	// SDK
+	"EOS_EResult_ToString",
+	// Platform
+	"EOS_Platform_Create",
+	"EOS_Platform_GetAchievementsInterface",
+	"EOS_Platform_GetConnectInterface",
+	// Auth
+	"EOS_Auth_GetLoggedInAccountByIndex",
+	// Connect
+	"EOS_Connect_GetLoggedInUserByIndex",
+	// Ecom
 	"EOS_Ecom_QueryOwnership",
 	"EOS_Ecom_QueryEntitlements",
 	"EOS_Ecom_GetEntitlementsCount",
@@ -96,8 +107,7 @@ std::vector<std::string> overrideFunctions{
 	"EOS_Achievements_CopyPlayerAchievementByIndex",
 	"EOS_Achievements_CopyPlayerAchievementByAchievementId",
 	"EOS_Achievements_UnlockAchievements",
-	"EOS_Achievements_AddNotifyAchievementsUnlockedV2",
-	"EOS_Achievements_RemoveNotifyAchievementsUnlocked"
+	"EOS_Achievements_DefinitionV2_Release"
 	// Achievements (Deprecated)
 	/*"EOS_Achievements_CopyAchievementDefinitionByIndex",
 	"EOS_Achievements_GetUnlockedAchievementCount",

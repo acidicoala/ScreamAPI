@@ -1,22 +1,25 @@
 #include "pch.h"
 #include "ScreamAPI.h"
 #include "constants.h"
+#include <Overlay.h>
+#include <eos-sdk\eos_achievements.h>
+#include <util.h>
 
-// Initialize static variables
-bool ScreamAPI::isDLLinitialized = false;
-HMODULE ScreamAPI::originalDLL = nullptr;
+using namespace Util;
 
-// Utility variables & functions
+namespace ScreamAPI{
 
-static std::filesystem::path getDLLparentDir(HMODULE hModule){
-	WCHAR modulePathBuffer[4096];
-	GetModuleFileName(hModule, modulePathBuffer, 4096);
+// Initialize extern variables
+bool isDLLinitialized = false;
+HMODULE originalDLL = nullptr;
 
-	std::filesystem::path modulePath = modulePathBuffer;
-	return modulePath.parent_path();
-}
+Achievements achievements;
 
-// Public functions
+// TODO: Encapsulate these in a struct?
+EOS_HPlatform hPlatform = nullptr;
+EOS_HAchievements hAchievements = nullptr;
+EOS_EpicAccountId EpicAccountId = nullptr;
+EOS_ProductUserId ProductUserId = nullptr;
 
 void ScreamAPI::init(HMODULE hModule){
 	// Check if DLL is already initialized
@@ -25,15 +28,23 @@ void ScreamAPI::init(HMODULE hModule){
 	else
 		isDLLinitialized = true;
 
-	// Initialize config
+	// Initialize Config
 	auto iniPath = getDLLparentDir(hModule) / SCREAM_API_CONFIG;
 	Config::init(iniPath.generic_wstring());
 
-	// Initialize logger
+	// Initialize Logger
 	auto logPath = getDLLparentDir(hModule) / Config::getLogFilename();
-	Logger::init(Config::isLogEnabled(), Config::isLoggingDLCQueries(), Config::getLogLevel(), logPath.generic_wstring());
+	Logger::init(Config::isLogEnabled(),
+				 Config::isLoggingDLCQueries(),
+				 Config::isLoggingAchievements(),
+				 Config::isLoggingOverlay(),
+				 Config::getLogLevel(),
+				 logPath.generic_wstring());
 
 	Logger::info("ScreamAPI v" SCREAM_API_VERSION);
+
+	// Initialize Overlay
+	Overlay::init(hModule, achievements, unlockAchievement);
 
 	// Load original library
 	auto orinalDLLpath = getDLLparentDir(hModule) / SCREAM_API_ORIG_DLL;
@@ -53,4 +64,11 @@ void ScreamAPI::checkSdkVersion(const int32_t apiVersion, const int32_t maxVersi
 			warned = true;
 		}
 	}
+}
+
+void ScreamAPI::destroy(){
+	Overlay::shutdown();
+
+}
+
 }

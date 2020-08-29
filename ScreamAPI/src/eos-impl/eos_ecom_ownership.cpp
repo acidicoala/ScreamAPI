@@ -8,6 +8,7 @@ struct OwnershipContainer{
 	EOS_Ecom_OnQueryOwnershipCallback originalCompletionDelegate;
 };
 
+// This is where the DLC magic happens ;)
 void EOS_CALL OwnershipCompletionDelegate(const EOS_Ecom_QueryOwnershipCallbackInfo* Data){
 	auto container = reinterpret_cast<OwnershipContainer*>(Data->ClientData);
 
@@ -20,7 +21,6 @@ void EOS_CALL OwnershipCompletionDelegate(const EOS_Ecom_QueryOwnershipCallbackI
 	Logger::dlc("Responding with %d item ownerships:", modifiedData->ItemOwnershipCount);
 
 	// Modify ownership status of items.
-	// This is where the magic happens ;)
 	for(unsigned int i = 0; i < modifiedData->ItemOwnershipCount; i++){
 		// Get non-const pointer to ownership struct
 		auto item = const_cast <EOS_Ecom_ItemOwnership*>(modifiedData->ItemOwnership + i);
@@ -36,7 +36,7 @@ void EOS_CALL OwnershipCompletionDelegate(const EOS_Ecom_QueryOwnershipCallbackI
 		item->OwnershipStatus = unlocked ? EOS_EOwnershipStatus::EOS_OS_Owned : EOS_EOwnershipStatus::EOS_OS_NotOwned;
 
 		auto ownershipStatusString = item->OwnershipStatus == EOS_EOwnershipStatus::EOS_OS_Owned ? "Owned" : "Not Owned";
-		Logger::dlc(" - Item ID: %s\t[%s]", item->Id, ownershipStatusString);
+		Logger::dlc("\t""Item ID: %s\t[%s]", item->Id, ownershipStatusString);
 	}
 
 	// Call original completion delegate with our modified data

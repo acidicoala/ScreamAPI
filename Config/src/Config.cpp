@@ -4,7 +4,9 @@
 
 bool unlockAllDLC = true;
 bool logIsEnabled = false;
-bool logDLCQueries = false;
+bool logDLCQueries = true;
+bool logAchievements = false;
+bool logOverlay = false;
 bool proxyEntitlements = false;
 std::string logLevel = "INFO";
 std::string logFilename = "ScreamAPI.log";
@@ -31,6 +33,10 @@ int iniHandler(void* user, const char* section_raw, const char* name_raw, const 
 				logLevel = value;
 			else if(name == "LogDLCQueries")
 				logDLCQueries = stringToBool(value);
+			else if(name == "LogAchievements")
+				logAchievements = stringToBool(value);
+			else if(name == "LogOverlay")
+				logOverlay = stringToBool(value);
 			else
 				throw InvalidSectionName(section_raw, name_raw);
 		} else if(section == "DLC"){
@@ -73,6 +79,14 @@ bool Config::isLogEnabled(){
 
 bool Config::isLoggingDLCQueries(){
 	return logDLCQueries;
+}
+
+bool Config::isLoggingAchievements(){
+	return logAchievements;
+}
+
+bool Config::isLoggingOverlay(){
+	return logOverlay;
 }
 
 std::string Config::getLogLevel(){

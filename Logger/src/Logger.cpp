@@ -3,19 +3,24 @@
 #include <mutex>
 #include <fstream>
 
-enum class LogLevel{ DLC, ERR, WARN, INFO, DEBUG };
-const char* const strLogLevels[] = {"DLC", "ERROR", "WARN", "INFO", "DEBUG"};
+enum class LogLevel{ OVRLY, ACH, DLC, ERR, WARN, INFO, DEBUG };
+const char* const strLogLevels[] = {"OVRLY", "ACH", "DLC", "ERROR", "WARN", "INFO", "DEBUG"};
 
 std::mutex logMutex;
 bool isEnabled = false;
 bool isLoggingDLCqueries = false;
+bool isLoggingAchievements = false;
+bool isLoggingOverlay = false;
 LogLevel logLevel = LogLevel::INFO;
 std::wstring logFilepath = L"ScreamAPI.log";
 
-void Logger::init(bool logging, bool loggingDLC, std::string level, std::wstring filepath){
+void Logger::init(bool logging, bool loggingDLC, bool loggingAch, bool loggingOvrl,
+				  std::string level, std::wstring filepath){
 	// Enable logging?
 	isEnabled = logging;
 	isLoggingDLCqueries = loggingDLC;
+	isLoggingAchievements = loggingAch;
+	isLoggingOverlay = loggingOvrl;
 
 	// Convert the log level from string to Enum
 	if(level == "DEBUG")
@@ -73,38 +78,21 @@ void log(LogLevel level, const char* const message, va_list args){
 	} // Mutex will be unlocked here
 }
 
-void Logger::debug(const char* const message, ...){
-	va_list args;
-	va_start(args, message);
-	log(LogLevel::DEBUG, message, args);
-	va_end(args);
-}
+// I generally don't like using macros, but in this case I believe it's justified
+// in order to avoid boilerplate code associated with varargs
+#define DEFINE_LOGGER_FUNCTION(functionName, Level, condition)	\
+void Logger::functionName(const char* const message, ...){		\
+	va_list args;												\
+	va_start(args, message);									\
+	if(condition)												\
+		log(Level, message, args);								\
+	va_end(args);												\
+}																\
 
-void Logger::info(const char* const message, ...){
-	va_list args;
-	va_start(args, message);
-	log(LogLevel::INFO, message, args);
-	va_end(args);
-}
-void Logger::warn(const char* const message, ...){
-	va_list args;
-	va_start(args, message);
-	log(LogLevel::WARN, message, args);
-	va_end(args);
-}
-
-void Logger::error(const char* const message, ...){
-	va_list args;
-	va_start(args, message);
-	log(LogLevel::ERR, message, args);
-	va_end(args);
-}
-
-void Logger::dlc(const char* const message, ...){
-	va_list args;
-	va_start(args, message);
-	if(isLoggingDLCqueries)
-		log(LogLevel::DLC, message, args);
-	va_end(args);
-}
-
+DEFINE_LOGGER_FUNCTION(debug, LogLevel::DEBUG, true)
+DEFINE_LOGGER_FUNCTION(info, LogLevel::INFO, true)
+DEFINE_LOGGER_FUNCTION(warn, LogLevel::WARN, true)
+DEFINE_LOGGER_FUNCTION(error, LogLevel::ERR, true)
+DEFINE_LOGGER_FUNCTION(dlc, LogLevel::DLC, isLoggingDLCqueries)
+DEFINE_LOGGER_FUNCTION(ach, LogLevel::ACH, isLoggingAchievements)
+DEFINE_LOGGER_FUNCTION(ovrly, LogLevel::OVRLY, isLoggingOverlay)

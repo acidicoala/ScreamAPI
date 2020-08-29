@@ -161,10 +161,10 @@
     <ClInclude Include="resources\resource.h">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="src\util.h">
+    <ClInclude Include="src\constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\constants.h">
+    <ClInclude Include="src\util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -192,6 +192,24 @@
     </ClCompile>
     <ClCompile Include="src\eos-impl\eos_achievements.cpp">
       <Filter>Source Files\eos-impl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\eos-impl\eos_init.cpp">
+      <Filter>Source Files\eos-impl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\eos-impl\eos_common.cpp">
+      <Filter>Source Files\eos-impl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\eos-impl\eos_sdk.cpp">
+      <Filter>Source Files\eos-impl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\eos-impl\eos_auth.cpp">
+      <Filter>Source Files\eos-impl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\eos-impl\eos_connect.cpp">
+      <Filter>Source Files\eos-impl</Filter>
+    </ClCompile>
+    <ClCompile Include="util.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

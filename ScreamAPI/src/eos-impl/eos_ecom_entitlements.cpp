@@ -43,7 +43,7 @@ EOS_DECLARE_FUNC(uint32_t) EOS_Ecom_GetEntitlementsCount(EOS_HEcom Handle, const
 		static auto proxy = ScreamAPI::proxyFunction(&EOS_Ecom_GetEntitlementsCount, __func__);
 		entitlementCount = proxy(Handle, Options);
 	} else{
-		entitlementCount = entitlementIDs.size();
+		entitlementCount = (uint32_t) entitlementIDs.size();
 	}
 
 	Logger::dlc("Responding with %d entitlements:", entitlementCount);

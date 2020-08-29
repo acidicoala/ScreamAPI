@@ -40,6 +40,15 @@
     <Filter Include="Source Files\minhook\hde">
       <UniqueIdentifier>{1aa6ede5-e00d-4546-8725-72f0bcc48720}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\curl">
+      <UniqueIdentifier>{6d579544-2485-4c72-832b-50b6ca63cabc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\curl\include">
+      <UniqueIdentifier>{e1e87ee9-d670-4fec-b76d-262a15216b75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\stb_image">
+      <UniqueIdentifier>{5b4ab06d-42a3-41f7-9397-34d497f3ba4d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\imgui\imconfig.h">
@@ -102,6 +111,42 @@
     <ClInclude Include="src\Overlay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Overlay_types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\curl\include\curl\curl.h">
+      <Filter>Header Files\curl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\curl\include\curl\curlver.h">
+      <Filter>Header Files\curl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\curl\include\curl\easy.h">
+      <Filter>Header Files\curl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\curl\include\curl\mprintf.h">
+      <Filter>Header Files\curl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\curl\include\curl\multi.h">
+      <Filter>Header Files\curl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\curl\include\curl\stdcheaders.h">
+      <Filter>Header Files\curl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\curl\include\curl\system.h">
+      <Filter>Header Files\curl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\curl\include\curl\typecheck-gcc.h">
+      <Filter>Header Files\curl\include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stb_image\stb_image.h">
+      <Filter>Header Files\stb_image</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AchievementManagerUI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\imgui\imgui.cpp">
@@ -145,6 +190,12 @@
     </ClCompile>
     <ClCompile Include="src\minhook\src\trampoline.c">
       <Filter>Source Files\minhook</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Loader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AchievementManagerUI.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

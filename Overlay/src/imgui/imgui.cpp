@@ -10436,7 +10436,7 @@ void ImGui::ShowMetricsWindow(bool* p_open)
                 return;
 
             if (!window->WasActive)
-                ImGui::TextDisabled("Note: window is not currently visible.");
+                ImGui::TextDisabled("Note: pWindow is not currently visible.");
             if (window->MemoryCompacted)
                 ImGui::TextDisabled("Note: some memory buffers have been compacted/freed.");
 
