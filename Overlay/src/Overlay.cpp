@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Overlay.h"
 #include "Loader.h"
-#include "AchievementManagerUI.h"
+#include "achievement_manager_ui.h"
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -90,12 +90,14 @@ DWORD WINAPI InitThread(LPVOID lpReserved){
 
 void Overlay::init(HMODULE hMod, Achievements& achievements, UnlockAchievementFunction* unlockAchievement){
 	AchievementManagerUI::init(achievements, unlockAchievement);
+	// TODO: Use std::thread?
 	CreateThread(nullptr, 0, InitThread, hMod, 0, nullptr);
 }
 
 void Overlay::shutdown(){
 	Logger::ovrly("Overlay: Shutting down");
 	kiero::shutdown();
+	// TODO: Clear the achievement vector as well?
 }
 
 }

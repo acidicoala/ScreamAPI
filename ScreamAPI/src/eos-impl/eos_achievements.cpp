@@ -1,14 +1,14 @@
 #include "pch.h"
 #include "eos-sdk\eos_achievements.h"
 #include "ScreamAPI.h"
-#include "util.h"
+#include <achievement_manager.h>
 
-using namespace Util;
+/* Achievement Definitions */
 
 EOS_DECLARE_FUNC(void) EOS_Achievements_QueryDefinitions(EOS_HAchievements Handle, const EOS_Achievements_QueryDefinitionsOptions* Options, void* ClientData, const EOS_Achievements_OnQueryDefinitionsCompleteCallback CompletionDelegate){
 	Logger::debug(__func__);
 
-	// Print out "Hidden Achievements"
+	// Log hidden achievements
 	for(unsigned int i = 0; i < Options->HiddenAchievementsCount; i++){
 		Logger::ach("\t""Hidden Achievement ID: %s", Options->HiddenAchievementIds[0]);
 	}
@@ -29,55 +29,44 @@ EOS_DECLARE_FUNC(uint32_t) EOS_Achievements_GetAchievementDefinitionCount(EOS_HA
 }
 
 EOS_DECLARE_FUNC(EOS_EResult) EOS_Achievements_CopyAchievementDefinitionV2ByIndex(EOS_HAchievements Handle, const EOS_Achievements_CopyAchievementDefinitionV2ByIndexOptions* Options, EOS_Achievements_DefinitionV2** OutDefinition){
+	Logger::debug(__func__);
+	
 	static auto proxy = ScreamAPI::proxyFunction(&EOS_Achievements_CopyAchievementDefinitionV2ByIndex, __func__);
-	auto result = proxy(Handle, Options, OutDefinition);
-
-	printAchievementDefinition(*OutDefinition);
-
-	return result;
+	return proxy(Handle, Options, OutDefinition);
 }
 
 EOS_DECLARE_FUNC(EOS_EResult) EOS_Achievements_CopyAchievementDefinitionV2ByAchievementId(EOS_HAchievements Handle, const EOS_Achievements_CopyAchievementDefinitionV2ByAchievementIdOptions* Options, EOS_Achievements_DefinitionV2** OutDefinition){
-	static auto proxy = ScreamAPI::proxyFunction(&EOS_Achievements_CopyAchievementDefinitionV2ByAchievementId, __func__);
-	auto result = proxy(Handle, Options, OutDefinition);
-
-	printAchievementDefinition(*OutDefinition);
-
-	return result;
-}
-
-void EOS_CALL QueryPlayerAchievementsDelegate(const EOS_Achievements_OnQueryPlayerAchievementsCompleteCallbackInfo* Data){
 	Logger::debug(__func__);
-	auto container = reinterpret_cast<QueryPlayerAchievementsContainer*>(Data->ClientData);
-
-	// Here we are redirecting the program flow to query all achievement defintions
-	// The original callack function will be called in the QueryDefinitions delegate
-
-	static bool firstTimeQuery = true; // Query defintions only once
-	if(Data->ResultCode == EOS_EResult::EOS_Success && firstTimeQuery){ // Only query definitions in case of success
-		EOS_Achievements_QueryDefinitionsOptions QueryOptions = {
-			EOS_ACHIEVEMENTS_QUERYDEFINITIONS_API_LATEST,
-			ScreamAPI::ProductUserId,
-			ScreamAPI::EpicAccountId,
-			nullptr,
-			0
-		};
-		EOS_Achievements_QueryDefinitions(ScreamAPI::hAchievements, &QueryOptions, container, queryDefinitionsComplete);
-		firstTimeQuery = false;
-	} else{
-		auto modifiedData = const_cast<EOS_Achievements_OnQueryPlayerAchievementsCompleteCallbackInfo*>(Data);
-		modifiedData->ClientData = container->originalClientData;
-		container->originalCompletionDelegate(Data);
-		delete container;
-	}
+	
+	static auto proxy = ScreamAPI::proxyFunction(&EOS_Achievements_CopyAchievementDefinitionV2ByAchievementId, __func__);
+	return proxy(Handle, Options, OutDefinition);
 }
+
+EOS_DECLARE_FUNC(void) EOS_Achievements_DefinitionV2_Release(EOS_Achievements_DefinitionV2* AchievementDefinition){
+	Logger::debug(__func__);
+
+	static auto proxy = ScreamAPI::proxyFunction(&EOS_Achievements_DefinitionV2_Release, __func__);
+	proxy(AchievementDefinition);
+}
+
+/* Player Achievements */
 
 EOS_DECLARE_FUNC(void) EOS_Achievements_QueryPlayerAchievements(EOS_HAchievements Handle, const EOS_Achievements_QueryPlayerAchievementsOptions* Options, void* ClientData, const EOS_Achievements_OnQueryPlayerAchievementsCompleteCallback CompletionDelegate){
 	Logger::debug(__func__);
 
-	auto container = new QueryPlayerAchievementsContainer{ClientData, CompletionDelegate};
 	static auto proxy = ScreamAPI::proxyFunction(&EOS_Achievements_QueryPlayerAchievements, __func__);
-	proxy(Handle, Options, container, QueryPlayerAchievementsDelegate);
+	proxy(Handle, Options, ClientData, CompletionDelegate);
+
+	// TODO: Move this up the execution chain for earlier overlay initialization.
+	// Problem is, we have to call it only after EOS_EpicAccountId has been initialized
+	// And the game doesn't call the AuthLogin function every time,
+	// so I don't know where else I can hook it from. But at least we can know that
+	// EOS_EpicAccountId is available upon EOS_Achievements_QueryPlayerAchievements call.
+	static bool init = false;
+	if(!init){
+		init = true;
+		AchievementManager::queryAchievementDefinitions();
+	}
 }
 
 EOS_DECLARE_FUNC(uint32_t) EOS_Achievements_GetPlayerAchievementCount(EOS_HAchievements Handle, const EOS_Achievements_GetPlayerAchievementCountOptions* Options){
@@ -95,42 +84,22 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Achievements_CopyPlayerAchievementByIndex(EOS_
 	Logger::debug(__func__);
 
 	static auto proxy = ScreamAPI::proxyFunction(&EOS_Achievements_CopyPlayerAchievementByIndex, __func__);
-	auto result = proxy(Handle, Options, OutAchievement);
-
-	auto playerAchievement = *OutAchievement;
-	printPlayerAchievement(playerAchievement);
-
-	// Update our achievement array if this achievement is unlocked
-	if(playerAchievement->UnlockTime != -1){
-		// Find the corresponding achievement in our achievement array
-		for(auto& achievement : ScreamAPI::achievements){
-			// Compare by AchievementId
-			if(!strcmp(achievement.AchievementId, playerAchievement->AchievementId)){
-				// Found it
-				achievement.UnlockState = UnlockState::Unlocked;
-				break;
-			}
-		}
-	}
-
-	return result;
+	return proxy(Handle, Options, OutAchievement);
 }
 
 EOS_DECLARE_FUNC(EOS_EResult) EOS_Achievements_CopyPlayerAchievementByAchievementId(EOS_HAchievements Handle, const EOS_Achievements_CopyPlayerAchievementByAchievementIdOptions* Options, EOS_Achievements_PlayerAchievement** OutAchievement){
 	Logger::debug(__func__);
 
 	static auto proxy = ScreamAPI::proxyFunction(&EOS_Achievements_CopyPlayerAchievementByAchievementId, __func__);
-	auto result = proxy(Handle, Options, OutAchievement);
-
-	printPlayerAchievement(*OutAchievement);
-
-	return result;
+	return proxy(Handle, Options, OutAchievement);
 }
 
-struct UnlockAchievementsContainer{
-	void* originalClientData;
-	EOS_Achievements_OnUnlockAchievementsCompleteCallback originalCompletionDelegate;
-};
+EOS_DECLARE_FUNC(void) EOS_Achievements_PlayerAchievement_Release(EOS_Achievements_PlayerAchievement* Achievement){
+	Logger::debug(__func__);
+
+	static auto proxy = ScreamAPI::proxyFunction(&EOS_Achievements_PlayerAchievement_Release, __func__);
+	proxy(Achievement);
+}
 
 // This is where the achievement magic happens ;)
 EOS_DECLARE_FUNC(void) EOS_Achievements_UnlockAchievements(EOS_HAchievements Handle, const EOS_Achievements_UnlockAchievementsOptions* Options, void* ClientData, const EOS_Achievements_OnUnlockAchievementsCompleteCallback CompletionDelegate){
@@ -143,12 +112,6 @@ EOS_DECLARE_FUNC(void) EOS_Achievements_UnlockAchievements(EOS_HAchievements Han
 
 	static auto proxy = ScreamAPI::proxyFunction(&EOS_Achievements_UnlockAchievements, __func__);
 	proxy(Handle, Options, ClientData, CompletionDelegate);
-}
-
-// A proxy implementation so that we could call it ourselves
-EOS_DECLARE_FUNC(void) EOS_Achievements_DefinitionV2_Release(EOS_Achievements_DefinitionV2* AchievementDefinition){
-	static auto proxy = ScreamAPI::proxyFunction(&EOS_Achievements_DefinitionV2_Release, __func__);
-	proxy(AchievementDefinition);
 }
 
 // Deprecated

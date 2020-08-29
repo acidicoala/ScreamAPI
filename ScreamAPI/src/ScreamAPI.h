@@ -5,12 +5,10 @@
 #include <eos-sdk\eos_sdk.h>
 
 namespace ScreamAPI{
+
+extern HMODULE thisDLL;
 extern HMODULE originalDLL;
 extern EOS_HPlatform hPlatform;
-extern EOS_HAchievements hAchievements;
-extern EOS_EpicAccountId EpicAccountId;
-extern EOS_ProductUserId ProductUserId;
-extern std::vector<Overlay_Achievement> achievements;
 
 void init(HMODULE hModule);
 void checkSdkVersion(const int32_t apiVersion, const int32_t maxVersion);
@@ -22,7 +20,7 @@ struct proxyTraits{
 	using funcType = RetType(EOS_CALL*)(ArgTypes...);
 };
 
-// A function that returns a type-safe reference to requested EOS SDK function
+// A function that returns a type-safe reference to the requested EOS SDK function
 template <typename RetType, typename... ArgTypes>
 static auto proxyFunction(RetType(EOS_CALL* proxy)(ArgTypes...), LPCSTR rawFunctionName){
 	using funcType = typename proxyTraits<RetType, ArgTypes...>::funcType;

@@ -79,14 +79,19 @@ std::vector<std::string> getExportFunctions(std::wstring dllPath){
 	return exportFunctions;
 }
 
+// TODO: This list is getting out of hand. I have to come up with a more convenient solution
 std::vector<std::string> overrideFunctions{
-	// SDK
+	// Common
 	"EOS_EResult_ToString",
-	// Platform
-	"EOS_Platform_Create",
+	"EOS_EpicAccountId_IsValid",
+	// SDK
+	"EOS_Platform_GetAuthInterface",
 	"EOS_Platform_GetAchievementsInterface",
 	"EOS_Platform_GetConnectInterface",
+	// Platform
+	"EOS_Platform_Create",
 	// Auth
+	"EOS_Auth_Login",
 	"EOS_Auth_GetLoggedInAccountByIndex",
 	// Connect
 	"EOS_Connect_GetLoggedInUserByIndex",
@@ -102,12 +107,13 @@ std::vector<std::string> overrideFunctions{
 	"EOS_Achievements_GetAchievementDefinitionCount",
 	"EOS_Achievements_CopyAchievementDefinitionV2ByIndex",
 	"EOS_Achievements_CopyAchievementDefinitionV2ByAchievementId",
+	"EOS_Achievements_DefinitionV2_Release",
 	"EOS_Achievements_QueryPlayerAchievements",
 	"EOS_Achievements_GetPlayerAchievementCount",
 	"EOS_Achievements_CopyPlayerAchievementByIndex",
 	"EOS_Achievements_CopyPlayerAchievementByAchievementId",
+	"EOS_Achievements_PlayerAchievement_Release",
 	"EOS_Achievements_UnlockAchievements",
-	"EOS_Achievements_DefinitionV2_Release"
 	// Achievements (Deprecated)
 	/*"EOS_Achievements_CopyAchievementDefinitionByIndex",
 	"EOS_Achievements_GetUnlockedAchievementCount",

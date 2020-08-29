@@ -183,7 +183,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\AchievementManagerUI.h" />
+    <ClInclude Include="src\achievement_manager_ui.h" />
     <ClInclude Include="src\curl\include\curl\curl.h" />
     <ClInclude Include="src\curl\include\curl\curlver.h" />
     <ClInclude Include="src\curl\include\curl\easy.h" />
@@ -217,7 +217,7 @@
     <ClInclude Include="src\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\AchievementManagerUI.cpp" />
+    <ClCompile Include="src\achievement_manager_ui.cpp" />
     <ClCompile Include="src\Loader.cpp" />
     <ClCompile Include="src\imgui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>

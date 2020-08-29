@@ -6,7 +6,6 @@ Welcome to the ScreamAPI repository.
 Readme has been transferred to [here](https://cs.rin.ru/forum/viewtopic.php?f=29&t=106474).
 
 ## TODO
-1. Move Overlay init earlier
 1. Refactor Config
 1. Enable/Disable overlay
 1. Shift+F5 dialog

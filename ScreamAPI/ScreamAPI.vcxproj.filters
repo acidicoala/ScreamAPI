@@ -18,6 +18,9 @@
     <Filter Include="Resources">
       <UniqueIdentifier>{5c4dbdd0-0d95-4acf-8f0a-69af10aae464}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\LinkerExports">
+      <UniqueIdentifier>{b308748e-0466-4aa4-b7c1-806333b4e3ad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\framework.h">
@@ -146,18 +149,6 @@
     <ClInclude Include="src\ScreamAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\LinkerExports32.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\LinkerExports64.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\LegacyExports64.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\LegacyExports32.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="resources\resource.h">
       <Filter>Resources</Filter>
     </ClInclude>
@@ -166,6 +157,21 @@
     </ClInclude>
     <ClInclude Include="src\util.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\achievement_manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LinkerExports\LegacyExports32.h">
+      <Filter>Header Files\LinkerExports</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LinkerExports\LegacyExports64.h">
+      <Filter>Header Files\LinkerExports</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LinkerExports\LinkerExports32.h">
+      <Filter>Header Files\LinkerExports</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LinkerExports\LinkerExports64.h">
+      <Filter>Header Files\LinkerExports</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -209,6 +215,9 @@
       <Filter>Source Files\eos-impl</Filter>
     </ClCompile>
     <ClCompile Include="util.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\achievement_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

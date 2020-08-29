@@ -9,10 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Header Files\imgui">
       <UniqueIdentifier>{cd90223b-9697-4e6e-925b-1aa97291055b}</UniqueIdentifier>
     </Filter>
@@ -144,7 +140,7 @@
     <ClInclude Include="src\Loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\AchievementManagerUI.h">
+    <ClInclude Include="src\achievement_manager_ui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -194,7 +190,7 @@
     <ClCompile Include="src\Loader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\AchievementManagerUI.cpp">
+    <ClCompile Include="src\achievement_manager_ui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

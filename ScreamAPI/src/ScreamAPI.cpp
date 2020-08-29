@@ -1,32 +1,28 @@
 #include "pch.h"
 #include "ScreamAPI.h"
 #include "constants.h"
+#include "eos-sdk\eos_achievements.h"
+#include "util.h"
 #include <Overlay.h>
-#include <eos-sdk\eos_achievements.h>
-#include <util.h>
 
 using namespace Util;
 
 namespace ScreamAPI{
 
 // Initialize extern variables
-bool isDLLinitialized = false;
+HMODULE thisDLL = nullptr;
 HMODULE originalDLL = nullptr;
-
-Achievements achievements;
-
-// TODO: Encapsulate these in a struct?
 EOS_HPlatform hPlatform = nullptr;
-EOS_HAchievements hAchievements = nullptr;
-EOS_EpicAccountId EpicAccountId = nullptr;
-EOS_ProductUserId ProductUserId = nullptr;
 
 void ScreamAPI::init(HMODULE hModule){
 	// Check if DLL is already initialized
-	if(isDLLinitialized) // Do we really need to check that?
+	static bool isScreamAPIinitialized = false;
+	if(isScreamAPIinitialized) // Do we really need to check that?
 		return;
 	else
-		isDLLinitialized = true;
+		isScreamAPIinitialized = true;
+
+	thisDLL = hModule;
 
 	// Initialize Config
 	auto iniPath = getDLLparentDir(hModule) / SCREAM_API_CONFIG;
@@ -42,9 +38,6 @@ void ScreamAPI::init(HMODULE hModule){
 				 logPath.generic_wstring());
 
 	Logger::info("ScreamAPI v" SCREAM_API_VERSION);
-
-	// Initialize Overlay
-	Overlay::init(hModule, achievements, unlockAchievement);
 
 	// Load original library
 	auto orinalDLLpath = getDLLparentDir(hModule) / SCREAM_API_ORIG_DLL;
@@ -68,7 +61,6 @@ void ScreamAPI::checkSdkVersion(const int32_t apiVersion, const int32_t maxVersi
 
 void ScreamAPI::destroy(){
 	Overlay::shutdown();
-
 }
 
 }

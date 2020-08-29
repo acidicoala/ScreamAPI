@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resources\resource.h" />
+    <ClInclude Include="src\achievement_manager.h" />
     <ClInclude Include="src\constants.h" />
     <ClInclude Include="src\eos-sdk\eos_achievements.h" />
     <ClInclude Include="src\eos-sdk\eos_achievements_types.h" />
@@ -61,15 +62,16 @@
     <ClInclude Include="src\eos-sdk\eos_userinfo_types.h" />
     <ClInclude Include="src\eos-sdk\eos_version.h" />
     <ClInclude Include="src\framework.h" />
-    <ClInclude Include="src\LegacyExports32.h" />
-    <ClInclude Include="src\LegacyExports64.h" />
-    <ClInclude Include="src\LinkerExports32.h" />
-    <ClInclude Include="src\LinkerExports64.h" />
+    <ClInclude Include="src\LinkerExports\LegacyExports32.h" />
+    <ClInclude Include="src\LinkerExports\LegacyExports64.h" />
+    <ClInclude Include="src\LinkerExports\LinkerExports32.h" />
+    <ClInclude Include="src\LinkerExports\LinkerExports64.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\ScreamAPI.h" />
     <ClInclude Include="src\util.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\achievement_manager.cpp" />
     <ClCompile Include="src\dllmain.cpp" />
     <ClCompile Include="src\eos-impl\eos_achievements.cpp" />
     <ClCompile Include="src\eos-impl\eos_auth.cpp" />
