@@ -27,14 +27,14 @@ void ScreamAPI::init(HMODULE hModule){
 	// Initialize Config
 	auto iniPath = getDLLparentDir(hModule) / SCREAM_API_CONFIG;
 	Config::init(iniPath.generic_wstring());
-
+	
 	// Initialize Logger
-	auto logPath = getDLLparentDir(hModule) / Config::getLogFilename();
-	Logger::init(Config::isLogEnabled(),
-				 Config::isLoggingDLCQueries(),
-				 Config::isLoggingAchievements(),
-				 Config::isLoggingOverlay(),
-				 Config::getLogLevel(),
+	auto logPath = getDLLparentDir(hModule) / Config::LogFilename();
+	Logger::init(Config::EnableLogging(),
+				 Config::LogDLCQueries(),
+				 Config::LogAchievementQueries(),
+				 Config::LogOverlay(),
+				 Config::LogLevel(),
 				 logPath.generic_wstring());
 
 	Logger::info("ScreamAPI v" SCREAM_API_VERSION);
@@ -60,6 +60,7 @@ void ScreamAPI::checkSdkVersion(const int32_t apiVersion, const int32_t maxVersi
 }
 
 void ScreamAPI::destroy(){
+	FreeLibrary(originalDLL);
 	Overlay::shutdown();
 }
 

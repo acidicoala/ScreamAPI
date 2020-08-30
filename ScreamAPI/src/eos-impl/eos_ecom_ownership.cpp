@@ -26,11 +26,11 @@ void EOS_CALL OwnershipCompletionDelegate(const EOS_Ecom_QueryOwnershipCallbackI
 		auto item = const_cast <EOS_Ecom_ItemOwnership*>(modifiedData->ItemOwnership + i);
 
 		// Search the id in DLC list from the config
-		bool isInOwnedList = Util::vectorContains<std::string>(Config::getOwnedItemIDs(),
+		bool isInOwnedList = Util::vectorContains<std::string>(Config::DLC_List(),
 															   modifiedData->ItemOwnership[i].Id);
 
 		// Determine if this DLC should be unlocked
-		bool unlocked = Config::isUnlockingAllDLC() || isInOwnedList;
+		bool unlocked = Config::UnlockAllDLC() || isInOwnedList;
 
 		// Finally, change the ownership status
 		item->OwnershipStatus = unlocked ? EOS_EOwnershipStatus::EOS_OS_Owned : EOS_EOwnershipStatus::EOS_OS_NotOwned;
@@ -51,6 +51,8 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryOwnership(EOS_HEcom Handle, const EOS_Ecom_
 	
 	// Log item IDs
 	if(Options){
+		ScreamAPI::checkSdkVersion(Options->ApiVersion, EOS_ECOM_QUERYOWNERSHIP_API_LATEST);
+
 		Logger::dlc("Game requested ownership of %d items:", Options->CatalogItemIdCount);
 		for(uint32_t i = 0; i < Options->CatalogItemIdCount; i++)
 			Logger::dlc(" - Item ID: %s", Options->CatalogItemIds[i]);
@@ -58,10 +60,12 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryOwnership(EOS_HEcom Handle, const EOS_Ecom_
 		Logger::warn("Game requested DLC ownership, but without Options parameter");
 	}
 
-	if(Options)	// Verify SDK version
-		ScreamAPI::checkSdkVersion(Options->ApiVersion, EOS_ECOM_QUERYOWNERSHIP_API_LATEST);
-
-	auto container = new OwnershipContainer{ClientData, CompletionDelegate}; // Don't forget to free the heap
 	static auto proxy = ScreamAPI::proxyFunction(&EOS_Ecom_QueryOwnership, __func__);
-	proxy(Handle, Options, container, OwnershipCompletionDelegate);
+
+	if(Config::EnableItemUnlocker()){
+		auto container = new OwnershipContainer{ClientData, CompletionDelegate}; // Don't forget to free the heap
+		proxy(Handle, Options, container, OwnershipCompletionDelegate);
+	} else{
+		proxy(Handle, Options, ClientData, CompletionDelegate);
+	}
 }

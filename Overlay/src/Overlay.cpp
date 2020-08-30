@@ -2,6 +2,7 @@
 #include "Overlay.h"
 #include "Loader.h"
 #include "achievement_manager_ui.h"
+#include <thread>
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -78,20 +79,17 @@ HRESULT __stdcall hookedPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, U
 	return oPresent(pSwapChain, SyncInterval, Flags);
 }
 
-DWORD WINAPI InitThread(LPVOID lpReserved){
+void InitThread(LPVOID lpReserved){
 	while(kiero::init(kiero::RenderType::D3D11) != kiero::Status::Success);
 	Logger::ovrly("Overlay: kiero successfully initialized");
 
 	kiero::bind(8, (void**) &oPresent, hookedPresent);
 	Logger::ovrly("Overlay: kiero successfully binded");
-
-	return TRUE;
 }
 
 void Overlay::init(HMODULE hMod, Achievements& achievements, UnlockAchievementFunction* unlockAchievement){
 	AchievementManagerUI::init(achievements, unlockAchievement);
-	// TODO: Use std::thread?
-	CreateThread(nullptr, 0, InitThread, hMod, 0, nullptr);
+	std::thread(InitThread, hMod).detach();
 }
 
 void Overlay::shutdown(){

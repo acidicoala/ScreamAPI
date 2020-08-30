@@ -99,7 +99,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\curl\include;$(ProjectDir)src\stb_image;$(SolutionDir)Logger\src;$(SolutionDir)ScreamAPI\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\curl\include;$(ProjectDir)src\stb_image;$(SolutionDir)Logger\src;$(SolutionDir)Config\src;$(SolutionDir)ScreamAPI\src</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -122,7 +122,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\curl\include;$(ProjectDir)src\stb_image;$(SolutionDir)Logger\src;$(SolutionDir)ScreamAPI\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\curl\include;$(ProjectDir)src\stb_image;$(SolutionDir)Logger\src;$(SolutionDir)Config\src;$(SolutionDir)ScreamAPI\src</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -145,7 +145,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\curl\include;$(ProjectDir)src\stb_image;$(SolutionDir)Logger\src;$(SolutionDir)ScreamAPI\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\curl\include;$(ProjectDir)src\stb_image;$(SolutionDir)Logger\src;$(SolutionDir)Config\src;$(SolutionDir)ScreamAPI\src</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -165,7 +165,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\curl\include;$(ProjectDir)src\stb_image;$(SolutionDir)Logger\src;$(SolutionDir)ScreamAPI\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\curl\include;$(ProjectDir)src\stb_image;$(SolutionDir)Logger\src;$(SolutionDir)Config\src;$(SolutionDir)ScreamAPI\src</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -300,6 +300,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Config\Config.vcxproj">
+      <Project>{4e27bffb-b98b-4b7a-bc13-460805a70f4a}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Logger\Logger.vcxproj">
       <Project>{88727dfa-8c25-4d63-9836-f8f2efb753ea}</Project>
     </ProjectReference>

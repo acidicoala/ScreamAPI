@@ -6,8 +6,6 @@ Welcome to the ScreamAPI repository.
 Readme has been transferred to [here](https://cs.rin.ru/forum/viewtopic.php?f=29&t=106474).
 
 ## TODO
-1. Refactor Config
-1. Enable/Disable overlay
 1. Shift+F5 dialog
 1. Font 18?
 1. Support for other rendering engines?
@@ -17,11 +15,7 @@ Readme has been transferred to [here](https://cs.rin.ru/forum/viewtopic.php?f=29
 // TODO: Format the links later
 https://github.com/nothings/stb/blob/master/stb_image.h
 
-https://www.youtube.com/watch?reload=9&v=q_mXVZ6VJs4
-
 https://github.com/curl/curl
-
-https://github.com/rdbo/ImGui-DirectX-11-Kiero-Hook
 
 https://github.com/Rebzzel/kiero
 

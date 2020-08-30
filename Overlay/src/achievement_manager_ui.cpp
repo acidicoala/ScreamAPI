@@ -3,7 +3,7 @@
 
 namespace AchievementManagerUI{
 
-Achievements* achievements;
+Achievements* achievements = nullptr;
 UnlockAchievementFunction* unlockAchievement = nullptr;
 
 ImFont* bigFont = nullptr;

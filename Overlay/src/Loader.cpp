@@ -3,8 +3,10 @@
 #include "Overlay.h"
 #include <fstream>
 #include <future>
+#include <Config.h>
 
-// Defining it as pragma comment in order to avoid linker warnings
+// Instructions on how to build libcurl on Windows can be found here:
+// https://www.youtube.com/watch?reload=9&v=q_mXVZ6VJs4
 #pragma comment(lib,"Ws2_32.lib")
 #pragma comment(lib,"Wldap32.lib")
 #pragma comment(lib,"Crypt32.lib")
@@ -47,6 +49,11 @@ bool init(){
 void shutdown(){
 	Logger::ovrly("Loader shutdown");
 	curl_global_cleanup();
+
+	if(!Config::CacheIcons()){
+		if(!RemoveDirectoryA(CACHE_DIR))
+			Logger::error("Failed to remove %s directory. Error code: %d", CACHE_DIR, GetLastError());
+	}
 }
 
 // Helper utility to generate icon path based on the AchievementID
@@ -167,6 +174,11 @@ void downloadIconIfNecessary(Overlay_Achievement& achievement){
 	}
 
 	loadIconTexture(achievement);
+
+	if(!Config::CacheIcons()){
+		if(!DeleteFileA(iconPath.c_str()))
+			Logger::error("Failed to remove %s file. Error code: %d", iconPath.c_str(), GetLastError());
+	}
 }
 // Asynchronously downloads the icons and loads them into textures
 void asyncLoadIcons(Achievements& achievements){

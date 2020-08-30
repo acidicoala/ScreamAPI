@@ -230,8 +230,8 @@ void EOS_CALL queryDefinitionsComplete(const EOS_Achievements_OnQueryDefinitions
 											 nullptr,
 											 queryPlayerAchievementsComplete);
 
-	// Download the files and load the textures in a background thread to keep UI responsive
 	Overlay::init(ScreamAPI::thisDLL, achievements, unlockAchievement);
+	// Download the files and load the textures in a background thread to keep UI responsive
 	Loader::asyncLoadIcons(achievements);
 }
 

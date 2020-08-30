@@ -63,7 +63,7 @@ EOS_DECLARE_FUNC(void) EOS_Achievements_QueryPlayerAchievements(EOS_HAchievement
 	// so I don't know where else I can hook it from. But at least we can know that
 	// EOS_EpicAccountId is available upon EOS_Achievements_QueryPlayerAchievements call.
 	static bool init = false;
-	if(!init){
+	if(!init && Config::EnableOverlay()){
 		init = true;
 		AchievementManager::queryAchievementDefinitions();
 	}
