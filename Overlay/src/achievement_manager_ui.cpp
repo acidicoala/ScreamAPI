@@ -7,6 +7,7 @@ Achievements* achievements = nullptr;
 UnlockAchievementFunction* unlockAchievement = nullptr;
 
 ImFont* bigFont = nullptr;
+const float mainFontSize = 17.0f;
 
 void init(Achievements& achievements, UnlockAchievementFunction* unlockAchievement){
 	AchievementManagerUI::achievements = &achievements;
@@ -20,7 +21,7 @@ void initImGui(void* pWindow, ID3D11Device* pD3D11Device, ID3D11DeviceContext* p
 	auto fontPath = "C:\\Windows\\Fonts\\calibri.ttf";
 
 	auto io = ImGui::GetIO();
-	io.Fonts->AddFontFromFileTTF(fontPath, 16.0f);
+	io.Fonts->AddFontFromFileTTF(fontPath, mainFontSize);
 	io.IniFilename = NULL;
 
 	{// Init big font
@@ -65,7 +66,7 @@ void renderOverlay(){
 	FitTextToWindow(ImVec4(0, 1, 0, 1), "ScreamAPI Achievement Manager");
 
 	ImGui::BeginChild("AchievementList", ImVec2(0, 0), false);
-	for(int i = 0; i < achievements->size(); i++){
+	for(unsigned int i = 0; i < achievements->size(); i++){
 		auto&& achievement = achievements->at(i);
 
 		ImGui::PushID(i);
@@ -80,7 +81,7 @@ void renderOverlay(){
 			ImGui::NextColumn();
 		}
 		{// Title & description
-			ImGui::SetColumnWidth(1, 225);
+			ImGui::SetColumnWidth(1, 220);
 			ImGui::TextColored(ImVec4(1, 1, 1, 1), achievement.UnlockedDisplayName);
 			ImGui::Spacing();
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(.75, .75, .75, 1));
