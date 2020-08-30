@@ -1,18 +1,15 @@
 # ScreamAPI
-#### A Legit DLC Unlocker for Epic Games
+#### A Legit DLC & Achievement Unlocker for Epic Games
 Welcome to the ScreamAPI repository.
 
 ## Readme
-Readme has been transferred to [here](https://cs.rin.ru/forum/viewtopic.php?f=29&t=106474).
+Readme can be found on the [official ScreamAPI forum thread](https://cs.rin.ru/forum/viewtopic.php?f=29&t=106474)
 
 ## TODO
-1. Shift+F5 dialog
 1. Font 18?
-1. Support for other rendering engines?
 
 ## Acknowledgements
 
-// TODO: Format the links later
 https://github.com/nothings/stb/blob/master/stb_image.h
 
 https://github.com/curl/curl

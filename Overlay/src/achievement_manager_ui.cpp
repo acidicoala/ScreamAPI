@@ -115,6 +115,51 @@ void renderOverlay(){
 	ImGui::End();
 }
 
+void renderInitPopup(){
+	static auto grayCol = ImVec4(.75, .75, .75, 1);
+	static auto greenCol = ImVec4(0, .75, 0, 1);
+
+	ImGuiIO& io = ImGui::GetIO();// (void) io;
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0, 0, 0, 1)); // Set window background to black
+	ImGui::PushStyleColor(ImGuiCol_Border, greenCol);
+	ImGui::Begin("InitPopup", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove);
+	ImGui::PopStyleColor();
+	ImGui::PopStyleColor();
+	ImGui::SetWindowPos(ImVec2());
+	ImGui::SetWindowSize(ImVec2(400, 80));
+
+	{
+		static std::string firstPart = "ScreamAPI Achievement Manager is";
+		static std::string secondPart = "online";
+		ImGui::PushFont(bigFont);
+		ImVec2 sz = ImGui::CalcTextSize((firstPart + " " + secondPart).c_str());
+		ImGui::PopFont();
+		float canvasWidth = ImGui::GetWindowContentRegionWidth();
+		float origScale = bigFont->Scale;
+		bigFont->Scale = canvasWidth / sz.x;
+
+		ImGui::Spacing();
+
+		ImGui::PushFont(bigFont);
+		ImGui::TextColored(grayCol, firstPart.c_str());
+		ImGui::SameLine();
+		ImGui::TextColored(greenCol, secondPart.c_str());
+		ImGui::PopFont();
+		bigFont->Scale = origScale;
+
+		ImGui::Spacing();
+		ImGui::Separator();
+		ImGui::Spacing();
+
+		ImGui::TextColored(grayCol, "Press");
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(1, 1, 1, 1), "[Shift] + [F5]");
+		ImGui::SameLine();
+		ImGui::TextColored(grayCol, "to open panel");
+	}
+
+	ImGui::End();
+}
 
 }
 

@@ -3,11 +3,14 @@
 #include "Loader.h"
 #include "achievement_manager_ui.h"
 #include <thread>
+#include <future>
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 // Adapted from: https://github.com/rdbo/ImGui-DirectX-11-Kiero-Hook
 namespace Overlay{
+
+#define POPUP_DURATION_MS	3000
 
 Present oPresent;
 HWND pWindow = nullptr;
@@ -15,12 +18,17 @@ WNDPROC oWndProc = nullptr;
 ID3D11Device* pD3D11Device = nullptr;
 ID3D11DeviceContext* pContext = nullptr;
 ID3D11RenderTargetView* mainRenderTargetView = nullptr;
+
 bool showAchievementManager = false;
+bool showInitPopup = true;
 
 LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 	if(uMsg == WM_KEYUP){
 		// Shift + F5 pressed?
 		if(GetKeyState(VK_SHIFT) & 0x8000 && wParam == VK_F5){
+			// Hide the popup
+			showInitPopup = false;
+
 			// Toggle the overlay
 			showAchievementManager = !showAchievementManager;
 		}
@@ -70,6 +78,9 @@ HRESULT __stdcall hookedPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, U
 	if(showAchievementManager)
 		AchievementManagerUI::renderOverlay();
 
+	if(showInitPopup)
+		AchievementManagerUI::renderInitPopup();
+
 	ImGui::Render();
 
 	pContext->OMSetRenderTargets(1, &mainRenderTargetView, NULL);
@@ -85,6 +96,12 @@ void InitThread(LPVOID lpReserved){
 
 	kiero::bind(8, (void**) &oPresent, hookedPresent);
 	Logger::ovrly("Overlay: kiero successfully binded");
+
+	// Hide the popup after POPUP_DURATION_MS time
+	static auto hidePopupJob = std::async(std::launch::async, [&] (){
+		Sleep(POPUP_DURATION_MS);
+		showInitPopup = false;
+	});
 }
 
 void Overlay::init(HMODULE hMod, Achievements& achievements, UnlockAchievementFunction* unlockAchievement){
