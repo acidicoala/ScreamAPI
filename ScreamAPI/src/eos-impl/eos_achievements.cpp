@@ -10,7 +10,7 @@ EOS_DECLARE_FUNC(void) EOS_Achievements_QueryDefinitions(EOS_HAchievements Handl
 
 	// Log hidden achievements
 	for(unsigned int i = 0; i < Options->HiddenAchievementsCount; i++){
-		Logger::ach("\t""Hidden Achievement ID: %s", Options->HiddenAchievementIds[0]);
+		Logger::ach("\t""Hidden Achievement ID: %s", Options->HiddenAchievementIds[i]);
 	}
 
 	static auto proxy = ScreamAPI::proxyFunction(&EOS_Achievements_QueryDefinitions, __func__);

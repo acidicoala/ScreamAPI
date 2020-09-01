@@ -55,7 +55,7 @@ void printAchievementDefinition(EOS_Achievements_DefinitionV2* definition){
 				<< "Name: " << definition->StatThresholds[i].Name << "; "
 				<< "Threshold: " << definition->StatThresholds[i].Threshold;
 		}
-		// Escape whole string because of % signs in URLs
+		// Escape whole string because of % characters in URLs
 		Logger::ach("%s", ss.str().c_str());
 	}
 }
@@ -83,7 +83,7 @@ void printPlayerAchievement(EOS_Achievements_PlayerAchievement* achievement){
 				<< "CurrentValue: " << achievement->StatInfo[i].CurrentValue << "; "
 				<< "ThresholdValue: " << achievement->StatInfo[i].ThresholdValue;
 		}
-		// Escape whole string because of % signs in URLs
+		// Escape whole string because of % characters in URLs
 		Logger::ach("%s", ss.str().c_str());
 	}
 }
@@ -148,9 +148,15 @@ void EOS_CALL queryPlayerAchievementsComplete(const EOS_Achievements_OnQueryPlay
 			i
 		};
 		EOS_Achievements_PlayerAchievement* OutAchievement;
-		EOS_Achievements_CopyPlayerAchievementByIndex(Util::getHAchievements(),
-													  &CopyAchievementOptions,
-													  &OutAchievement);
+		auto result = EOS_Achievements_CopyPlayerAchievementByIndex(Util::getHAchievements(),
+																	&CopyAchievementOptions,
+																	&OutAchievement);
+		if(result != EOS_EResult::EOS_Success){
+			Logger::error("Failed to copy player achievement by index %d. "
+						  "Result string: %s", i, EOS_EResult_ToString(result));
+			continue;
+		}
+
 		printPlayerAchievement(OutAchievement);
 
 		// Update our achievement array if this achievement is unlocked
@@ -201,9 +207,15 @@ void EOS_CALL queryDefinitionsComplete(const EOS_Achievements_OnQueryDefinitions
 			i
 		};
 		EOS_Achievements_DefinitionV2* OutDefinition;
-		EOS_Achievements_CopyAchievementDefinitionV2ByIndex(Util::getHAchievements(),
-															&DefinitionOptions,
-															&OutDefinition);
+		auto result = EOS_Achievements_CopyAchievementDefinitionV2ByIndex(Util::getHAchievements(),
+																		  &DefinitionOptions,
+																		  &OutDefinition);
+		if(result != EOS_EResult::EOS_Success){
+			Logger::error("Failed to copy achievement definition by index %d. "
+						  "Result string: %s", i, EOS_EResult_ToString(result));
+			continue;
+		}
+
 		printAchievementDefinition(OutDefinition);
 
 		achievements.push_back(
@@ -215,7 +227,8 @@ void EOS_CALL queryDefinitionsComplete(const EOS_Achievements_OnQueryDefinitions
 				copy_c_string(OutDefinition->UnlockedDisplayName),
 				copy_c_string(OutDefinition->UnlockedIconURL),
 				nullptr
-			});
+			}
+		);
 
 		EOS_Achievements_DefinitionV2_Release(OutDefinition);
 	}

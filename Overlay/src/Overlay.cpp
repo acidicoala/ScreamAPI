@@ -5,6 +5,7 @@
 #include <thread>
 #include <future>
 
+// Do I need this extern declaration?
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 // Adapted from: https://github.com/rdbo/ImGui-DirectX-11-Kiero-Hook
@@ -92,10 +93,10 @@ HRESULT __stdcall hookedPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, U
 
 void InitThread(LPVOID lpReserved){
 	while(kiero::init(kiero::RenderType::D3D11) != kiero::Status::Success);
-	Logger::ovrly("Overlay: kiero successfully initialized");
+	Logger::ovrly("Kiero: Successfully initialized");
 
 	kiero::bind(8, (void**) &oPresent, hookedPresent);
-	Logger::ovrly("Overlay: kiero successfully binded");
+	Logger::ovrly("Kiero: Successfully binded");
 
 	// Hide the popup after POPUP_DURATION_MS time
 	static auto hidePopupJob = std::async(std::launch::async, [&] (){
@@ -110,7 +111,8 @@ void Overlay::init(HMODULE hMod, Achievements& achievements, UnlockAchievementFu
 }
 
 void Overlay::shutdown(){
-	Logger::ovrly("Overlay: Shutting down");
+	Logger::ovrly("Kiero: Shutting down");
+	AchievementManagerUI::shutdownImGui();
 	kiero::shutdown();
 	// TODO: Clear the achievement vector as well?
 }

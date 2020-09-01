@@ -167,7 +167,7 @@ void downloadIconIfNecessary(Overlay_Achievement& achievement){
 		// File doesn't exist
 		downloadFile(achievement.UnlockedIconURL, iconPath.c_str());
 	} else{
-		// File exists, but we could not read it's attribute.
+		// File exists, but we could not read it's attributes.
 		Logger::error("Failed to read file attributes. Error code: %d", GetLastError());
 		// TODO: Use FormatMessage to print user-friendly error message?
 		return;

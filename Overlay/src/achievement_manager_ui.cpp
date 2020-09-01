@@ -35,8 +35,12 @@ void initImGui(void* pWindow, ID3D11Device* pD3D11Device, ID3D11DeviceContext* p
 
 	ImGui_ImplWin32_Init(pWindow);
 	ImGui_ImplDX11_Init(pD3D11Device, pContext);
+}
 
-	//io.ImeWindowHandle = pWindow; // Do I need this?
+void shutdownImGui(){
+	ImGui_ImplWin32_Shutdown();
+	ImGui_ImplDX11_Shutdown();
+	ImGui::DestroyContext();
 }
 
 // Adapted from: https://github.com/ocornut/imgui/issues/1018#issuecomment-491875324
@@ -81,7 +85,7 @@ void renderOverlay(){
 			ImGui::NextColumn();
 		}
 		{// Title & description
-			ImGui::SetColumnWidth(1, 220);
+			ImGui::SetColumnWidth(1, 210);
 			ImGui::TextColored(ImVec4(1, 1, 1, 1), achievement.UnlockedDisplayName);
 			ImGui::Spacing();
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(.75, .75, .75, 1));
@@ -96,13 +100,13 @@ void renderOverlay(){
 
 			switch(achievement.UnlockState){
 				case UnlockState::Unlocked:
-					ImGui::TextColored(ImVec4(00, .75, 00, 1), "Unlocked");
+					ImGui::TextColored(ImVec4(00, .75, 00, 1), "Unlocked   ");
 					break;
 				case UnlockState::Unlocking:
 					ImGui::TextColored(ImVec4(.75, .75, 0, 1), "Unlocking...");
 					break;
 				case UnlockState::Locked:
-					if(ImGui::Button("Unlock"))
+					if(ImGui::Button(" Unlock "))
 						unlockAchievement(&achievement);
 					break;
 			}
