@@ -1,5 +1,5 @@
 # ScreamAPI
-#### A Legit DLC & Achievement Unlocker for Epic Games
+#### Legit DLC & Achievement Unlocker for Epic Games
 Welcome to the ScreamAPI repository.
 
 ## Readme

@@ -13,6 +13,9 @@
 
 #pragma once
 
+// Fix the XInput1_4.dll issue on Windows 7. Credit to Nemirtingas for the fix.
+#define IMGUI_IMPL_WIN32_DISABLE_GAMEPAD
+
 //---- Define assertion handler. Defaults to calling assert().
 // If your macro uses multiple statements, make sure is enclosed in a 'do { .. } while (0)' block so it can be used as a single statement.
 //#define IM_ASSERT(_EXPR)  MyAssert(_EXPR)
