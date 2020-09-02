@@ -57,7 +57,7 @@ void FitTextToWindow(const ImVec4 color, const char* text){
 	bigFont->Scale = origScale;
 }
 
-void renderOverlay(){
+void drawAchievementList(){
 	ImGuiIO& io = ImGui::GetIO();
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); // Set window background to black
 	ImGui::Begin("AchievementManagerUI", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove);
@@ -120,7 +120,7 @@ void renderOverlay(){
 	ImGui::End();
 }
 
-void renderInitPopup(){
+void drawInitPopup(){
 	static auto grayCol = ImVec4(.75, .75, .75, 1);
 	static auto greenCol = ImVec4(0, .75, 0, 1);
 
