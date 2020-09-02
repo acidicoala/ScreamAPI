@@ -18,6 +18,7 @@ bool bLogAchievementQueries = false;
 bool bLogOverlay = false;
 // Overlay
 bool bCacheIcons = true;
+bool bValidateIcons = true;
 // DLC
 bool bUnlockAllDLC = true;
 // DLC_List
@@ -39,6 +40,7 @@ std::map<std::string, std::map<std::string, void*>> configMap = {
 	}},
 	{"Overlay",{
 		{"CacheIcons", &bCacheIcons},
+		{"ValidateIcons", &bValidateIcons},
 	}},
 	{"DLC", {
 		{"UnlockAllDLC", &bUnlockAllDLC},
@@ -91,8 +93,8 @@ int iniHandler(void* user, const char* section_raw, const char* name_raw, const 
 void init(const std::wstring iniPath){
 	int parseResult = ini_wparse(iniPath.c_str(), iniHandler, 0);
 	
-	if(parseResult == -1)
-		showError(L"Error opening " + iniPath + L"\nUsing defaults");
+	//if(parseResult == -1)
+		//showError(L"Error opening " + iniPath + L"\nUsing defaults");
 }
 
 // ScreamAPI
@@ -107,7 +109,8 @@ bool LogDLCQueries(){ return bLogDLCQueries; }
 bool LogAchievementQueries(){ return bLogAchievementQueries; }
 bool LogOverlay(){ return bLogOverlay; }
 // Overlay
-bool CacheIcons(){ return bCacheIcons; }
+bool CacheIcons() { return bCacheIcons; }
+bool ValidateIcons(){ return bValidateIcons; }
 // DLC
 bool UnlockAllDLC(){ return bUnlockAllDLC; }
 // DLC_List

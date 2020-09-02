@@ -21,8 +21,8 @@ void initImGui(void* pWindow, ID3D11Device* pD3D11Device, ID3D11DeviceContext* p
 	auto fontPath = "C:\\Windows\\Fonts\\calibri.ttf";
 
 	auto io = ImGui::GetIO();
+	io.IniFilename = NULL; // FIXME: Why is this not working?
 	io.Fonts->AddFontFromFileTTF(fontPath, mainFontSize);
-	io.IniFilename = NULL;
 
 	{// Init big font
 		float pixedSize = 64;
@@ -35,12 +35,14 @@ void initImGui(void* pWindow, ID3D11Device* pD3D11Device, ID3D11DeviceContext* p
 
 	ImGui_ImplWin32_Init(pWindow);
 	ImGui_ImplDX11_Init(pD3D11Device, pContext);
+	Logger::ovrly("ImGui: Successfully initialized");
 }
 
 void shutdownImGui(){
 	ImGui_ImplWin32_Shutdown();
 	ImGui_ImplDX11_Shutdown();
 	ImGui::DestroyContext();
+	Logger::ovrly("ImGui: Shutdown");
 }
 
 // Adapted from: https://github.com/ocornut/imgui/issues/1018#issuecomment-491875324

@@ -43,7 +43,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Achievements_CopyAchievementDefinitionV2ByAchi
 }
 
 EOS_DECLARE_FUNC(void) EOS_Achievements_DefinitionV2_Release(EOS_Achievements_DefinitionV2* AchievementDefinition){
-	Logger::debug(__func__);
+	//Logger::debug(__func__);
 
 	static auto proxy = ScreamAPI::proxyFunction(&EOS_Achievements_DefinitionV2_Release, __func__);
 	proxy(AchievementDefinition);
@@ -95,7 +95,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Achievements_CopyPlayerAchievementByAchievemen
 }
 
 EOS_DECLARE_FUNC(void) EOS_Achievements_PlayerAchievement_Release(EOS_Achievements_PlayerAchievement* Achievement){
-	Logger::debug(__func__);
+	//Logger::debug(__func__);
 
 	static auto proxy = ScreamAPI::proxyFunction(&EOS_Achievements_PlayerAchievement_Release, __func__);
 	proxy(Achievement);

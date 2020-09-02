@@ -24,7 +24,6 @@ namespace Loader{
 #define CACHE_DIR ".ScreamApi_Cache"
 
 std::vector<std::future<void>>asyncJobs;
-std::future<void> awaitFuture;
 
 /**
  * Initialize the loader and its dependencies.
@@ -32,8 +31,6 @@ std::future<void> awaitFuture;
  *         false if there was an error in initialization
  */
 bool init(){
-	Logger::ovrly("Loader init");
-
 	curl_global_init(CURL_GLOBAL_ALL);
 
 	// Create directory if it doesn't exist already
@@ -44,16 +41,19 @@ bool init(){
 		Logger::error("Failed to create '%s' directory. Error code: %d", CACHE_DIR, GetLastError());
 		return false;
 	}
+
+	Logger::ovrly("Loader: Successfully initialized");
 }
 
 void shutdown(){
-	Logger::ovrly("Loader shutdown");
 	curl_global_cleanup();
 
 	if(!Config::CacheIcons()){
 		if(!RemoveDirectoryA(CACHE_DIR))
 			Logger::error("Failed to remove %s directory. Error code: %d", CACHE_DIR, GetLastError());
 	}
+
+	Logger::ovrly("Loader: shutdown");
 }
 
 // Helper utility to generate icon path based on the AchievementID
@@ -157,7 +157,8 @@ void downloadIconIfNecessary(Overlay_Achievement& achievement){
 	auto fileAttributes = GetFileAttributesExA(iconPath.c_str(), GetFileExInfoStandard, &fileInfo);
 	if(fileAttributes){
 		// File exists
-		if(getLocalFileSize(fileInfo) == getOnlineFileSize(achievement.UnlockedIconURL)){
+		if(Config::ValidateIcons() && // And sizes are equal
+			getLocalFileSize(fileInfo) == getOnlineFileSize(achievement.UnlockedIconURL)) {
 			Logger::ovrly("Using cached icon: %s", iconPath.c_str());
 		} else{
 			// Download the file again if the local version is different from online one
@@ -186,13 +187,13 @@ void asyncLoadIcons(Achievements& achievements){
 		for(auto& achievement : achievements){
 			asyncJobs.emplace_back(std::async(std::launch::async, downloadIconIfNecessary, std::ref(achievement)));
 		}
-		awaitFuture = std::async(std::launch::async, [&] (){
+		static auto awaitFuture = std::async(std::launch::async, [&](){
 			for(auto& job : asyncJobs){
 				// Asynchronously wait for all other async jobs to be completed
 				job.wait();
 			}
 			asyncJobs.clear();
-			Loader::shutdown();
+			shutdown();
 		});
 	}
 }

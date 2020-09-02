@@ -9,7 +9,7 @@
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 // Adapted from: https://github.com/rdbo/ImGui-DirectX-11-Kiero-Hook
-namespace Overlay{
+namespace Overlay {
 
 #define POPUP_DURATION_MS	3000
 
@@ -20,38 +20,31 @@ ID3D11Device* pD3D11Device = nullptr;
 bool showAchievementManager = false;
 bool showInitPopup = true;
 
-LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
-	if(uMsg == WM_KEYUP){
+LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	if(uMsg == WM_KEYUP) {
 		// Shift + F5 pressed?
-		if(GetKeyState(VK_SHIFT) & 0x8000 && wParam == VK_F5){
+		if(GetKeyState(VK_SHIFT) & 0x8000 && wParam == VK_F5) {
 			showInitPopup = false; // Hide the popup
 			showAchievementManager = !showAchievementManager; // Toggle the overlay
 		}
 	}
 
-	if(showAchievementManager){
-		// A mouse input fix I adapted from here:
-		// https://niemand.com.ar/2019/01/01/how-to-hook-directx-11-imgui/
+	if(showAchievementManager) {
 		ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam);
-		POINT mPos;
-		GetCursorPos(&mPos);
-		ScreenToClient(hWnd, &mPos);
-		ImGui::GetIO().MousePos.x = (float) mPos.x;
-		ImGui::GetIO().MousePos.y = (float) mPos.y;
 		return true;
-	} else{
+	} else {
 		return CallWindowProc(originalWndProc, hWnd, uMsg, wParam, lParam);
 	}
 }
 
-HRESULT __stdcall hookedPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags){
+HRESULT __stdcall hookedPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags) {
 	static ID3D11RenderTargetView* mainRenderTargetView = nullptr;
 	static ID3D11DeviceContext* pContext = nullptr;
 	static HWND pWindow = nullptr;
 
 	static bool init = false;
-	if(!init){
-		if(SUCCEEDED(pSwapChain->GetDevice(__uuidof(ID3D11Device), (void**) &pD3D11Device))){
+	if(!init) {
+		if(SUCCEEDED(pSwapChain->GetDevice(__uuidof(ID3D11Device), (void**) &pD3D11Device))) {
 			pD3D11Device->GetImmediateContext(&pContext);
 			DXGI_SWAP_CHAIN_DESC sd;
 			pSwapChain->GetDesc(&sd);
@@ -64,8 +57,9 @@ HRESULT __stdcall hookedPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, U
 			originalWndProc = (WNDPROC) SetWindowLongPtr(pWindow, GWLP_WNDPROC, (LONG_PTR) WndProc);
 			AchievementManagerUI::initImGui(pWindow, pD3D11Device, pContext);
 			init = true;
-		} else
+		} else {
 			return originalPresent(pSwapChain, SyncInterval, Flags);
+		}
 	}
 
 	// Now that we are hooked, it's time to render the Achivement Manager
@@ -88,7 +82,7 @@ HRESULT __stdcall hookedPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, U
 	return originalPresent(pSwapChain, SyncInterval, Flags);
 }
 
-void initThread(LPVOID lpReserved){
+void initThread(LPVOID lpReserved) {
 	while(kiero::init(kiero::RenderType::D3D11) != kiero::Status::Success);
 	Logger::ovrly("Kiero: Successfully initialized");
 
@@ -96,21 +90,21 @@ void initThread(LPVOID lpReserved){
 	Logger::ovrly("Kiero: Successfully binded");
 
 	// Hide the popup after POPUP_DURATION_MS time
-	static auto hidePopupJob = std::async(std::launch::async, [&] (){
+	static auto hidePopupJob = std::async(std::launch::async, [&]() {
 		Sleep(POPUP_DURATION_MS);
 		showInitPopup = false;
 	});
 }
 
-void Overlay::init(HMODULE hMod, Achievements& achievements, UnlockAchievementFunction* unlockAchievement){
+void Overlay::init(HMODULE hMod, Achievements& achievements, UnlockAchievementFunction* unlockAchievement) {
 	AchievementManagerUI::init(achievements, unlockAchievement);
 	std::thread(initThread, hMod).detach();
 }
 
-void Overlay::shutdown(){
-	Logger::ovrly("Kiero: Shutting down");
+void Overlay::shutdown() {
 	AchievementManagerUI::shutdownImGui();
 	kiero::shutdown();
+	Logger::ovrly("Kiero: Shutdown");
 	// TODO: Clear the achievement vector as well?
 }
 
