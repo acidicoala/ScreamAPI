@@ -156,13 +156,14 @@ void downloadIconIfNecessary(Overlay_Achievement& achievement){
 	WIN32_FILE_ATTRIBUTE_DATA fileInfo;
 	auto fileAttributes = GetFileAttributesExA(iconPath.c_str(), GetFileExInfoStandard, &fileInfo);
 	if(fileAttributes){
-		// File exists
-		if(Config::ValidateIcons() && // And sizes are equal
-			getLocalFileSize(fileInfo) == getOnlineFileSize(achievement.UnlockedIconURL)) {
-			Logger::ovrly("Using cached icon: %s", iconPath.c_str());
-		} else{
-			// Download the file again if the local version is different from online one
-			downloadFile(achievement.UnlockedIconURL, iconPath.c_str());
+		if(Config::ValidateIcons()){
+			// File exists
+			if(getLocalFileSize(fileInfo) == getOnlineFileSize(achievement.UnlockedIconURL)) {
+				Logger::ovrly("Using cached icon: %s", iconPath.c_str());
+			} else{
+				// Download the file again if the local version is different from online one
+				downloadFile(achievement.UnlockedIconURL, iconPath.c_str());
+			}
 		}
 	} else if(GetLastError() == ERROR_FILE_NOT_FOUND){
 		// File doesn't exist
