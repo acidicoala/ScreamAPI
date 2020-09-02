@@ -53,7 +53,7 @@ void shutdown(){
 			Logger::error("Failed to remove %s directory. Error code: %d", CACHE_DIR, GetLastError());
 	}
 
-	Logger::ovrly("Loader: shutdown");
+	Logger::ovrly("Loader: Shutdown");
 }
 
 // Helper utility to generate icon path based on the AchievementID
@@ -61,66 +61,54 @@ std::string getIconPath(Overlay_Achievement& achievement){
 	return CACHE_DIR"\\" + std::string(achievement.AchievementId) + ".png";
 }
 
-// Downloads only the file headers and retuns the size of the file
-int getOnlineFileSize(const char* url){
-	CURL* curl_handle = curl_easy_init();
-	curl_easy_setopt(curl_handle, CURLOPT_URL, url);
-	curl_easy_setopt(curl_handle, CURLOPT_HEADER, 1);
-	curl_easy_setopt(curl_handle, CURLOPT_NOBODY, 1);
-	curl_easy_setopt(curl_handle, CURLOPT_CUSTOMREQUEST, "GET");
-	curl_easy_perform(curl_handle);
-	curl_off_t contentLength;
-	curl_easy_getinfo(curl_handle, CURLINFO_CONTENT_LENGTH_DOWNLOAD_T, &contentLength);
-	curl_easy_cleanup(curl_handle);
-
-	return (int) contentLength;
-}
-
 // Simple helper function to load an image into a DX11 texture with common settings
 void loadIconTexture(Overlay_Achievement& achievement){
-	Logger::debug(__func__);
+	//Logger::debug(__func__);
+	static std::mutex loadIconMutex;
+	{ // Code block for lock_guard destructor to release lock
+		std::lock_guard<std::mutex> guard(loadIconMutex);
+		auto iconPath = getIconPath(achievement);
 
-	auto iconPath = getIconPath(achievement);
+		// Load from disk into a raw RGBA buffer
+		int image_width = 0;
+		int image_height = 0;
+		unsigned char* image_data = stbi_load(iconPath.c_str(), &image_width, &image_height, NULL, 4);
+		if(image_data == NULL)
+			return;
 
-	// Load from disk into a raw RGBA buffer
-	int image_width = 0;
-	int image_height = 0;
-	unsigned char* image_data = stbi_load(iconPath.c_str(), &image_width, &image_height, NULL, 4);
-	if(image_data == NULL)
-		return;
+		// Create texture
+		D3D11_TEXTURE2D_DESC desc;
+		ZeroMemory(&desc, sizeof(desc));
+		desc.Width = image_width;
+		desc.Height = image_height;
+		desc.MipLevels = 1;
+		desc.ArraySize = 1;
+		desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		desc.SampleDesc.Count = 1;
+		desc.Usage = D3D11_USAGE_DEFAULT;
+		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		desc.CPUAccessFlags = 0;
 
-	// Create texture
-	D3D11_TEXTURE2D_DESC desc;
-	ZeroMemory(&desc, sizeof(desc));
-	desc.Width = image_width;
-	desc.Height = image_height;
-	desc.MipLevels = 1;
-	desc.ArraySize = 1;
-	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	desc.SampleDesc.Count = 1;
-	desc.Usage = D3D11_USAGE_DEFAULT;
-	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	desc.CPUAccessFlags = 0;
+		ID3D11Texture2D* pTexture = NULL;
+		D3D11_SUBRESOURCE_DATA subResource;
+		subResource.pSysMem = image_data;
+		subResource.SysMemPitch = desc.Width * 4;
+		subResource.SysMemSlicePitch = 0;
+		Overlay::pD3D11Device->CreateTexture2D(&desc, &subResource, &pTexture);
 
-	ID3D11Texture2D* pTexture = NULL;
-	D3D11_SUBRESOURCE_DATA subResource;
-	subResource.pSysMem = image_data;
-	subResource.SysMemPitch = desc.Width * 4;
-	subResource.SysMemSlicePitch = 0;
-	Overlay::pD3D11Device->CreateTexture2D(&desc, &subResource, &pTexture);
-
-	// Create texture view
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-	ZeroMemory(&srvDesc, sizeof(srvDesc));
-	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = desc.MipLevels;
-	srvDesc.Texture2D.MostDetailedMip = 0;
+		// Create texture view
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+		ZeroMemory(&srvDesc, sizeof(srvDesc));
+		srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = desc.MipLevels;
+		srvDesc.Texture2D.MostDetailedMip = 0;
 #pragma warning(suppress: 6387)
-	Overlay::pD3D11Device->CreateShaderResourceView(pTexture, &srvDesc, &achievement.IconTexture);
-	pTexture->Release();
+		Overlay::pD3D11Device->CreateShaderResourceView(pTexture, &srvDesc, &achievement.IconTexture);
+		pTexture->Release();
 
-	stbi_image_free(image_data);
+		stbi_image_free(image_data);
+	}
 }
 
 // Downloads the online icon into local cache folder
@@ -150,6 +138,21 @@ int getLocalFileSize(WIN32_FILE_ATTRIBUTE_DATA& fileInfo){
 	return (int) size.QuadPart;
 }
 
+// Downloads only the file headers and retuns the size of the file
+int getOnlineFileSize(const char* url){
+	CURL* curl_handle = curl_easy_init();
+	curl_easy_setopt(curl_handle, CURLOPT_URL, url);
+	curl_easy_setopt(curl_handle, CURLOPT_HEADER, 1);
+	curl_easy_setopt(curl_handle, CURLOPT_NOBODY, 1);
+	curl_easy_setopt(curl_handle, CURLOPT_CUSTOMREQUEST, "GET");
+	curl_easy_perform(curl_handle);
+	curl_off_t contentLength;
+	curl_easy_getinfo(curl_handle, CURLINFO_CONTENT_LENGTH_DOWNLOAD_T, &contentLength);
+	curl_easy_cleanup(curl_handle);
+
+	return (int) contentLength;
+}
+
 void downloadIconIfNecessary(Overlay_Achievement& achievement){
 	auto iconPath = getIconPath(achievement);
 
@@ -164,6 +167,8 @@ void downloadIconIfNecessary(Overlay_Achievement& achievement){
 				// Download the file again if the local version is different from online one
 				downloadFile(achievement.UnlockedIconURL, iconPath.c_str());
 			}
+		} else {
+			Sleep(500); // Games crash without a small delay. No idea why.
 		}
 	} else if(GetLastError() == ERROR_FILE_NOT_FOUND){
 		// File doesn't exist

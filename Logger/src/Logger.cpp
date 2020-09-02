@@ -6,7 +6,6 @@
 enum class LogLevel{ OVRLY, ACH, DLC, ERR, WARN, INFO, DEBUG };
 const char* const strLogLevels[] = {"OVRLY", "ACH", "DLC", "ERROR", "WARN", "INFO", "DEBUG"};
 
-std::mutex logMutex;
 bool isEnabled = false;
 bool isLoggingDLCqueries = false;
 bool isLoggingAchievements = false;
@@ -57,6 +56,7 @@ void log(LogLevel level, const char* const message, va_list args){
 	if(level > logLevel)
 		return;
 
+	static std::mutex logMutex;
 	{ // Code block for lock_guard destructor to release lock
 		std::lock_guard<std::mutex> guard(logMutex);
 

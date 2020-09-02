@@ -30,6 +30,21 @@ LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	}
 
 	if(showAchievementManager) {
+		switch(uMsg)
+		{
+			case WM_POINTERDOWN:
+				uMsg = WM_LBUTTONDOWN;
+				break;
+			case WM_POINTERUP:
+				uMsg = WM_LBUTTONUP;
+				break;
+			case WM_POINTERWHEEL:
+				uMsg = WM_MOUSEWHEEL;
+				break;
+			case WM_POINTERUPDATE:
+				uMsg = WM_SETCURSOR;
+				break;
+		}
 		ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam);
 		return true;
 	} else {
