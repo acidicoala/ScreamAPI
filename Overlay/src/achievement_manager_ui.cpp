@@ -1,18 +1,11 @@
 #include "pch.h"
 #include "achievement_manager_ui.h"
+#include <Overlay.h>
 
 namespace AchievementManagerUI{
 
-Achievements* achievements = nullptr;
-UnlockAchievementFunction* unlockAchievement = nullptr;
-
 ImFont* bigFont = nullptr;
 const float mainFontSize = 17.0f;
-
-void Init(Achievements& achievements, UnlockAchievementFunction* unlockAchievement){
-	AchievementManagerUI::achievements = &achievements;
-	AchievementManagerUI::unlockAchievement = unlockAchievement;
-}
 
 void InitImGui(void* pWindow, ID3D11Device* pD3D11Device, ID3D11DeviceContext* pContext){
 	ImGui::CreateContext();
@@ -72,8 +65,8 @@ void DrawAchievementList(){
 	FitTextToWindow(ImVec4(0, 1, 0, 1), "ScreamAPI Achievement Manager");
 
 	ImGui::BeginChild("AchievementList", ImVec2(0, 0), false);
-	for(unsigned int i = 0; i < achievements->size(); i++){
-		auto&& achievement = achievements->at(i);
+	for(unsigned int i = 0; i < Overlay::achievements->size(); i++){
+		auto&& achievement = Overlay::achievements->at(i);
 
 		ImGui::PushID(i);
 
@@ -109,7 +102,7 @@ void DrawAchievementList(){
 					break;
 				case UnlockState::Locked:
 					if(ImGui::Button(" Unlock "))
-						unlockAchievement(&achievement);
+						Overlay::unlockAchievement(&achievement);
 					break;
 			}
 		}

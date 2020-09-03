@@ -62,7 +62,7 @@ std::string getIconPath(Overlay_Achievement& achievement){
 
 // Simple helper function to load an image into a DX11 texture with common settings
 void loadIconTexture(Overlay_Achievement& achievement){
-	//Logger::debug(__func__);
+	Logger::debug("Loading icon texure for achievement: %s", achievement.AchievementId);
 	static std::mutex loadIconMutex;
 	{ // Code block for lock_guard destructor to release lock
 		std::lock_guard<std::mutex> guard(loadIconMutex);
@@ -71,9 +71,11 @@ void loadIconTexture(Overlay_Achievement& achievement){
 		// Load from disk into a raw RGBA buffer
 		int image_width = 0;
 		int image_height = 0;
-		unsigned char* image_data = stbi_load(iconPath.c_str(), &image_width, &image_height, NULL, 4);
-		if(image_data == NULL)
+		auto* image_data = stbi_load(iconPath.c_str(), &image_width, &image_height, NULL, 4);
+		if(image_data == NULL){
+			Logger::error("Failed to load icon: %s. Failure reason: %s", iconPath.c_str(), stbi_failure_reason());
 			return;
+		}
 
 		// Create texture
 		D3D11_TEXTURE2D_DESC desc;
@@ -166,8 +168,6 @@ void downloadIconIfNecessary(Overlay_Achievement& achievement){
 				// Download the file again if the local version is different from online one
 				downloadFile(achievement.UnlockedIconURL, iconPath.c_str());
 			}
-		} else {
-			Sleep(500); // Games crash without a small delay. No idea why.
 		}
 	} else if(GetLastError() == ERROR_FILE_NOT_FOUND){
 		// File doesn't exist
@@ -187,9 +187,9 @@ void downloadIconIfNecessary(Overlay_Achievement& achievement){
 	}
 }
 // Asynchronously downloads the icons and loads them into textures in order to keep UI responsive
-void AsyncLoadIcons(Achievements& achievements){
+void AsyncLoadIcons(){
 	if(init()){
-		for(auto& achievement : achievements){
+		for(auto& achievement : *Overlay::achievements){
 			asyncJobs.emplace_back(std::async(std::launch::async, downloadIconIfNecessary, std::ref(achievement)));
 		}
 		static auto awaitFuture = std::async(std::launch::async, [&](){

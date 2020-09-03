@@ -13,19 +13,22 @@ extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam
 // Adapted from: https://github.com/rdbo/ImGui-DirectX-11-Kiero-Hook
 namespace Overlay {
 
-HRESULT(__stdcall* originalPresent) (IDXGISwapChain*, UINT, UINT);
-HRESULT(__stdcall* originalResizeBuffers) (IDXGISwapChain*, UINT, UINT, UINT, DXGI_FORMAT, UINT);
-LRESULT(__stdcall* originalWindowProc)(HWND, UINT, WPARAM, LPARAM);
+HRESULT(WINAPI* originalPresent) (IDXGISwapChain*, UINT, UINT);
+HRESULT(WINAPI* originalResizeBuffers) (IDXGISwapChain*, UINT, UINT, UINT, DXGI_FORMAT, UINT);
+LRESULT(WINAPI* originalWindowProc)(HWND, UINT, WPARAM, LPARAM);
 
 HWND gWindow = nullptr;
 ID3D11Device* gD3D11Device = nullptr;
 ID3D11RenderTargetView* gRenderTargetView = nullptr;
 
 bool bInit = false;
-bool bShowAchievementManager = false;
 bool bShowInitPopup = true;
+bool bShowAchievementManager = false;
 
-LRESULT __stdcall WindowProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+Achievements* achievements = nullptr;
+UnlockAchievementFunction* unlockAchievement = nullptr;
+
+LRESULT WINAPI WindowProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	if(uMsg == WM_KEYDOWN) {
 		// Shift + F5 pressed?
 		if(GetKeyState(VK_SHIFT) & 0x8000 && wParam == VK_F5) {
@@ -58,7 +61,7 @@ LRESULT __stdcall WindowProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 	}
 }
 
-HRESULT __stdcall hookedPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags) {
+HRESULT WINAPI hookedPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags) {
 	static ID3D11DeviceContext* pContext = nullptr;
 
 	if(!bInit) {
@@ -79,6 +82,7 @@ HRESULT __stdcall hookedPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, U
 			}
 			AchievementManagerUI::InitImGui(gWindow, gD3D11Device, pContext);
 			bInit = true;
+			Loader::AsyncLoadIcons();
 		} else {
 			return originalPresent(pSwapChain, SyncInterval, Flags);
 		}
@@ -109,8 +113,8 @@ HRESULT __stdcall hookedPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, U
  * and reset init flag, so that our overlay can reinitialize with new window size.
  * Without it, the game will crash on window resize.
  */
-HRESULT __stdcall hookedResizeBuffer(IDXGISwapChain* pThis, UINT BufferCount, UINT Width, UINT Height, DXGI_FORMAT NewFormat, UINT SwapChainFlags){
-	AchievementManagerUI::ShutdownImGui();
+HRESULT WINAPI hookedResizeBuffer(IDXGISwapChain* pThis, UINT BufferCount, UINT Width, UINT Height, DXGI_FORMAT NewFormat, UINT SwapChainFlags){
+	//AchievementManagerUI::ShutdownImGui();
 
 	// Restore original WndProc. Crashes without it.
 	SetWindowLongPtr(gWindow, GWLP_WNDPROC, (LONG_PTR) originalWindowProc);
@@ -128,7 +132,17 @@ HRESULT __stdcall hookedResizeBuffer(IDXGISwapChain* pThis, UINT BufferCount, UI
 #define D3D11_ResizeBuffers	13
 
 void InitThread(LPVOID lpReserved) {
-	while(kiero::init(kiero::RenderType::D3D11) != kiero::Status::Success);
+#pragma warning(suppress: 26812)
+	auto result = kiero::init(kiero::RenderType::D3D11);
+	Logger::debug("%s: result = %d", __func__, result);
+	if(result != kiero::Status::Success){
+		if(result == kiero::Status::ModuleNotFoundError)
+			Logger::error("Failed to initialize kiero. Are you sure you are running a DirectX 11 game?");
+		else
+			Logger::error("Failed to initialize kiero. Error code: %d", result);
+
+		return;
+	}
 	Logger::ovrly("Kiero: Successfully initialized");
 
 	// Hook Present
@@ -146,9 +160,10 @@ void InitThread(LPVOID lpReserved) {
 	});
 }
 
-void Init(HMODULE hMod, Achievements& achievements, UnlockAchievementFunction* unlockAchievement) {
-	AchievementManagerUI::Init(achievements, unlockAchievement);
-	std::thread(InitThread, hMod).detach();
+void Init(HMODULE hMod, Achievements* pAchievements, UnlockAchievementFunction* fnUnlockAchievement) {
+	achievements = pAchievements;
+	unlockAchievement = fnUnlockAchievement;
+	std::thread(InitThread, nullptr).detach();
 }
 
 void Shutdown() {

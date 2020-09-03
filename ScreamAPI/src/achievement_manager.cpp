@@ -2,9 +2,8 @@
 #include "achievement_manager.h"
 #include "ScreamAPI.h"
 #include "util.h"
-#include "Loader.h"
 #include "eos-sdk\eos_achievements.h"
-#include <Overlay.h>
+#include "Overlay.h"
 #include <future>
 
 using namespace Util;
@@ -176,8 +175,7 @@ void EOS_CALL queryPlayerAchievementsComplete(const EOS_Achievements_OnQueryPlay
 	}
 
 	// Initialize Overlay
-	Overlay::Init(ScreamAPI::thisDLL, achievements, unlockAchievement);
-
+	Overlay::Init(ScreamAPI::thisDLL, &achievements, unlockAchievement);
 }
 
 /**
@@ -242,9 +240,6 @@ void EOS_CALL queryDefinitionsComplete(const EOS_Achievements_OnQueryDefinitions
 											 &QueryAchievementsOptions,
 											 nullptr,
 											 queryPlayerAchievementsComplete);
-
-	Overlay::Init(ScreamAPI::thisDLL, achievements, unlockAchievement);
-	Loader::AsyncLoadIcons(achievements);
 }
 
 void queryAchievementDefinitions(){
