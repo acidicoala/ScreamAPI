@@ -5,7 +5,7 @@
 
 namespace Overlay{
 
-extern ID3D11Device* pD3D11Device;
+extern ID3D11Device* gD3D11Device;
 
 void init(HMODULE hMod, Achievements& achievements, UnlockAchievementFunction* unlockAchievement);
 void shutdown();

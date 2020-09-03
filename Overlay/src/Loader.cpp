@@ -36,13 +36,12 @@ bool init(){
 	// Create directory if it doesn't exist already
 	auto success = CreateDirectoryA(CACHE_DIR, NULL); // FIXME: Non-unicode function
 	if(success || GetLastError() == ERROR_ALREADY_EXISTS){
+		Logger::ovrly("Loader: Successfully initialized");
 		return true;
 	} else{
-		Logger::error("Failed to create '%s' directory. Error code: %d", CACHE_DIR, GetLastError());
+		Logger::error("Loader: Failed to create '%s' directory. Error code: %d", CACHE_DIR, GetLastError());
 		return false;
 	}
-
-	Logger::ovrly("Loader: Successfully initialized");
 }
 
 void shutdown(){
@@ -94,7 +93,7 @@ void loadIconTexture(Overlay_Achievement& achievement){
 		subResource.pSysMem = image_data;
 		subResource.SysMemPitch = desc.Width * 4;
 		subResource.SysMemSlicePitch = 0;
-		Overlay::pD3D11Device->CreateTexture2D(&desc, &subResource, &pTexture);
+		Overlay::gD3D11Device->CreateTexture2D(&desc, &subResource, &pTexture);
 
 		// Create texture view
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
@@ -104,7 +103,7 @@ void loadIconTexture(Overlay_Achievement& achievement){
 		srvDesc.Texture2D.MipLevels = desc.MipLevels;
 		srvDesc.Texture2D.MostDetailedMip = 0;
 #pragma warning(suppress: 6387)
-		Overlay::pD3D11Device->CreateShaderResourceView(pTexture, &srvDesc, &achievement.IconTexture);
+		Overlay::gD3D11Device->CreateShaderResourceView(pTexture, &srvDesc, &achievement.IconTexture);
 		pTexture->Release();
 
 		stbi_image_free(image_data);
