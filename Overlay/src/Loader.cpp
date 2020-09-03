@@ -186,8 +186,8 @@ void downloadIconIfNecessary(Overlay_Achievement& achievement){
 			Logger::error("Failed to remove %s file. Error code: %d", iconPath.c_str(), GetLastError());
 	}
 }
-// Asynchronously downloads the icons and loads them into textures
-void asyncLoadIcons(Achievements& achievements){
+// Asynchronously downloads the icons and loads them into textures in order to keep UI responsive
+void AsyncLoadIcons(Achievements& achievements){
 	if(init()){
 		for(auto& achievement : achievements){
 			asyncJobs.emplace_back(std::async(std::launch::async, downloadIconIfNecessary, std::ref(achievement)));

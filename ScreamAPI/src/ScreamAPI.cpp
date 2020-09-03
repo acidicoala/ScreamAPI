@@ -61,7 +61,7 @@ void ScreamAPI::checkSdkVersion(const int32_t apiVersion, const int32_t maxVersi
 
 void ScreamAPI::destroy(){
 	FreeLibrary(originalDLL);
-	Overlay::shutdown();
+	Overlay::Shutdown();
 }
 
 }

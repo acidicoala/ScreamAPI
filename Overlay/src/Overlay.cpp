@@ -77,7 +77,7 @@ HRESULT __stdcall hookedPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, U
 				Logger::error("Failed to SetWindowLongPtr. Error code: %d", GetLastError());
 				return originalPresent(pSwapChain, SyncInterval, Flags);
 			}
-			AchievementManagerUI::initImGui(gWindow, gD3D11Device, pContext);
+			AchievementManagerUI::InitImGui(gWindow, gD3D11Device, pContext);
 			bInit = true;
 		} else {
 			return originalPresent(pSwapChain, SyncInterval, Flags);
@@ -91,10 +91,10 @@ HRESULT __stdcall hookedPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, U
 	ImGui::NewFrame();
 
 	if(bShowInitPopup)
-		AchievementManagerUI::drawInitPopup();
+		AchievementManagerUI::DrawInitPopup();
 
 	if(bShowAchievementManager)
-		AchievementManagerUI::drawAchievementList();
+		AchievementManagerUI::DrawAchievementList();
 
 	ImGui::Render();
 
@@ -110,7 +110,7 @@ HRESULT __stdcall hookedPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, U
  * Without it, the game will crash on window resize.
  */
 HRESULT __stdcall hookedResizeBuffer(IDXGISwapChain* pThis, UINT BufferCount, UINT Width, UINT Height, DXGI_FORMAT NewFormat, UINT SwapChainFlags){
-	AchievementManagerUI::shutdownImGui();
+	AchievementManagerUI::ShutdownImGui();
 
 	// Restore original WndProc. Crashes without it.
 	SetWindowLongPtr(gWindow, GWLP_WNDPROC, (LONG_PTR) originalWindowProc);
@@ -127,7 +127,7 @@ HRESULT __stdcall hookedResizeBuffer(IDXGISwapChain* pThis, UINT BufferCount, UI
 #define D3D11_Present		8
 #define D3D11_ResizeBuffers	13
 
-void initThread(LPVOID lpReserved) {
+void InitThread(LPVOID lpReserved) {
 	while(kiero::init(kiero::RenderType::D3D11) != kiero::Status::Success);
 	Logger::ovrly("Kiero: Successfully initialized");
 
@@ -146,13 +146,13 @@ void initThread(LPVOID lpReserved) {
 	});
 }
 
-void Overlay::init(HMODULE hMod, Achievements& achievements, UnlockAchievementFunction* unlockAchievement) {
-	AchievementManagerUI::init(achievements, unlockAchievement);
-	std::thread(initThread, hMod).detach();
+void Init(HMODULE hMod, Achievements& achievements, UnlockAchievementFunction* unlockAchievement) {
+	AchievementManagerUI::Init(achievements, unlockAchievement);
+	std::thread(InitThread, hMod).detach();
 }
 
-void Overlay::shutdown() {
-	AchievementManagerUI::shutdownImGui();
+void Shutdown() {
+	AchievementManagerUI::ShutdownImGui();
 	SetWindowLongPtr(gWindow, GWLP_WNDPROC, (LONG_PTR) originalWindowProc);
 	kiero::shutdown();
 	Logger::ovrly("Kiero: Shutdown");

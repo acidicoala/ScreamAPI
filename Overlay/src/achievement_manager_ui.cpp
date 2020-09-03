@@ -9,12 +9,12 @@ UnlockAchievementFunction* unlockAchievement = nullptr;
 ImFont* bigFont = nullptr;
 const float mainFontSize = 17.0f;
 
-void init(Achievements& achievements, UnlockAchievementFunction* unlockAchievement){
+void Init(Achievements& achievements, UnlockAchievementFunction* unlockAchievement){
 	AchievementManagerUI::achievements = &achievements;
 	AchievementManagerUI::unlockAchievement = unlockAchievement;
 }
 
-void initImGui(void* pWindow, ID3D11Device* pD3D11Device, ID3D11DeviceContext* pContext){
+void InitImGui(void* pWindow, ID3D11Device* pD3D11Device, ID3D11DeviceContext* pContext){
 	ImGui::CreateContext();
 
 	// Hopefully every Windows PC should have calibri font installed
@@ -38,7 +38,7 @@ void initImGui(void* pWindow, ID3D11Device* pD3D11Device, ID3D11DeviceContext* p
 	Logger::ovrly("ImGui: Successfully initialized");
 }
 
-void shutdownImGui(){
+void ShutdownImGui(){
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
@@ -59,7 +59,7 @@ void FitTextToWindow(const ImVec4 color, const char* text){
 	bigFont->Scale = origScale;
 }
 
-void drawAchievementList(){
+void DrawAchievementList(){
 	ImGuiIO& io = ImGui::GetIO();
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); // Set window background to black
 	ImGui::Begin("AchievementManagerUI", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove);
@@ -122,7 +122,7 @@ void drawAchievementList(){
 	ImGui::End();
 }
 
-void drawInitPopup(){
+void DrawInitPopup(){
 	static auto grayCol = ImVec4(.75, .75, .75, 1);
 	static auto greenCol = ImVec4(0, .75, 0, 1);
 

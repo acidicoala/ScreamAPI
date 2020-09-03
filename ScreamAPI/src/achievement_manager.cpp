@@ -176,7 +176,7 @@ void EOS_CALL queryPlayerAchievementsComplete(const EOS_Achievements_OnQueryPlay
 	}
 
 	// Initialize Overlay
-	Overlay::init(ScreamAPI::thisDLL, achievements, unlockAchievement);
+	Overlay::Init(ScreamAPI::thisDLL, achievements, unlockAchievement);
 
 }
 
@@ -243,9 +243,8 @@ void EOS_CALL queryDefinitionsComplete(const EOS_Achievements_OnQueryDefinitions
 											 nullptr,
 											 queryPlayerAchievementsComplete);
 
-	Overlay::init(ScreamAPI::thisDLL, achievements, unlockAchievement);
-	// Download the files and load the textures in a background thread to keep UI responsive
-	Loader::asyncLoadIcons(achievements);
+	Overlay::Init(ScreamAPI::thisDLL, achievements, unlockAchievement);
+	Loader::AsyncLoadIcons(achievements);
 }
 
 void queryAchievementDefinitions(){

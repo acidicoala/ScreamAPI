@@ -4,6 +4,6 @@
 
 namespace Loader{
 
-void asyncLoadIcons(Achievements& achievements);
+void AsyncLoadIcons(Achievements& achievements);
 
 }
