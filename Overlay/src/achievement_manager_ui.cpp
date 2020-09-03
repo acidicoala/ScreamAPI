@@ -20,8 +20,8 @@ void initImGui(void* pWindow, ID3D11Device* pD3D11Device, ID3D11DeviceContext* p
 	// Hopefully every Windows PC should have calibri font installed
 	auto fontPath = "C:\\Windows\\Fonts\\calibri.ttf";
 
-	auto io = ImGui::GetIO();
-	io.IniFilename = NULL; // FIXME: Why is this not working?
+	auto& io = ImGui::GetIO(); // It's important to get reference (auto&) instead of copy (auto)
+	io.IniFilename = NULL;
 	io.Fonts->AddFontFromFileTTF(fontPath, mainFontSize);
 
 	{// Init big font
@@ -39,8 +39,8 @@ void initImGui(void* pWindow, ID3D11Device* pD3D11Device, ID3D11DeviceContext* p
 }
 
 void shutdownImGui(){
-	ImGui_ImplWin32_Shutdown();
 	ImGui_ImplDX11_Shutdown();
+	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 	Logger::ovrly("ImGui: Shutdown");
 }
