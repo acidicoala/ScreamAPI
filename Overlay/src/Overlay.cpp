@@ -134,8 +134,8 @@ HRESULT WINAPI hookedResizeBuffer(IDXGISwapChain* pThis, UINT BufferCount, UINT 
 void InitThread(LPVOID lpReserved) {
 #pragma warning(suppress: 26812)
 	auto result = kiero::init(kiero::RenderType::D3D11);
-	Logger::debug("%s: result = %d", __func__, result);
 	if(result != kiero::Status::Success){
+		Logger::debug("Kiero: result code = %d", result);
 		if(result == kiero::Status::ModuleNotFoundError)
 			Logger::error("Failed to initialize kiero. Are you sure you are running a DirectX 11 game?");
 		else

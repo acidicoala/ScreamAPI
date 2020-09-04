@@ -43,11 +43,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyEntitlementByIndex(EOS_HEcom Handle, 
 	Logger::debug(__func__);
 
 	if(Config::EnableEntitlementUnlocker()){
-		size_t idLength = entitlementIDs.at(Options->EntitlementIndex).length() + 1;
-		const char* idRaw = entitlementIDs.at(Options->EntitlementIndex).c_str();
-
-		char* id = new char[idLength];  // Don't forget to free the heap
-		strcpy_s(id, idLength, idRaw);
+		const char* id = Util::copy_c_string(entitlementIDs.at(Options->EntitlementIndex).c_str());
 
 		auto entitlement = new EOS_Ecom_Entitlement(); // Don't forget to free the heap
 		entitlement->ApiVersion = EOS_ECOM_ENTITLEMENT_API_LATEST;
@@ -58,7 +54,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyEntitlementByIndex(EOS_HEcom Handle, 
 		entitlement->EndTimestamp = -1;
 		entitlement->ServerIndex = -1;
 
-		Logger::dlc(" - Entitlement ID: %s", entitlement->EntitlementId);
+		Logger::dlc("\t""Entitlement ID: %s", entitlement->EntitlementId);
 
 		*OutEntitlement = entitlement;
 		return EOS_EResult::EOS_Success;
@@ -66,18 +62,18 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyEntitlementByIndex(EOS_HEcom Handle, 
 		static auto proxy = ScreamAPI::proxyFunction(&EOS_Ecom_CopyEntitlementByIndex, __func__);
 		auto result = proxy(Handle, Options, OutEntitlement);
 		Logger::dlc("Proxy CopyEntitlementByIndex:");
-		Logger::dlc(" - EntitlementId: %s", (*OutEntitlement)->EntitlementId);
-		Logger::dlc(" - CatalogItemId: %s", (*OutEntitlement)->CatalogItemId);
-		Logger::dlc(" - EntitlementName: %s", (*OutEntitlement)->EntitlementName);
-		Logger::dlc(" - bRedeemed: %d", (*OutEntitlement)->bRedeemed);
-		Logger::dlc(" - ServerIndex: %d", (*OutEntitlement)->ServerIndex);
-		Logger::dlc(" - EndTimestamp: %ll", (*OutEntitlement)->EndTimestamp);
+		Logger::dlc("\t""EntitlementId: %s", (*OutEntitlement)->EntitlementId);
+		Logger::dlc("\t""CatalogItemId: %s", (*OutEntitlement)->CatalogItemId);
+		Logger::dlc("\t""EntitlementName: %s", (*OutEntitlement)->EntitlementName);
+		Logger::dlc("\t""bRedeemed: %d", (*OutEntitlement)->bRedeemed);
+		Logger::dlc("\t""ServerIndex: %d", (*OutEntitlement)->ServerIndex);
+		Logger::dlc("\t""EndTimestamp: %ll", (*OutEntitlement)->EndTimestamp);
 		return result;
 	}
 }
 
 EOS_DECLARE_FUNC(void) EOS_Ecom_Entitlement_Release(EOS_Ecom_Entitlement* Entitlement){
-	Logger::debug(__func__);
+	//Logger::debug(__func__);
 
 	if(Config::EnableEntitlementUnlocker()){
 		// Free the heap

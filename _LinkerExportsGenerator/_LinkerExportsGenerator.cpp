@@ -79,29 +79,48 @@ std::vector<std::string> getExportFunctions(std::wstring dllPath){
 	return exportFunctions;
 }
 
+
+// #define TRANSACTION_UNLOCKER
+
 // TODO: This list is getting out of hand. I have to come up with a more convenient solution
 std::vector<std::string> overrideFunctions{
 	// Common
 	"EOS_EResult_ToString",
 	"EOS_EpicAccountId_IsValid",
+
 	// SDK
 	"EOS_Platform_GetAuthInterface",
 	"EOS_Platform_GetAchievementsInterface",
 	"EOS_Platform_GetConnectInterface",
+
 	// Platform
 	"EOS_Platform_Create",
+
 	// Auth
 	"EOS_Auth_Login",
 	"EOS_Auth_GetLoggedInAccountByIndex",
+
 	// Connect
 	"EOS_Connect_GetLoggedInUserByIndex",
-	// Ecom
+
+	// Ecom Items & Entitlements
 	"EOS_Ecom_QueryOwnership",
 	"EOS_Ecom_QueryEntitlements",
 	"EOS_Ecom_GetEntitlementsCount",
 	"EOS_Ecom_CopyEntitlementByIndex",
 	"EOS_Ecom_Entitlement_Release",
+
+	// Ecom Transactions
 	"EOS_Ecom_Checkout",
+#ifdef TRANSACTION_UNLOCKER
+	"EOS_Ecom_CopyTransactionByIndex",
+	"EOS_Ecom_GetTransactionCount",
+	"EOS_Ecom_Transaction_GetTransactionId",
+	"EOS_Ecom_Transaction_GetEntitlementsCount",
+	"EOS_Ecom_Transaction_CopyEntitlementByIndex",
+	"EOS_Ecom_Transaction_Release",
+#endif // TRANSACTION_UNLOCKER
+
 	// Achievements
 	"EOS_Achievements_QueryDefinitions",
 	"EOS_Achievements_GetAchievementDefinitionCount",
@@ -113,13 +132,7 @@ std::vector<std::string> overrideFunctions{
 	"EOS_Achievements_CopyPlayerAchievementByIndex",
 	"EOS_Achievements_CopyPlayerAchievementByAchievementId",
 	"EOS_Achievements_PlayerAchievement_Release",
-	"EOS_Achievements_UnlockAchievements",
-	// Achievements (Deprecated)
-	/*"EOS_Achievements_CopyAchievementDefinitionByIndex",
-	"EOS_Achievements_GetUnlockedAchievementCount",
-	"EOS_Achievements_CopyUnlockedAchievementByIndex",
-	"EOS_Achievements_CopyUnlockedAchievementByAchievementId",
-	"EOS_Achievements_AddNotifyAchievementsUnlocked"*/
+	"EOS_Achievements_UnlockAchievements"
 };
 
 enum class Architecture{ Win32, Win64 };

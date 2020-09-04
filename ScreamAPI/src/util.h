@@ -16,5 +16,6 @@ EOS_HConnect getHConnect();
 EOS_HAchievements getHAchievements();
 EOS_EpicAccountId getEpicAccountId();
 EOS_ProductUserId getProductUserId();
+char* copy_c_string(const char* c_string);
 
 }

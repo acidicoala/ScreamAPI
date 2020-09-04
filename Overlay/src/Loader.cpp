@@ -23,7 +23,6 @@ namespace Loader{
 
 #define CACHE_DIR ".ScreamApi_Cache"
 
-std::vector<std::future<void>>asyncJobs;
 
 /**
  * Initialize the loader and its dependencies.
@@ -189,6 +188,8 @@ void downloadIconIfNecessary(Overlay_Achievement& achievement){
 // Asynchronously downloads the icons and loads them into textures in order to keep UI responsive
 void AsyncLoadIcons(){
 	if(init()){
+		static std::vector<std::future<void>>asyncJobs;
+
 		for(auto& achievement : *Overlay::achievements){
 			asyncJobs.emplace_back(std::async(std::launch::async, downloadIconIfNecessary, std::ref(achievement)));
 		}

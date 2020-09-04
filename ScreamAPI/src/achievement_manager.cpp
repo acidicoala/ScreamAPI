@@ -12,22 +12,6 @@ namespace AchievementManager{
 
 Achievements achievements;
 
-/**
- * A small utility function that copies the c string into a newly allocated memory
- * @return Pointer to the new string
- */
-char* copy_c_string(const char* c_string){
-	// Get string size
-	auto string_size = strlen(c_string) + 1;// +1 for null terminator
-
-	// Allocate enough memory for the new string
-	char* new_string = new char[string_size];
-
-	// Copy the string contents
-	strcpy_s(new_string, string_size, c_string);
-
-	return new_string;
-}
 
 void printAchievementDefinition(EOS_Achievements_DefinitionV2* definition){
 	if(definition == nullptr){
