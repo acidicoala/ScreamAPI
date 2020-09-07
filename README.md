@@ -1,16 +1,18 @@
-# ScreamAPI
+﻿# ScreamAPI
 #### Legit DLC & Achievement Unlocker for Epic Games
 Welcome to the ScreamAPI repository.
 
-## Readme
-Readme can be found on the [official ScreamAPI forum topic](https://cs.rin.ru/forum/viewtopic.php?f=29&t=106474)
+## Links
+
+|![](https://i.ibb.co/zfg4kmg/cs.png) [**Support Forum**](https://cs.rin.ru/forum/viewtopic.php?f=29&t=106474)|![](https://i.ibb.co/9YrFrMH/circle-icon-16px.png) [**Download Stats**](https://scream-api-stats.web.app/)|![](https://i.ibb.co/qBZjbdc/sheets.png) [**Compatibility Spreadsheet**](https://docs.google.com/spreadsheets/d/1yCm2KWSFlV283SI35QpI86v68bFnK7MwxicKBEihIJM)|![](https://i.ibb.co/mHytW8F/forms-16px.png) [**Test result submission form**](https://docs.google.com/forms/d/e/1FAIpQLSeEGotx8ThaHQK8ywW_UPwTJysUZWnCPIDNBJjNpvXAYLPBEg/viewform)|
+|---|---|---|---|---|
 
 ## Acknowledgements
 
 This project makes use of several open-source libraries listed below:
 
 * [inih](https://github.com/benhoyt/inih)
-* [stb](https://github.com/nothings/stb/blob/master/stb_image.h)
+* [stb](https://github.com/nothings/stb)
 * [curl](https://github.com/curl/curl)
 * [kiero](https://github.com/Rebzzel/kiero)
 * [imgui](https://github.com/ocornut/imgui)
