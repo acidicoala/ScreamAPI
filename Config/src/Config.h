@@ -17,6 +17,7 @@ bool LogDLCQueries();
 bool LogAchievementQueries();
 bool LogOverlay();
 // Overlay
+bool LoadIcons();
 bool CacheIcons();
 bool ValidateIcons();
 // DLC

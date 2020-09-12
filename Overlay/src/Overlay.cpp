@@ -102,7 +102,8 @@ HRESULT WINAPI hookedPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT
 
 	ImGui::Render();
 
-	pContext->OMSetRenderTargets(1, &gRenderTargetView, NULL);
+	if(gRenderTargetView)
+		pContext->OMSetRenderTargets(1, &gRenderTargetView, NULL);
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 	return originalPresent(pSwapChain, SyncInterval, Flags);
@@ -114,7 +115,9 @@ HRESULT WINAPI hookedPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT
  * Without it, the game will crash on window resize.
  */
 HRESULT WINAPI hookedResizeBuffer(IDXGISwapChain* pThis, UINT BufferCount, UINT Width, UINT Height, DXGI_FORMAT NewFormat, UINT SwapChainFlags){
-	//AchievementManagerUI::ShutdownImGui();
+	Logger::debug("hookedResizeBuffer");
+
+	AchievementManagerUI::ShutdownImGui();
 
 	// Restore original WndProc. Crashes without it.
 	SetWindowLongPtr(gWindow, GWLP_WNDPROC, (LONG_PTR) originalWindowProc);
@@ -131,7 +134,7 @@ HRESULT WINAPI hookedResizeBuffer(IDXGISwapChain* pThis, UINT BufferCount, UINT 
 #define D3D11_Present		8
 #define D3D11_ResizeBuffers	13
 
-void InitThread(LPVOID lpReserved) {
+void asyncInit(LPVOID reserved) {
 #pragma warning(suppress: 26812)
 	auto result = kiero::init(kiero::RenderType::D3D11);
 	if(result != kiero::Status::Success){
@@ -163,7 +166,11 @@ void InitThread(LPVOID lpReserved) {
 void Init(HMODULE hMod, Achievements* pAchievements, UnlockAchievementFunction* fnUnlockAchievement) {
 	achievements = pAchievements;
 	unlockAchievement = fnUnlockAchievement;
-	std::thread(InitThread, nullptr).detach();
+
+	std::thread(asyncInit, nullptr).detach();
+	//static auto initJob = std::async(std::launch::async, [&]() {
+	//	asyncInit();
+	//});
 }
 
 void Shutdown() {

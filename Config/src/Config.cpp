@@ -17,6 +17,7 @@ bool bLogDLCQueries = true;
 bool bLogAchievementQueries = false;
 bool bLogOverlay = false;
 // Overlay
+bool bLoadIcons = true;
 bool bCacheIcons = true;
 bool bValidateIcons = true;
 // DLC
@@ -39,6 +40,7 @@ std::map<std::string, std::map<std::string, void*>> configMap = {
 		{"LogOverlay", &bLogOverlay}
 	}},
 	{"Overlay",{
+		{"LoadIcons", &bLoadIcons},
 		{"CacheIcons", &bCacheIcons},
 		{"ValidateIcons", &bValidateIcons},
 	}},
@@ -92,7 +94,7 @@ int iniHandler(void* user, const char* section_raw, const char* name_raw, const 
 
 void init(const std::wstring iniPath){
 	int parseResult = ini_wparse(iniPath.c_str(), iniHandler, 0);
-	
+
 	//if(parseResult == -1)
 		//showError(L"Error opening " + iniPath + L"\nUsing defaults");
 }
@@ -104,11 +106,12 @@ bool EnableOverlay(){ return bEnableOverlay; }
 // Logging
 bool EnableLogging(){ return bEnableLogging; }
 std::string LogLevel(){ return sLogLevel; }
-std::string LogFilename() {return sLogFilename;}
+std::string LogFilename() { return sLogFilename; }
 bool LogDLCQueries(){ return bLogDLCQueries; }
 bool LogAchievementQueries(){ return bLogAchievementQueries; }
 bool LogOverlay(){ return bLogOverlay; }
 // Overlay
+bool LoadIcons() { return bLoadIcons; }
 bool CacheIcons() { return bCacheIcons; }
 bool ValidateIcons(){ return bValidateIcons; }
 // DLC

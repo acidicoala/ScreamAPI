@@ -55,7 +55,7 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryOwnership(EOS_HEcom Handle, const EOS_Ecom_
 
 		Logger::dlc("Game requested ownership of %d items:", Options->CatalogItemIdCount);
 		for(uint32_t i = 0; i < Options->CatalogItemIdCount; i++)
-			Logger::dlc(" - Item ID: %s", Options->CatalogItemIds[i]);
+			Logger::dlc("\t""Item ID: %s", Options->CatalogItemIds[i]);
 	} else{
 		Logger::warn("Game requested DLC ownership, but without Options parameter");
 	}

@@ -105,10 +105,19 @@ EOS_DECLARE_FUNC(void) EOS_Achievements_PlayerAchievement_Release(EOS_Achievemen
 EOS_DECLARE_FUNC(void) EOS_Achievements_UnlockAchievements(EOS_HAchievements Handle, const EOS_Achievements_UnlockAchievementsOptions* Options, void* ClientData, const EOS_Achievements_OnUnlockAchievementsCompleteCallback CompletionDelegate){
 	Logger::debug(__func__);
 
-	Logger::ach("Game requested to unlock %d achievement(s)", Options->AchievementsCount);
+	Logger::info("Game requested to unlock %d achievement(s)", Options->AchievementsCount);
 	for(unsigned int i = 0; i < Options->AchievementsCount; i++){
-		Logger::ach("\t""Achievement ID: %s", Options->AchievementIds[i]);
+		Logger::info("\t""Achievement ID: %s", Options->AchievementIds[i]);
+		AchievementManager::findAchievement(Options->AchievementIds[i], [](Overlay_Achievement& achievement){
+			// Setting it to unlocked is a bit optimistic, since the UnlockAchievements function
+			// may fail. But it is a very rare scenario and no harm is done if it indeed occurs.
+			// And I don't find it necessary to write a custom UnlockAchievements delegate
+			// in order to implement a proper solution.
+			achievement.UnlockState = UnlockState::Unlocked;
+		});
 	}
+
+	
 
 	static auto proxy = ScreamAPI::proxyFunction(&EOS_Achievements_UnlockAchievements, __func__);
 	proxy(Handle, Options, ClientData, CompletionDelegate);

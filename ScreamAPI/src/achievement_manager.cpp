@@ -12,7 +12,6 @@ namespace AchievementManager{
 
 Achievements achievements;
 
-
 void printAchievementDefinition(EOS_Achievements_DefinitionV2* definition){
 	if(definition == nullptr){
 		Logger::ach("Invalid Achievement Definition");
@@ -69,6 +68,24 @@ void printPlayerAchievement(EOS_Achievements_PlayerAchievement* achievement){
 		// Escape whole string because of % characters in URLs
 		Logger::ach("%s", ss.str().c_str());
 	}
+}
+
+/**
+ * Searches the overlay achievements vector and executes the callback function
+ * on the achievment with the given id, if it exists. Otherwise prints error log
+ */
+void findAchievement(const char* achievementID, std::function<void(Overlay_Achievement&)> callback){
+	// Find the corresponding achievement in our achievement array
+	for(auto& achievement : achievements){
+		// Compare by AchievementId
+		if(!strcmp(achievement.AchievementId, achievementID)){
+			// Found it
+			callback(achievement);
+			return;
+		}
+	}
+
+	Logger::error("Could not find achievement with id: %s", achievementID);
 }
 
 /**
@@ -144,15 +161,9 @@ void EOS_CALL queryPlayerAchievementsComplete(const EOS_Achievements_OnQueryPlay
 
 		// Update our achievement array if this achievement is unlocked
 		if(OutAchievement->UnlockTime != -1){
-			// Find the corresponding achievement in our achievement array
-			for(auto& achievement : achievements){
-				// Compare by AchievementId
-				if(!strcmp(achievement.AchievementId, OutAchievement->AchievementId)){
-					// Found it
-					achievement.UnlockState = UnlockState::Unlocked;
-					break;
-				}
-			}
+			findAchievement(OutAchievement->AchievementId, [](Overlay_Achievement& achievement){
+				achievement.UnlockState = UnlockState::Unlocked;
+			});
 		}
 
 		EOS_Achievements_PlayerAchievement_Release(OutAchievement);
@@ -165,7 +176,7 @@ void EOS_CALL queryPlayerAchievementsComplete(const EOS_Achievements_OnQueryPlay
 /**
  * A callback function that is executed when EOS has done querying achievement definitions at out request.
  *
- * @see queryAchievements
+ * @see queryAchievementDefinitions
  * @see EOS_Achievements_QueryDefinitions
  */
 void EOS_CALL queryDefinitionsComplete(const EOS_Achievements_OnQueryDefinitionsCompleteCallbackInfo* Data){

@@ -214,10 +214,10 @@
     <ClCompile Include="src\eos-impl\eos_connect.cpp">
       <Filter>Source Files\eos-impl</Filter>
     </ClCompile>
-    <ClCompile Include="util.cpp">
+    <ClCompile Include="src\achievement_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\achievement_manager.cpp">
+    <ClCompile Include="src\util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

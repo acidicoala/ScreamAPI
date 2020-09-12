@@ -13,10 +13,10 @@ namespace ScreamAPI{
 HMODULE thisDLL = nullptr;
 HMODULE originalDLL = nullptr;
 EOS_HPlatform hPlatform = nullptr;
+bool isScreamAPIinitialized = false;
 
 void ScreamAPI::init(HMODULE hModule){
 	// Check if DLL is already initialized
-	static bool isScreamAPIinitialized = false;
 	if(isScreamAPIinitialized) // Do we really need to check that?
 		return;
 	else
@@ -27,7 +27,7 @@ void ScreamAPI::init(HMODULE hModule){
 	// Initialize Config
 	auto iniPath = getDLLparentDir(hModule) / SCREAM_API_CONFIG;
 	Config::init(iniPath.generic_wstring());
-	
+
 	// Initialize Logger
 	auto logPath = getDLLparentDir(hModule) / Config::LogFilename();
 	Logger::init(Config::EnableLogging(),
@@ -60,8 +60,10 @@ void ScreamAPI::checkSdkVersion(const int32_t apiVersion, const int32_t maxVersi
 }
 
 void ScreamAPI::destroy(){
-	FreeLibrary(originalDLL);
+	Logger::info("Game requested to free the EOS SDK");
 	Overlay::Shutdown();
+	FreeLibrary(originalDLL);
+	isScreamAPIinitialized = false;
 }
 
 }

@@ -23,14 +23,20 @@ namespace Loader{
 
 #define CACHE_DIR ".ScreamApi_Cache"
 
-
 /**
  * Initialize the loader and its dependencies.
  * @return true	if initialization was successfull
  *         false if there was an error in initialization
  */
 bool init(){
-	curl_global_init(CURL_GLOBAL_ALL);
+	// Init curl first
+#pragma warning(suppress: 26812) // Unscoped enum...
+	CURLcode errorCode = curl_global_init(CURL_GLOBAL_ALL);
+	if(errorCode != CURLE_OK){
+		// Something went wrong
+		Logger::error("Loader: Failed to initialize curl");
+		return false;
+	}
 
 	// Create directory if it doesn't exist already
 	auto success = CreateDirectoryA(CACHE_DIR, NULL); // FIXME: Non-unicode function
@@ -61,10 +67,11 @@ std::string getIconPath(Overlay_Achievement& achievement){
 
 // Simple helper function to load an image into a DX11 texture with common settings
 void loadIconTexture(Overlay_Achievement& achievement){
-	Logger::debug("Loading icon texure for achievement: %s", achievement.AchievementId);
 	static std::mutex loadIconMutex;
 	{ // Code block for lock_guard destructor to release lock
 		std::lock_guard<std::mutex> guard(loadIconMutex);
+
+		Logger::debug("Loading icon texure for achievement: %s", achievement.AchievementId);
 		auto iconPath = getIconPath(achievement);
 
 		// Load from disk into a raw RGBA buffer
@@ -78,34 +85,41 @@ void loadIconTexture(Overlay_Achievement& achievement){
 
 		// Create texture
 		D3D11_TEXTURE2D_DESC desc;
-		ZeroMemory(&desc, sizeof(desc));
 		desc.Width = image_width;
 		desc.Height = image_height;
 		desc.MipLevels = 1;
 		desc.ArraySize = 1;
 		desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		desc.SampleDesc.Count = 1;
+		desc.SampleDesc.Quality = 0;
 		desc.Usage = D3D11_USAGE_DEFAULT;
 		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 		desc.CPUAccessFlags = 0;
+		desc.MiscFlags = 0;
 
-		ID3D11Texture2D* pTexture = NULL;
+		ID3D11Texture2D* pTexture = nullptr;
 		D3D11_SUBRESOURCE_DATA subResource;
 		subResource.pSysMem = image_data;
-		subResource.SysMemPitch = desc.Width * 4;
+		subResource.SysMemPitch = static_cast<UINT>(desc.Width * 4);
 		subResource.SysMemSlicePitch = 0;
-		Overlay::gD3D11Device->CreateTexture2D(&desc, &subResource, &pTexture);
 
-		// Create texture view
-		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-		ZeroMemory(&srvDesc, sizeof(srvDesc));
-		srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-		srvDesc.Texture2D.MipLevels = desc.MipLevels;
-		srvDesc.Texture2D.MostDetailedMip = 0;
-#pragma warning(suppress: 6387)
-		Overlay::gD3D11Device->CreateShaderResourceView(pTexture, &srvDesc, &achievement.IconTexture);
-		pTexture->Release();
+		// FIXME: This function call somtimes messes up the Railway Empire. No idea why.
+		auto result = Overlay::gD3D11Device->CreateTexture2D(&desc, &subResource, &pTexture);
+
+		if(SUCCEEDED(result)){
+			// Create texture view
+			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+			memset(&srvDesc, 0, sizeof(srvDesc));
+			srvDesc.Format = desc.Format;
+			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			srvDesc.Texture2D.MipLevels = desc.MipLevels;
+			result = Overlay::gD3D11Device->CreateShaderResourceView(pTexture, &srvDesc, &achievement.IconTexture);
+			pTexture->Release();
+			if(FAILED(result))
+				Logger::error("Failed to create shader resource view. Error code: %x", result);
+		} else {
+			Logger::error("Failed to load the texture. Error code: %x", result);
+		}
 
 		stbi_image_free(image_data);
 	}
@@ -167,6 +181,8 @@ void downloadIconIfNecessary(Overlay_Achievement& achievement){
 				// Download the file again if the local version is different from online one
 				downloadFile(achievement.UnlockedIconURL, iconPath.c_str());
 			}
+		} else {
+			Logger::ovrly("Using cached icon: %s", iconPath.c_str());
 		}
 	} else if(GetLastError() == ERROR_FILE_NOT_FOUND){
 		// File doesn't exist
@@ -187,7 +203,7 @@ void downloadIconIfNecessary(Overlay_Achievement& achievement){
 }
 // Asynchronously downloads the icons and loads them into textures in order to keep UI responsive
 void AsyncLoadIcons(){
-	if(init()){
+	if(Config::LoadIcons() && init()){
 		static std::vector<std::future<void>>asyncJobs;
 
 		for(auto& achievement : *Overlay::achievements){
