@@ -56,7 +56,7 @@ int iniHandler(void* user, const char* section_raw, const char* name_raw, const 
 
 	try{
 		if(section == "DLC_List"){
-			// TODO: ID validation?
+			// TODO: separate lists for allowed/blocked DLCs
 			if(stringToBool(value)) // Add to the list only IDs set to True
 				vDLC_List.push_back(name);
 			return TRUE;

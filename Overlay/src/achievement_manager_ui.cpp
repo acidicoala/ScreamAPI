@@ -61,7 +61,6 @@ void DrawAchievementList(){
 	ImGui::SetWindowPos(ImVec2());
 	ImGui::SetWindowSize(ImVec2(400, io.DisplaySize.y));
 
-	//FitTextToWindow;
 	FitTextToWindow(ImVec4(0, 1, 0, 1), "ScreamAPI Achievement Manager");
 
 	ImGui::BeginChild("AchievementList", ImVec2(0, 0), false);

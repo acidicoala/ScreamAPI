@@ -109,10 +109,8 @@ EOS_DECLARE_FUNC(void) EOS_Achievements_UnlockAchievements(EOS_HAchievements Han
 	for(unsigned int i = 0; i < Options->AchievementsCount; i++){
 		Logger::info("\t""Achievement ID: %s", Options->AchievementIds[i]);
 		AchievementManager::findAchievement(Options->AchievementIds[i], [](Overlay_Achievement& achievement){
-			// Setting it to unlocked is a bit optimistic, since the UnlockAchievements function
-			// may fail. But it is a very rare scenario and no harm is done if it indeed occurs.
-			// And I don't find it necessary to write a custom UnlockAchievements delegate
-			// in order to implement a proper solution.
+			// TODO: Use EOS_Achievements_AddNotifyAchievementsUnlockedV2,
+			// since EOS_Achievements_UnlockAchievements may fail
 			achievement.UnlockState = UnlockState::Unlocked;
 		});
 	}
@@ -122,13 +120,3 @@ EOS_DECLARE_FUNC(void) EOS_Achievements_UnlockAchievements(EOS_HAchievements Han
 	static auto proxy = ScreamAPI::proxyFunction(&EOS_Achievements_UnlockAchievements, __func__);
 	proxy(Handle, Options, ClientData, CompletionDelegate);
 }
-
-// Deprecated
-/*
-EOS_DECLARE_FUNC(EOS_EResult) EOS_Achievements_CopyAchievementDefinitionByIndex(EOS_HAchievements Handle, const EOS_Achievements_CopyAchievementDefinitionByIndexOptions* Options, EOS_Achievements_Definition** OutDefinition);
-EOS_DECLARE_FUNC(EOS_EResult) EOS_Achievements_CopyAchievementDefinitionByAchievementId(EOS_HAchievements Handle, const EOS_Achievements_CopyAchievementDefinitionByAchievementIdOptions* Options, EOS_Achievements_Definition** OutDefinition);
-EOS_DECLARE_FUNC(uint32_t) EOS_Achievements_GetUnlockedAchievementCount(EOS_HAchievements Handle, const EOS_Achievements_GetUnlockedAchievementCountOptions* Options);
-EOS_DECLARE_FUNC(EOS_EResult) EOS_Achievements_CopyUnlockedAchievementByIndex(EOS_HAchievements Handle, const EOS_Achievements_CopyUnlockedAchievementByIndexOptions* Options, EOS_Achievements_UnlockedAchievement** OutAchievement);
-EOS_DECLARE_FUNC(EOS_EResult) EOS_Achievements_CopyUnlockedAchievementByAchievementId(EOS_HAchievements Handle, const EOS_Achievements_CopyUnlockedAchievementByAchievementIdOptions* Options, EOS_Achievements_UnlockedAchievement** OutAchievement);
-EOS_DECLARE_FUNC(EOS_NotificationId) EOS_Achievements_AddNotifyAchievementsUnlocked(EOS_HAchievements Handle, const EOS_Achievements_AddNotifyAchievementsUnlockedOptions* Options, void* ClientData, const EOS_Achievements_OnAchievementsUnlockedCallback NotificationFn);
-*/

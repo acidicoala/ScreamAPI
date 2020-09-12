@@ -34,11 +34,11 @@ bool init(){
 	CURLcode errorCode = curl_global_init(CURL_GLOBAL_ALL);
 	if(errorCode != CURLE_OK){
 		// Something went wrong
-		Logger::error("Loader: Failed to initialize curl");
+		Logger::error("Loader: Failed to initialize curl. Error code: %d", errorCode);
 		return false;
 	}
 
-	// Create directory if it doesn't exist already
+	// Create directory if it doesn't already exist 
 	auto success = CreateDirectoryA(CACHE_DIR, NULL); // FIXME: Non-unicode function
 	if(success || GetLastError() == ERROR_ALREADY_EXISTS){
 		Logger::ovrly("Loader: Successfully initialized");
@@ -71,7 +71,7 @@ void loadIconTexture(Overlay_Achievement& achievement){
 	{ // Code block for lock_guard destructor to release lock
 		std::lock_guard<std::mutex> guard(loadIconMutex);
 
-		Logger::debug("Loading icon texure for achievement: %s", achievement.AchievementId);
+		Logger::ovrly("Loading icon texure for achievement: %s", achievement.AchievementId);
 		auto iconPath = getIconPath(achievement);
 
 		// Load from disk into a raw RGBA buffer
