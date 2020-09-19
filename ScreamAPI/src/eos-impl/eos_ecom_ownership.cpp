@@ -26,8 +26,7 @@ void EOS_CALL OwnershipCompletionDelegate(const EOS_Ecom_QueryOwnershipCallbackI
 		auto item = const_cast <EOS_Ecom_ItemOwnership*>(modifiedData->ItemOwnership + i);
 
 		// Search the id in DLC list from the config
-		bool isInOwnedList = Util::vectorContains<std::string>(Config::DLC_List(),
-															   modifiedData->ItemOwnership[i].Id);
+		bool isInOwnedList = Util::vectorContains<std::string>(Config::DLC_List(), modifiedData->ItemOwnership[i].Id);
 
 		// Determine if this DLC should be unlocked
 		bool unlocked = Config::UnlockAllDLC() || isInOwnedList;

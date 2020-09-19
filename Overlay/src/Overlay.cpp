@@ -134,7 +134,7 @@ HRESULT WINAPI hookedResizeBuffer(IDXGISwapChain* pThis, UINT BufferCount, UINT 
 #define D3D11_Present		8
 #define D3D11_ResizeBuffers	13
 
-void asyncInit(LPVOID reserved) {
+void asyncInit() {
 #pragma warning(suppress: 26812)
 	auto result = kiero::init(kiero::RenderType::D3D11);
 	if(result != kiero::Status::Success){
@@ -167,10 +167,10 @@ void Init(HMODULE hMod, Achievements* pAchievements, UnlockAchievementFunction* 
 	achievements = pAchievements;
 	unlockAchievement = fnUnlockAchievement;
 
-	std::thread(asyncInit, nullptr).detach();
-	//static auto initJob = std::async(std::launch::async, [&]() {
-	//	asyncInit();
-	//});
+	// Init asynchronously to keep the main thread going
+	static auto initJob = std::async(std::launch::async, [&]() {
+		asyncInit();
+	});
 }
 
 void Shutdown() {

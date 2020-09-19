@@ -92,6 +92,7 @@ std::vector<std::string> overrideFunctions{
 	"EOS_Platform_GetAuthInterface",
 	"EOS_Platform_GetAchievementsInterface",
 	"EOS_Platform_GetConnectInterface",
+	"EOS_Platform_GetSessionsInterface",
 
 	// Platform
 	"EOS_Platform_Create",
@@ -101,6 +102,7 @@ std::vector<std::string> overrideFunctions{
 	"EOS_Auth_GetLoggedInAccountByIndex",
 
 	// Connect
+	"EOS_Connect_Login",
 	"EOS_Connect_GetLoggedInUserByIndex",
 
 	// Ecom Items & Entitlements

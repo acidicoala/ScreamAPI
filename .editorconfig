@@ -1,0 +1,9 @@
+# https://docs.microsoft.com/en-us/visualstudio/ide/cpp-editorconfig-properties
+
+[*.{c++,cc,cpp,cppm,cxx,h,h++,hh,hpp,hxx,inl,ipp,ixx,tlh,tli}]
+cpp_indent_namespace_contents = false
+indent_size = 4
+indent_style = tabs
+
+[*.{c++,cc,cpp,cppm,cxx,h,h++,hh,hpp,hxx,inl,ipp,ixx,tlh,tli}]
+vc_generate_documentation_comments = none

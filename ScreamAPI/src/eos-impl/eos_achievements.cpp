@@ -56,17 +56,6 @@ EOS_DECLARE_FUNC(void) EOS_Achievements_QueryPlayerAchievements(EOS_HAchievement
 
 	static auto proxy = ScreamAPI::proxyFunction(&EOS_Achievements_QueryPlayerAchievements, __func__);
 	proxy(Handle, Options, ClientData, CompletionDelegate);
-
-	// TODO: Move this up the execution chain for earlier overlay initialization.
-	// Problem is, we have to call it only after EOS_EpicAccountId has been initialized
-	// And the game doesn't call the AuthLogin function every time,
-	// so I don't know where else I can hook it from. But at least we can know that
-	// EOS_EpicAccountId is available upon EOS_Achievements_QueryPlayerAchievements call.
-	static bool init = false;
-	if(!init && Config::EnableOverlay()){
-		init = true;
-		AchievementManager::queryAchievementDefinitions();
-	}
 }
 
 EOS_DECLARE_FUNC(uint32_t) EOS_Achievements_GetPlayerAchievementCount(EOS_HAchievements Handle, const EOS_Achievements_GetPlayerAchievementCountOptions* Options){
@@ -114,8 +103,6 @@ EOS_DECLARE_FUNC(void) EOS_Achievements_UnlockAchievements(EOS_HAchievements Han
 			achievement.UnlockState = UnlockState::Unlocked;
 		});
 	}
-
-	
 
 	static auto proxy = ScreamAPI::proxyFunction(&EOS_Achievements_UnlockAchievements, __func__);
 	proxy(Handle, Options, ClientData, CompletionDelegate);

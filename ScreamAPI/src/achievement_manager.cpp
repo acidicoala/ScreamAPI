@@ -252,4 +252,13 @@ void queryAchievementDefinitions(){
 									  queryDefinitionsComplete);
 }
 
+void init() {
+	static bool init = false;
+
+	if (!init && Config::EnableOverlay()) {
+		init = true;
+		queryAchievementDefinitions();
+	}
+}
+
 }
