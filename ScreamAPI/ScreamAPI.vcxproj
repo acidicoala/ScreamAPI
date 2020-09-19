@@ -94,7 +94,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\ScreamAPI.props" />
-    <None Include="ScreamAPI.ini" />
     <None Include="src\eos-sdk\eos_achievements_types_deprecated.inl" />
     <None Include="src\eos-sdk\eos_leaderboards_types_deprecated.inl" />
   </ItemGroup>

@@ -228,9 +228,6 @@
     <None Include="src\eos-sdk\eos_leaderboards_types_deprecated.inl">
       <Filter>Header Files\eos-sdk</Filter>
     </None>
-    <None Include="ScreamAPI.ini">
-      <Filter>Resources</Filter>
-    </None>
     <None Include="resources\ScreamAPI.props">
       <Filter>Resources</Filter>
     </None>
