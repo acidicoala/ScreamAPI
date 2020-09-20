@@ -1,7 +1,7 @@
 #pragma once
 
 #pragma comment(linker, "/export:EOS_Achievements_AddNotifyAchievementsUnlocked=EOSSDK-Win64-Shipping_o.EOS_Achievements_AddNotifyAchievementsUnlocked")
-#pragma comment(linker, "/export:EOS_Achievements_AddNotifyAchievementsUnlockedV2=EOSSDK-Win64-Shipping_o.EOS_Achievements_AddNotifyAchievementsUnlockedV2")
+// #pragma comment(linker, "/export:EOS_Achievements_AddNotifyAchievementsUnlockedV2=EOSSDK-Win64-Shipping_o.EOS_Achievements_AddNotifyAchievementsUnlockedV2")
 #pragma comment(linker, "/export:EOS_Achievements_CopyAchievementDefinitionByAchievementId=EOSSDK-Win64-Shipping_o.EOS_Achievements_CopyAchievementDefinitionByAchievementId")
 #pragma comment(linker, "/export:EOS_Achievements_CopyAchievementDefinitionByIndex=EOSSDK-Win64-Shipping_o.EOS_Achievements_CopyAchievementDefinitionByIndex")
 // #pragma comment(linker, "/export:EOS_Achievements_CopyAchievementDefinitionV2ByAchievementId=EOSSDK-Win64-Shipping_o.EOS_Achievements_CopyAchievementDefinitionV2ByAchievementId")

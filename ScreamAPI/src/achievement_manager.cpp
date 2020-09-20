@@ -2,7 +2,7 @@
 #include "achievement_manager.h"
 #include "ScreamAPI.h"
 #include "util.h"
-#include "eos-sdk\eos_achievements.h"
+#include "eos-sdk/eos_achievements.h"
 #include "Overlay.h"
 #include <future>
 
@@ -15,7 +15,8 @@ Achievements achievements;
 void printAchievementDefinition(EOS_Achievements_DefinitionV2* definition){
 	if(definition == nullptr){
 		Logger::ach("Invalid Achievement Definition");
-	} else{
+	}
+	else{
 		std::stringstream ss;
 		// We are using stream stream since rapid opening and closing log file adversely impacts the performance
 		ss
@@ -45,7 +46,8 @@ void printAchievementDefinition(EOS_Achievements_DefinitionV2* definition){
 void printPlayerAchievement(EOS_Achievements_PlayerAchievement* achievement){
 	if(achievement == nullptr){
 		Logger::ach("Invalid Player Achievement");
-	} else{
+	}
+	else{
 		std::stringstream ss;
 		// We are using stream stream since rapid opening and closing log file adversely impacts the performance
 		ss
@@ -93,19 +95,17 @@ void findAchievement(const char* achievementID, std::function<void(Overlay_Achie
  * @see EOS_Achievements_UnlockAchievements
  */
 void EOS_CALL unlockAchievementsComplete(const EOS_Achievements_OnUnlockAchievementsCompleteCallbackInfo* Data){
-	auto achievement = (Overlay_Achievement*) Data->ClientData;
+	auto achievement = (Overlay_Achievement*)Data->ClientData;
 
 	// Abort if something went wrong
 	if(Data->ResultCode != EOS_EResult::EOS_Success){
 		achievement->UnlockState = UnlockState::Locked;
 		Logger::error("Failed to unlock the achievement: %s. Error string: %s",
-					  achievement->AchievementId,
-					  EOS_EResult_ToString(Data->ResultCode));
+			achievement->AchievementId,
+			EOS_EResult_ToString(Data->ResultCode));
 		return;
 	}
 
-	// Otherwise, update the achievement state
-	achievement->UnlockState = UnlockState::Unlocked;
 	Logger::info("Successfully unlocked the achievement: %s", achievement->AchievementId);
 }
 
@@ -129,7 +129,7 @@ void EOS_CALL queryPlayerAchievementsComplete(const EOS_Achievements_OnQueryPlay
 	// Abort if something went wrong
 	if(Data->ResultCode != EOS_EResult::EOS_Success){
 		Logger::error("Failed to query player achievements. Result string: %s",
-					  EOS_EResult_ToString(Data->ResultCode));
+			EOS_EResult_ToString(Data->ResultCode));
 		return;
 	}
 
@@ -139,7 +139,7 @@ void EOS_CALL queryPlayerAchievementsComplete(const EOS_Achievements_OnQueryPlay
 		Util::getProductUserId()
 	};
 	auto playerAchievementsCount = EOS_Achievements_GetPlayerAchievementCount(Util::getHAchievements(),
-																			  &GetCountOptions);
+		&GetCountOptions);
 	// Iterate over queried player achievements and update our own structs
 	for(unsigned int i = 0; i < playerAchievementsCount; i++){
 		EOS_Achievements_CopyPlayerAchievementByIndexOptions CopyAchievementOptions{
@@ -149,11 +149,11 @@ void EOS_CALL queryPlayerAchievementsComplete(const EOS_Achievements_OnQueryPlay
 		};
 		EOS_Achievements_PlayerAchievement* OutAchievement;
 		auto result = EOS_Achievements_CopyPlayerAchievementByIndex(Util::getHAchievements(),
-																	&CopyAchievementOptions,
-																	&OutAchievement);
+			&CopyAchievementOptions,
+			&OutAchievement);
 		if(result != EOS_EResult::EOS_Success){
 			Logger::error("Failed to copy player achievement by index %d. "
-						  "Result string: %s", i, EOS_EResult_ToString(result));
+				"Result string: %s", i, EOS_EResult_ToString(result));
 			continue;
 		}
 
@@ -183,7 +183,7 @@ void EOS_CALL queryDefinitionsComplete(const EOS_Achievements_OnQueryDefinitions
 	// Abort if something went wrong
 	if(Data->ResultCode != EOS_EResult::EOS_Success){
 		Logger::error("Failed to query achievement definitions. Result string: %s",
-					  EOS_EResult_ToString(Data->ResultCode));
+			EOS_EResult_ToString(Data->ResultCode));
 		return;
 	}
 
@@ -192,7 +192,7 @@ void EOS_CALL queryDefinitionsComplete(const EOS_Achievements_OnQueryDefinitions
 		EOS_ACHIEVEMENTS_GETACHIEVEMENTDEFINITIONCOUNT_API_LATEST
 	};
 	auto achievementDefinitionCount = EOS_Achievements_GetAchievementDefinitionCount(Util::getHAchievements(),
-																					 &GetCountOptions);
+		&GetCountOptions);
 	// Iterate over queried achievement definitions and save them to our own structs
 	for(uint32_t i = 0; i < achievementDefinitionCount; i++){
 		EOS_Achievements_CopyAchievementDefinitionV2ByIndexOptions DefinitionOptions{
@@ -201,11 +201,11 @@ void EOS_CALL queryDefinitionsComplete(const EOS_Achievements_OnQueryDefinitions
 		};
 		EOS_Achievements_DefinitionV2* OutDefinition;
 		auto result = EOS_Achievements_CopyAchievementDefinitionV2ByIndex(Util::getHAchievements(),
-																		  &DefinitionOptions,
-																		  &OutDefinition);
+			&DefinitionOptions,
+			&OutDefinition);
 		if(result != EOS_EResult::EOS_Success){
 			Logger::error("Failed to copy achievement definition by index %d. "
-						  "Result string: %s", i, EOS_EResult_ToString(result));
+				"Result string: %s", i, EOS_EResult_ToString(result));
 			continue;
 		}
 
@@ -214,7 +214,7 @@ void EOS_CALL queryDefinitionsComplete(const EOS_Achievements_OnQueryDefinitions
 		achievements.push_back(
 			{
 				copy_c_string(OutDefinition->AchievementId),
-				(bool) OutDefinition->bIsHidden,
+				(bool)OutDefinition->bIsHidden,
 				UnlockState::Locked,
 				copy_c_string(OutDefinition->UnlockedDescription),
 				copy_c_string(OutDefinition->UnlockedDisplayName),
@@ -232,9 +232,9 @@ void EOS_CALL queryDefinitionsComplete(const EOS_Achievements_OnQueryDefinitions
 			Util::getProductUserId()
 	};
 	EOS_Achievements_QueryPlayerAchievements(Util::getHAchievements(),
-											 &QueryAchievementsOptions,
-											 nullptr,
-											 queryPlayerAchievementsComplete);
+		&QueryAchievementsOptions,
+		nullptr,
+		queryPlayerAchievementsComplete);
 }
 
 void queryAchievementDefinitions(){
@@ -247,17 +247,35 @@ void queryAchievementDefinitions(){
 			0
 	};
 	EOS_Achievements_QueryDefinitions(Util::getHAchievements(),
-									  &QueryDefinitionsOptions,
-									  nullptr,
-									  queryDefinitionsComplete);
+		&QueryDefinitionsOptions,
+		nullptr,
+		queryDefinitionsComplete);
+}
+
+/**
+ * Subscribe to AchievementsUnlocked events so that we can update
+ * the state of achievements in our own list.
+ */
+void subscribeToAchievementNotifications(){
+	EOS_Achievements_AddNotifyAchievementsUnlockedV2Options NotifyOptions = {
+		EOS_ACHIEVEMENTS_ADDNOTIFYACHIEVEMENTSUNLOCKEDV2_API_LATEST
+	};
+
+	EOS_Achievements_AddNotifyAchievementsUnlockedV2(getHAchievements(), &NotifyOptions, nullptr,
+		[](const EOS_Achievements_OnAchievementsUnlockedCallbackV2Info* Data){
+		findAchievement(Data->AchievementId, [](Overlay_Achievement& achievement){
+			achievement.UnlockState = UnlockState::Unlocked;
+		});
+	});
 }
 
 void init() {
 	static bool init = false;
 
-	if (!init && Config::EnableOverlay()) {
+	if(!init && Config::EnableOverlay()) {
 		init = true;
 		queryAchievementDefinitions();
+		subscribeToAchievementNotifications();
 	}
 }
 

@@ -10,44 +10,28 @@
 EOS_Ecom_HTransaction ScreamAPITransaction;
 extern std::vector<std::string> entitlementIDs;
 constexpr auto ScreamAPITransactionId = "12345678901234567890123456789012";
-#endif // TRANSACTION_UNLOCKER
-
-struct CheckoutContainer{
-	void* originalClientData;
-	EOS_Ecom_OnCheckoutCallback originalCompletionDelegate;
-};
-
-// Just a snooper function at this point to debug transactions.
-// Might implement a transaction spoofing later on,
-// if there are appropriate games to test it on.
-void EOS_CALL CheckoutCompletionDelegate(const EOS_Ecom_CheckoutCallbackInfo* Data){
-	Logger::debug(__func__);
-
-	auto container = reinterpret_cast<CheckoutContainer*>(Data->ClientData);
-
-	// get non-const pointer to data
-	auto modifiedData = const_cast<EOS_Ecom_CheckoutCallbackInfo*>(Data);
-
-	// Restore original client data
-	modifiedData->ClientData = container->originalClientData;
-
-#ifdef TRANSACTION_UNLOCKER
-	modifiedData->TransactionId = ScreamAPITransactionId;
-	modifiedData->ResultCode = EOS_EResult::EOS_Success;
 #endif
 
-	Logger::dlc("\t""ResultString: %s", EOS_EResult_ToString(Data->ResultCode));
-	Logger::dlc("\t""TransactionId: %s", Data->TransactionId);
 
-	container->originalCompletionDelegate(Data);
-}
-
+// Just a snooper function at this point to debug transactions.
+// Might enable transaction spoofing later on,
+// if there are appropriate games to test it on.
 EOS_DECLARE_FUNC(void) EOS_Ecom_Checkout(EOS_HEcom Handle, const EOS_Ecom_CheckoutOptions* Options, void* ClientData, const EOS_Ecom_OnCheckoutCallback CompletionDelegate){
 	Logger::debug(__func__);
 
-	auto container = new CheckoutContainer{ClientData, CompletionDelegate}; // Don't forget to free the heap
 	static auto proxy = ScreamAPI::proxyFunction(&EOS_Ecom_Checkout, __func__);
-	proxy(Handle, Options, container, CheckoutCompletionDelegate);
+	auto container = new ScreamAPI::OriginalDataContainer(ClientData, CompletionDelegate);
+	proxy(Handle, Options, container, [](const EOS_Ecom_CheckoutCallbackInfo* Data){
+		auto nonConstData = const_cast<EOS_Ecom_CheckoutCallbackInfo*>(Data);
+		ScreamAPI::proxyCallback(nonConstData, &nonConstData->ClientData, [&](){
+#ifdef TRANSACTION_UNLOCKER
+			modifiedData->TransactionId = ScreamAPITransactionId;
+			modifiedData->ResultCode = EOS_EResult::EOS_Success;
+#endif
+			Logger::dlc("\t""ResultString: %s", EOS_EResult_ToString(nonConstData->ResultCode));
+			Logger::dlc("\t""TransactionId: %s", nonConstData->TransactionId);
+		});
+	});
 }
 
 #ifdef TRANSACTION_UNLOCKER
@@ -60,7 +44,8 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyTransactionById(EOS_HEcom Handle, con
 		Logger::debug("\t""Responding with ScreamAPITransaction");
 		*OutTransaction = ScreamAPITransaction;
 		return EOS_EResult::EOS_Success;
-	} else {
+	}
+	else {
 		static auto proxy = ScreamAPI::proxyFunction(&EOS_Ecom_CopyTransactionById, __func__);
 		return proxy(Handle, Options, OutTransaction);
 	}
@@ -74,7 +59,8 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyTransactionByIndex(EOS_HEcom Handle, 
 		Logger::debug("\t""Responding with ScreamAPITransaction");
 		*OutTransaction = ScreamAPITransaction;
 		return EOS_EResult::EOS_Success;
-	} else {
+	}
+	else {
 		static auto proxy = ScreamAPI::proxyFunction(&EOS_Ecom_CopyTransactionByIndex, __func__);
 		return proxy(Handle, Options, OutTransaction);
 	}
@@ -98,7 +84,8 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_Transaction_GetTransactionId(EOS_Ecom_HTr
 		OutBuffer = Util::copy_c_string(ScreamAPITransactionId);
 		*InOutBufferLength = 32;
 		return EOS_EResult::EOS_Success;
-	} else {
+	}
+	else {
 		static auto proxy = ScreamAPI::proxyFunction(&EOS_Ecom_Transaction_GetTransactionId, __func__);
 		return proxy(Handle, OutBuffer, InOutBufferLength);
 	}
@@ -109,8 +96,9 @@ EOS_DECLARE_FUNC(uint32_t) EOS_Ecom_Transaction_GetEntitlementsCount(EOS_Ecom_HT
 
 	if(Handle == ScreamAPITransaction){
 		Logger::dlc("Responding with GetEntitlementsCount: %d", entitlementIDs.size());
-		return (uint32_t) entitlementIDs.size();
-	} else {
+		return (uint32_t)entitlementIDs.size();
+	}
+	else {
 		static auto proxy = ScreamAPI::proxyFunction(&EOS_Ecom_Transaction_GetEntitlementsCount, __func__);
 		return proxy(Handle, Options);
 	}
@@ -136,7 +124,8 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_Transaction_CopyEntitlementByIndex(EOS_Ec
 
 		*OutEntitlement = entitlement;
 		return EOS_EResult::EOS_Success;
-	} else {
+	}
+	else {
 		static auto proxy = ScreamAPI::proxyFunction(&EOS_Ecom_Transaction_CopyEntitlementByIndex, __func__);
 		return proxy(Handle, Options, OutEntitlement);
 	}
@@ -147,7 +136,8 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_Transaction_Release(EOS_Ecom_HTransaction Transa
 
 	if(Transaction == ScreamAPITransaction){
 		Logger::dlc("Pretending to release the transaction handle...");
-	} else {
+	}
+	else {
 		static auto proxy = ScreamAPI::proxyFunction(&EOS_Ecom_Transaction_Release, __func__);
 		proxy(Transaction);
 	}

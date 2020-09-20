@@ -22,7 +22,7 @@ struct proxyTraits{
 
 // A function that returns a type-safe reference to the requested EOS SDK function
 template <typename RetType, typename... ArgTypes>
-static auto proxyFunction(RetType(EOS_CALL* proxy)(ArgTypes...), LPCSTR rawFunctionName){
+auto proxyFunction(RetType(EOS_CALL*)(ArgTypes...), LPCSTR rawFunctionName){
 	using funcType = typename proxyTraits<RetType, ArgTypes...>::funcType;
 
 #ifdef _WIN64
@@ -44,5 +44,17 @@ static auto proxyFunction(RetType(EOS_CALL* proxy)(ArgTypes...), LPCSTR rawFunct
 	// Return type-safe version of that function pointer
 	return reinterpret_cast<funcType>(funcPtr);
 }
+
+struct OriginalDataContainer{
+	void* originalClientData;
+	void (*originalCompletionDelegate)(void*);
+	OriginalDataContainer(void* clientData, void* completionDelegate) {
+		originalClientData = clientData;
+		reinterpret_cast<void*&>(originalCompletionDelegate) = completionDelegate;
+	}
 };
+
+void proxyCallback(void* callbackInfoData, void** clientData, std::function<void()> customCallback);
+
+}
 

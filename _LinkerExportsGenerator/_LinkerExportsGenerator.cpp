@@ -133,7 +133,8 @@ std::vector<std::string> overrideFunctions{
 	"EOS_Achievements_CopyPlayerAchievementByIndex",
 	"EOS_Achievements_CopyPlayerAchievementByAchievementId",
 	"EOS_Achievements_PlayerAchievement_Release",
-	"EOS_Achievements_UnlockAchievements"
+	"EOS_Achievements_UnlockAchievements",
+	"EOS_Achievements_AddNotifyAchievementsUnlockedV2"
 };
 
 enum class Architecture{ Win32, Win64 };
