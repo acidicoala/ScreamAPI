@@ -222,7 +222,7 @@
 #pragma comment(linker, "/export:_EOS_Platform_GetP2PInterface@4=EOSSDK-Win32-Shipping_o._EOS_Platform_GetP2PInterface@4")
 #pragma comment(linker, "/export:_EOS_Platform_GetPlayerDataStorageInterface@4=EOSSDK-Win32-Shipping_o._EOS_Platform_GetPlayerDataStorageInterface@4")
 #pragma comment(linker, "/export:_EOS_Platform_GetPresenceInterface@4=EOSSDK-Win32-Shipping_o._EOS_Platform_GetPresenceInterface@4")
-// #pragma comment(linker, "/export:_EOS_Platform_GetSessionsInterface@4=EOSSDK-Win32-Shipping_o._EOS_Platform_GetSessionsInterface@4")
+#pragma comment(linker, "/export:_EOS_Platform_GetSessionsInterface@4=EOSSDK-Win32-Shipping_o._EOS_Platform_GetSessionsInterface@4")
 #pragma comment(linker, "/export:_EOS_Platform_GetStatsInterface@4=EOSSDK-Win32-Shipping_o._EOS_Platform_GetStatsInterface@4")
 #pragma comment(linker, "/export:_EOS_Platform_GetUIInterface@4=EOSSDK-Win32-Shipping_o._EOS_Platform_GetUIInterface@4")
 #pragma comment(linker, "/export:_EOS_Platform_GetUserInfoInterface@4=EOSSDK-Win32-Shipping_o._EOS_Platform_GetUserInfoInterface@4")

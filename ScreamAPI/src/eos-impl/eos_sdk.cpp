@@ -22,10 +22,3 @@ EOS_DECLARE_FUNC(EOS_HConnect) EOS_Platform_GetConnectInterface(EOS_HPlatform Ha
 	static auto proxy = ScreamAPI::proxyFunction(&EOS_Platform_GetConnectInterface, __func__);
 	return proxy(Handle);
 }
-
-EOS_DECLARE_FUNC(EOS_HSessions) EOS_Platform_GetSessionsInterface(EOS_HPlatform Handle){
-	Logger::debug(__func__);
-
-	static auto proxy = ScreamAPI::proxyFunction(&EOS_Platform_GetSessionsInterface, __func__);
-	return proxy(Handle);
-}

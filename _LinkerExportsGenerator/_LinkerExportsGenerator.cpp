@@ -92,7 +92,6 @@ std::vector<std::string> overrideFunctions{
 	"EOS_Platform_GetAuthInterface",
 	"EOS_Platform_GetAchievementsInterface",
 	"EOS_Platform_GetConnectInterface",
-	"EOS_Platform_GetSessionsInterface",
 
 	// Platform
 	"EOS_Platform_Create",

@@ -1,6 +1,6 @@
 #pragma once
 #include "pch.h"
-#include "ScreamAPI.h"
+#include "eos-sdk/eos_sdk.h"
 
 namespace Util{
 template <typename T>

@@ -4,11 +4,11 @@
 #include "achievement_manager.h"
 #include <future>
 
+// TODO: Not using it at all, except for logging.
 EOS_DECLARE_FUNC(void) EOS_Auth_Login(EOS_HAuth Handle, const EOS_Auth_LoginOptions* Options, void* ClientData, const EOS_Auth_OnLoginCallback CompletionDelegate){
 	Logger::debug(__func__);
 
 	static auto proxy = ScreamAPI::proxyFunction(&EOS_Auth_Login, __func__);
-	//auto container = new AuthLoginContainer{ ClientData, CompletionDelegate }; // Don't forget to free the heap
 	proxy(Handle, Options, ClientData, CompletionDelegate);
 }
 
