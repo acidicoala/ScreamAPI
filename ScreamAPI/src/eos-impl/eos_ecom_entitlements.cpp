@@ -8,15 +8,12 @@ std::vector<std::string> entitlementIDs;
 EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlements(EOS_HEcom Handle, const EOS_Ecom_QueryEntitlementsOptions* Options, void* ClientData, const EOS_Ecom_OnQueryEntitlementsCallback CompletionDelegate){
 	Logger::debug(__func__);
 
-	// Verify SDK version
-	ScreamAPI::checkSdkVersion(Options->ApiVersion, EOS_ECOM_QUERYENTITLEMENTS_API_LATEST);
-
 	Logger::dlc("Game requested %d entitlements:", Options->EntitlementNameCount);
 	for(uint32_t i = 0; i < Options->EntitlementNameCount; i++){
-		Logger::dlc(" - Entitlement Name: %s", Options->EntitlementNames[i]);
+		Logger::dlc("\t""Entitlement Name: %s", Options->EntitlementNames[i]);
 
 		// Add to vector only if it isn't already there
-		if(!Util::vectorContains<std::string>(entitlementIDs, Options->EntitlementNames[i]))
+		if(!Util::vectorContains(entitlementIDs, std::string(Options->EntitlementNames[i])))
 			entitlementIDs.emplace_back(Options->EntitlementNames[i]);
 	}
 

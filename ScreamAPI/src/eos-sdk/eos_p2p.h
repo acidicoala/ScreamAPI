@@ -26,8 +26,8 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_P2P_SendPacket(EOS_HP2P Handle, const EOS_P2P_
  * packets to be retrieved.
  *
  * @param Options Information about who is requesting the size of their next packet
- * @param OutPacketSize The amount of bytes required to store the data of the next packet for the requested user
- * @return EOS_EResult::EOS_Success - If OutPacketSize was successfully set and there is data to be received
+ * @param OutPacketSizeBytes The amount of bytes required to store the data of the next packet for the requested user
+ * @return EOS_EResult::EOS_Success - If OutPacketSizeBytes was successfully set and there is data to be received
  *         EOS_EResult::EOS_InvalidParameters - If input was invalid
  *         EOS_EResult::EOS_NotFound  - If there are no packets available for the requesting user
  */

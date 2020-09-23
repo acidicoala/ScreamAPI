@@ -8,8 +8,6 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryOwnership(EOS_HEcom Handle, const EOS_Ecom_
 
 	// Log item IDs
 	if(Options){
-		ScreamAPI::checkSdkVersion(Options->ApiVersion, EOS_ECOM_QUERYOWNERSHIP_API_LATEST);
-
 		Logger::dlc("Game requested ownership of %d items:", Options->CatalogItemIdCount);
 		for(uint32_t i = 0; i < Options->CatalogItemIdCount; i++)
 			Logger::dlc("\t""Item ID: %s", Options->CatalogItemIds[i]);

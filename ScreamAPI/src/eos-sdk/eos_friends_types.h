@@ -8,7 +8,7 @@
 EXTERN_C typedef struct EOS_FriendsHandle* EOS_HFriends;
 
 /**
- * EOS_Friends_QueryFriends is used to start an asynchronous query to retrieve friends and pending outbound/inbound friendship invitations for a user account.
+ * EOS_Friends_QueryFriends is used to start an asynchronous query to retrieve friends and pending outbound/inbound friends list invitations for a user account.
  * The following types are used to work with the API.
  */
 
@@ -17,12 +17,12 @@ EXTERN_C typedef struct EOS_FriendsHandle* EOS_HFriends;
 #define EOS_FRIENDS_QUERYFRIENDS_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Friends_QueryFriends Function.
+ * Input parameters for the EOS_Friends_QueryFriends function.
  */
 EOS_STRUCT(EOS_Friends_QueryFriendsOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_FRIENDS_QUERYFRIENDS_API_LATEST. */
 	int32_t ApiVersion;
-	/** Account ID of the user whose friends should be asynchronously retrieved */
+	/** The Epic Online Services Account ID of the local, logged-in user whose friends list you want to retrieve */
 	EOS_EpicAccountId LocalUserId;
 ));
 
@@ -30,11 +30,11 @@ EOS_STRUCT(EOS_Friends_QueryFriendsOptions, (
  * Output parameters for the EOS_Friends_QueryFriends Function. These parameters are received through the callback provided to EOS_Friends_QueryFriends
  */
 EOS_STRUCT(EOS_Friends_QueryFriendsCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned for a successful query, otherwise one of the error codes is returned. See eos_common.h */
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Friends_QueryFriends */
 	void* ClientData;
-	/** Account ID of the user whose friends were queried */
+	/** The Epic Online Services Account ID of the user whose friends were queried */
 	EOS_EpicAccountId LocalUserId;
 ));
 
@@ -47,7 +47,7 @@ EOS_DECLARE_CALLBACK(EOS_Friends_OnQueryFriendsCallback, const EOS_Friends_Query
 
 
 /**
- * EOS_Friends_SendInvite is used to start an asynchronous operation to send a friendship invitation from a local user to a target user.
+ * EOS_Friends_SendInvite is used to start an asynchronous operation to send a friends list invitation from a local user to a target user.
  * The following types are used to work with the API.
  */
 
@@ -55,14 +55,14 @@ EOS_DECLARE_CALLBACK(EOS_Friends_OnQueryFriendsCallback, const EOS_Friends_Query
 #define EOS_FRIENDS_SENDINVITE_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Friends_SendInvite Function.
+ * Input parameters for the EOS_Friends_SendInvite function.
  */
 EOS_STRUCT(EOS_Friends_SendInviteOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_FRIENDS_SENDINVITE_API_LATEST. */
 	int32_t ApiVersion;
-	/** Account ID of the user who is sending the friendship invitation */
+	/** The Epic Online Services Account ID of the local, logged-in user who is sending the friends list invitation */
 	EOS_EpicAccountId LocalUserId;
-	/** Account ID of the user who is receiving the friendship invitation */
+	/** The Epic Online Services Account ID of the user who is receiving the friends list invitation */
 	EOS_EpicAccountId TargetUserId;
 ));
 
@@ -74,9 +74,9 @@ EOS_STRUCT(EOS_Friends_SendInviteCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Friends_SendInvite */
 	void* ClientData;
-	/** Account ID of the user who sent the friendship invitation */
+	/** The Epic Online Services Account ID of the user who sent the friends list invitation */
 	EOS_EpicAccountId LocalUserId;
-	/** Account ID of the user to whom the friendship invitation was sent */
+	/** The Epic Online Services Account ID of the user to whom the friends list invitation was sent */
 	EOS_EpicAccountId TargetUserId;
 ));
 
@@ -89,7 +89,7 @@ EOS_DECLARE_CALLBACK(EOS_Friends_OnSendInviteCallback, const EOS_Friends_SendInv
 
 
 /**
- * EOS_Friends_AcceptInvite is used to start an asynchronous operation to accept a friendship invitation from another user.
+ * EOS_Friends_AcceptInvite is used to start an asynchronous operation to accept a friends list invitation from another user.
  * The following types are used to work with the API.
  */
 
@@ -97,14 +97,14 @@ EOS_DECLARE_CALLBACK(EOS_Friends_OnSendInviteCallback, const EOS_Friends_SendInv
 #define EOS_FRIENDS_ACCEPTINVITE_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Friends_AcceptInvite Function.
+ * Input parameters for the EOS_Friends_AcceptInvite function.
  */
 EOS_STRUCT(EOS_Friends_AcceptInviteOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_FRIENDS_ACCEPTINVITE_API_LATEST. */
 	int32_t ApiVersion;
-	/** Account ID of the user who is accepting the friendship invitation */
+	/** The Epic Online Services Account ID of the local, logged-in user who is accepting the friends list invitation */
 	EOS_EpicAccountId LocalUserId;
-	/** Account ID of the user who sent the local user a friendship invitation */
+	/** The Epic Online Services Account ID of the user who sent the friends list invitation */
 	EOS_EpicAccountId TargetUserId;
 ));
 
@@ -116,9 +116,9 @@ EOS_STRUCT(EOS_Friends_AcceptInviteCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** Context that was passed into to EOS_Friends_AcceptInvite */
 	void* ClientData;
-	/** Account ID of the user who is accepting the friendship invitation */
+	/** The Epic Online Services Account ID of the user who is accepting the friends list invitation */
 	EOS_EpicAccountId LocalUserId;
-	/** Account ID of the user who sent the local user a friendship invitation */
+	/** The Epic Online Services Account ID of the user who sent the local user a friends list invitation */
 	EOS_EpicAccountId TargetUserId;
 ));
 
@@ -131,7 +131,7 @@ EOS_DECLARE_CALLBACK(EOS_Friends_OnAcceptInviteCallback, const EOS_Friends_Accep
 
 
 /**
- * EOS_Friends_RejectInvite is used to start an asynchronous operation to reject a friendship invitation from another user.
+ * EOS_Friends_RejectInvite is used to start an asynchronous operation to reject a friends list invitation from another user.
  * The following types are used to work with the API.
  */
 
@@ -139,14 +139,14 @@ EOS_DECLARE_CALLBACK(EOS_Friends_OnAcceptInviteCallback, const EOS_Friends_Accep
 #define EOS_FRIENDS_REJECTINVITE_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Friends_RejectInvite Function.
+ * Input parameters for the EOS_Friends_RejectInvite function.
  */
 EOS_STRUCT(EOS_Friends_RejectInviteOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_FRIENDS_REJECTINVITE_API_LATEST. */
 	int32_t ApiVersion;
-	/** Account ID of the user who is rejecting a friendship invitation */
+	/** The Epic Online Services Account ID of the local, logged-in user who is rejecting a friends list invitation */
 	EOS_EpicAccountId LocalUserId;
-	/** Account ID of the user who sent the friendship invitation */
+	/** The Epic Online Services Account ID of the user who sent the friends list invitation */
 	EOS_EpicAccountId TargetUserId;
 ));
 
@@ -158,9 +158,9 @@ EOS_STRUCT(EOS_Friends_RejectInviteCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** Context that was passed into to EOS_Friends_RejectInvite */
 	void* ClientData;
-	/** Account ID of the user who is rejecting a friendship invitation */
+	/** The Epic Online Services Account ID of the user who is rejecting the friends list invitation */
 	EOS_EpicAccountId LocalUserId;
-	/** Account ID of the user who sent the friendship invitation */
+	/** The Epic Online Services Account ID of the user who sent the friends list invitation */
 	EOS_EpicAccountId TargetUserId;
 ));
 
@@ -181,14 +181,14 @@ EOS_DECLARE_CALLBACK(EOS_Friends_OnRejectInviteCallback, const EOS_Friends_Rejec
 #define EOS_FRIENDS_DELETEFRIEND_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Friends_DeleteFriend Function.
+ * Input parameters for the EOS_Friends_DeleteFriend function.
  */
 EOS_STRUCT(EOS_Friends_DeleteFriendOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_FRIENDS_DELETEFRIEND_API_LATEST. */
 	int32_t ApiVersion;
-	/** Account ID of the user who is deleting a friendship. */
+	/** The Epic Online Services Account ID of the local, logged-in user who is deleting a friend. */
 	EOS_EpicAccountId LocalUserId;
-	/** Account ID of the user who is being removed from the friends list. */
+	/** The Epic Online Services Account ID of the user to remove from the friends list. */
 	EOS_EpicAccountId TargetUserId;
 ));
 
@@ -200,9 +200,9 @@ EOS_STRUCT(EOS_Friends_DeleteFriendCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** Context that was passed into to EOS_Friends_DeleteFriend */
 	void* ClientData;
-	/** Account ID of the user who is deleting a friendship. */
+	/** The Epic Online Services Account ID of the user who is removing a user from their friends list. */
 	EOS_EpicAccountId LocalUserId;
-	/** Account ID of the user who is being removed from the friends list. */
+	/** The Epic Online Services Account ID of the user who is being removed from the friends list. */
 	EOS_EpicAccountId TargetUserId;
 ));
 
@@ -224,12 +224,12 @@ EOS_DECLARE_CALLBACK(EOS_Friends_OnDeleteFriendCallback, const EOS_Friends_Delet
 
 
 /**
- * Input parameters for the EOS_Friends_GetFriendsCount Function.
+ * Input parameters for the EOS_Friends_GetFriendsCount function.
  */
 EOS_STRUCT(EOS_Friends_GetFriendsCountOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_FRIENDS_GETFRIENDSCOUNT_API_LATEST. */
 	int32_t ApiVersion;
-	/** Account ID of the user whose friendships should be counted */
+	/** The Epic Online Services Account ID of the user whose friends should be counted */
 	EOS_EpicAccountId LocalUserId;
 ));
 
@@ -243,12 +243,12 @@ EOS_STRUCT(EOS_Friends_GetFriendsCountOptions, (
 #define EOS_FRIENDS_GETFRIENDATINDEX_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Friends_GetFriendAtIndex Function.
+ * Input parameters for the EOS_Friends_GetFriendAtIndex function.
  */
 EOS_STRUCT(EOS_Friends_GetFriendAtIndexOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_FRIENDS_GETFRIENDATINDEX_API_LATEST. */
 	int32_t ApiVersion;
-	/** Account ID of the user whose friend list is being queried */
+	/** The Epic Online Services Account ID of the user whose friend list is being queried */
 	EOS_EpicAccountId LocalUserId;
 	/** Index into the friend list. This value must be between 0 and EOS_Friends_GetFriendsCount-1 inclusively. */
 	int32_t Index;
@@ -279,14 +279,14 @@ EOS_ENUM(EOS_EFriendsStatus,
 );
 
 /**
- * Input parameters for the EOS_Friends_GetStatus Function.
+ * Input parameters for the EOS_Friends_GetStatus function.
  */
 EOS_STRUCT(EOS_Friends_GetStatusOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_FRIENDS_GETSTATUS_API_LATEST. */
 	int32_t ApiVersion;
-	/** Account ID of the local, logged in user */
+	/** The Epic Online Services Account ID of the local, logged in user */
 	EOS_EpicAccountId LocalUserId;
-	/** Account ID of the user whose friendship status with the local user is being queried */
+	/** The Epic Online Services Account ID of the user whose friendship status with the local user is being queried */
 	EOS_EpicAccountId TargetUserId;
 ));
 
@@ -300,9 +300,9 @@ EOS_STRUCT(EOS_Friends_GetStatusOptions, (
 /** The most recent version of the EOS_Friends_AddNotifyFriendsUpdate API. */
 #define EOS_FRIENDS_ADDNOTIFYFRIENDSUPDATE_API_LATEST 1
 
-/** Input parameters for the EOS_Friends_AddNotifyFriendsUpdate Function.  */
+/** Input parameters for the EOS_Friends_AddNotifyFriendsUpdate function.  */
 EOS_STRUCT(EOS_Friends_AddNotifyFriendsUpdateOptions, (
-	/** API Version of the structure */
+	/** API Version: Set this to EOS_FRIENDS_ADDNOTIFYFRIENDSUPDATE_API_LATEST. */
 	int32_t ApiVersion;
 ));
 
@@ -312,13 +312,13 @@ EOS_STRUCT(EOS_Friends_AddNotifyFriendsUpdateOptions, (
 EOS_STRUCT(EOS_Friends_OnFriendsUpdateInfo, (
 	/** Client-specified data passed into EOS_Friends_AddNotifyFriendsUpdate */
 	void* ClientData;
-	/** The local user who is being notified of the friends update. */
+	/** The Epic Online Services Account ID of the local user who is receiving the update */
 	EOS_EpicAccountId LocalUserId;
-	/** The target user whose status is being updated. */
+	/** The Epic Online Services Account ID of the user whose status is being updated. */
 	EOS_EpicAccountId TargetUserId;
-	/** The previous status of the friend. */
+	/** The previous status of the user. */
 	EOS_EFriendsStatus PreviousStatus;
-	/** The current status of the friend. */
+	/** The current status of the user. */
 	EOS_EFriendsStatus CurrentStatus;
 ));
 

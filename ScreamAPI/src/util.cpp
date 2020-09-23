@@ -5,6 +5,8 @@
 
 namespace Util{
 
+EOS_HPlatform hPlatform = nullptr;
+
 std::filesystem::path getDLLparentDir(HMODULE hModule){
 	WCHAR modulePathBuffer[MAX_PATH];
 	GetModuleFileName(hModule, modulePathBuffer, MAX_PATH);
@@ -14,7 +16,7 @@ std::filesystem::path getDLLparentDir(HMODULE hModule){
 }
 
 EOS_HPlatform getHPlatform(){
-	return ScreamAPI::hPlatform;
+	return hPlatform;
 }
 
 EOS_HAuth getHAuth(){

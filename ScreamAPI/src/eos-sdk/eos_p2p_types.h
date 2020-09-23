@@ -34,7 +34,9 @@ EOS_ENUM(EOS_ENATType,
 );
 
 
+/** The most recent version of the EOS_P2P_SocketId structure. */
 #define EOS_P2P_SOCKETID_API_LATEST 1
+
 /**
  * P2P Socket ID
  *
@@ -46,7 +48,7 @@ EOS_ENUM(EOS_ENATType,
  * private data, like a private match's Session ID are good candidates for a socket name.
  */
 EOS_STRUCT(EOS_P2P_SocketId, (
-	/** API Version of the EOS_P2P_SocketId structure */
+	/** API Version: Set this to EOS_P2P_SOCKETID_API_LATEST. */
 	int32_t ApiVersion;
 	/** A name for the connection. Must be a NULL-terminated string of between 1-32 alpha-numeric characters (A-Z, a-z, 0-9) */
 	char SocketName[33];
@@ -67,16 +69,18 @@ EOS_ENUM(EOS_EPacketReliability,
 	EOS_PR_ReliableOrdered = 2
 );
 
+/** The most recent version of the EOS_P2P_SendPacket API. */
 #define EOS_P2P_SENDPACKET_API_LATEST 2
+
 /**
  * Structure containing information about the data being sent and to which player
  */
 EOS_STRUCT(EOS_P2P_SendPacketOptions, (
-	/** API Version of the EOS_P2P_SendPacketOptions structure */
+	/** API Version: Set this to EOS_P2P_SENDPACKET_API_LATEST. */
 	int32_t ApiVersion;
-	/** Local User ID who is sending this packet */
+	/** The Product User ID of the local user who is sending this packet */
 	EOS_ProductUserId LocalUserId;
-	/** The ID of the Peer you would like to send a packet to */
+	/** The Product User ID of the Peer you would like to send a packet to */
 	EOS_ProductUserId RemoteUserId;
 	/** The socket ID for data you are sending in this packet */
 	const EOS_P2P_SocketId* SocketId;
@@ -93,29 +97,33 @@ EOS_STRUCT(EOS_P2P_SendPacketOptions, (
 ));
 
 
+/** The most recent version of the EOS_P2P_GetNextReceivedPacketSize API. */
 #define EOS_P2P_GETNEXTRECEIVEDPACKETSIZE_API_LATEST 2
+
 /**
  * Structure containing information about who would like to receive a packet.
  */
 EOS_STRUCT(EOS_P2P_GetNextReceivedPacketSizeOptions, (
-	/** API Version of the EOS_P2P_GetNextReceivedPacketSizeOptions structure */
+	/** API Version: Set this to EOS_P2P_GETNEXTRECEIVEDPACKETSIZE_API_LATEST. */
 	int32_t ApiVersion;
-	/** The user who is receiving the packet */
+	/** The Product User ID of the local user who is receiving the packet */
 	EOS_ProductUserId LocalUserId;
-	/** An optional channel to request the data for. If NULL, we're retrieving the size of the next packet on any channel */
+	/** An optional channel to request the data for. If NULL, we're retrieving the size of the next packet on any channel. */
 	const uint8_t* RequestedChannel;
 
 ));
 
 
+/** The most recent version of the EOS_P2P_ReceivePacket API. */
 #define EOS_P2P_RECEIVEPACKET_API_LATEST 2
+
 /**
  * Structure containing information about who would like to receive a packet, and how much data can be stored safely.
  */
 EOS_STRUCT(EOS_P2P_ReceivePacketOptions, (
-	/** API Version of the EOS_P2P_ReceivePacketOptions structure */
+	/** API Version: Set this to EOS_P2P_RECEIVEPACKET_API_LATEST. */
 	int32_t ApiVersion;
-	/** The user who is receiving the packet */
+	/** The Product User ID of the user who is receiving the packet */
 	EOS_ProductUserId LocalUserId;
 	/** The maximum amount of data in bytes that can be safely copied to OutData in the function call */
 	uint32_t MaxDataSizeBytes;
@@ -124,16 +132,18 @@ EOS_STRUCT(EOS_P2P_ReceivePacketOptions, (
 ));
 
 
+/** The most recent version of the EOS_P2P_AddNotifyPeerConnectionRequest API. */
 #define EOS_P2P_ADDNOTIFYPEERCONNECTIONREQUEST_API_LATEST 1
+
 /**
  * Structure containing information about who would like connection notifications, and about which socket.
  */
 EOS_STRUCT(EOS_P2P_AddNotifyPeerConnectionRequestOptions, (
-	/** API Version of the EOS_P2P_AddNotifyPeerConnectionRequestOptions structure */
+	/** API Version: Set this to EOS_P2P_ADDNOTIFYPEERCONNECTIONREQUEST_API_LATEST. */
 	int32_t ApiVersion;
-	/** The user who wishes to listen for incoming connection requests */
+	/** The Product User ID of the user who is listening for incoming connection requests */
 	EOS_ProductUserId LocalUserId;
-	/** (Optional) The socket ID to listen for, for incoming connection requests. If NULL, we listen for all requests */
+	/** The optional socket ID to listen for, used as a filter for incoming connection requests; If NULL, incoming connection requests will not be filtered */
 	const EOS_P2P_SocketId* SocketId;
 ));
 
@@ -143,9 +153,9 @@ EOS_STRUCT(EOS_P2P_AddNotifyPeerConnectionRequestOptions, (
 EOS_STRUCT(EOS_P2P_OnIncomingConnectionRequestInfo, (
 	/** Client-specified data passed into EOS_Presence_AddNotifyOnPresenceChanged */
 	void* ClientData;
-	/** The local user who is being requested to open a P2P session with RemoteUserId */
+	/** The Product User ID of the local user who is being requested to open a P2P session with RemoteUserId */
 	EOS_ProductUserId LocalUserId;
-	/** The remote user who requested a peer connection with the local user */
+	/** The Product User ID of the remote user who requested a peer connection with the local user */
 	EOS_ProductUserId RemoteUserId;
 	/** The ID of the socket the Remote User wishes to communicate on */
 	const EOS_P2P_SocketId* SocketId;
@@ -157,16 +167,18 @@ EOS_STRUCT(EOS_P2P_OnIncomingConnectionRequestInfo, (
 EOS_DECLARE_CALLBACK(EOS_P2P_OnIncomingConnectionRequestCallback, const EOS_P2P_OnIncomingConnectionRequestInfo* Data);
 
 
+/** The most recent version of the EOS_P2P_AddNotifyPeerConnectionClosed API. */
 #define EOS_P2P_ADDNOTIFYPEERCONNECTIONCLOSED_API_LATEST 1
+
 /**
  * Structure containing information about who would like notifications about closed connections, and for which socket.
  */
 EOS_STRUCT(EOS_P2P_AddNotifyPeerConnectionClosedOptions, (
-	/** API Version of the EOS_P2P_AddNotifyPeerConnectionClosedOptions structure */
+	/** API Version: Set this to EOS_P2P_ADDNOTIFYPEERCONNECTIONCLOSED_API_LATEST. */
 	int32_t ApiVersion;
-	/** The local user who would like notifications */
+	/** The Product User ID of the local user who would like notifications */
 	EOS_ProductUserId LocalUserId;
-	/** (Optional) The socket ID to listen for to be closed. If NULL, this handler will be called for all closed connections */
+	/** The optional socket ID to listen for to be closed. If NULL, this handler will be called for all closed connections */
 	const EOS_P2P_SocketId* SocketId;
 ));
 
@@ -206,7 +218,7 @@ EOS_STRUCT(EOS_P2P_OnRemoteConnectionClosedInfo, (
 	void* ClientData;
 	/** The local user who is being notified of a connection being closed */
 	EOS_ProductUserId LocalUserId;
-	/** The remote user who this connection was with */
+	/** The Product User ID of the remote user who this connection was with */
 	EOS_ProductUserId RemoteUserId;
 	/** The socket ID of the connection being closed */
 	const EOS_P2P_SocketId* SocketId;
@@ -220,58 +232,66 @@ EOS_STRUCT(EOS_P2P_OnRemoteConnectionClosedInfo, (
 EOS_DECLARE_CALLBACK(EOS_P2P_OnRemoteConnectionClosedCallback, const EOS_P2P_OnRemoteConnectionClosedInfo* Data);
 
 
+/** The most recent version of the EOS_P2P_AcceptConnection API. */
 #define EOS_P2P_ACCEPTCONNECTION_API_LATEST 1
+
 /**
  * Structure containing information about who would like to accept a connection, and which connection.
  */
 EOS_STRUCT(EOS_P2P_AcceptConnectionOptions, (
-	/** API Version of the EOS_P2P_AcceptConnectionOptions structure */
+	/** API Version: Set this to EOS_P2P_ACCEPTCONNECTION_API_LATEST. */
 	int32_t ApiVersion;
-	/** The local user who is accepting any pending or future connections with RemoteUserId */
+	/** The Product User ID of the local user who is accepting any pending or future connections with RemoteUserId */
 	EOS_ProductUserId LocalUserId;
-	/** The remote user who has either sent a connection request or will in the future */
+	/** The Product User ID of the remote user who has either sent a connection request or is expected to in the future */
 	EOS_ProductUserId RemoteUserId;
 	/** The socket ID of the connection to accept on */
 	const EOS_P2P_SocketId* SocketId;
 ));
 
 
+/** The most recent version of the EOS_P2P_CloseConnection API. */
 #define EOS_P2P_CLOSECONNECTION_API_LATEST 1
+
 /**
  * Structure containing information about who would like to close a connection, and which connection.
  */
 EOS_STRUCT(EOS_P2P_CloseConnectionOptions, (
-	/** API Version of the EOS_P2P_CloseConnectionOptions structure */
+	/** API Version: Set this to EOS_P2P_CLOSECONNECTION_API_LATEST. */
 	int32_t ApiVersion;
-	/** The local user who would like to close a previously accepted connection (or decline a pending invite) */
+	/** The Product User ID of the local user who would like to close a previously accepted connection (or decline a pending invite) */
 	EOS_ProductUserId LocalUserId;
-	/** The remote user to disconnect from (or to reject a pending invite from) */
+	/** The Product User ID of the remote user to disconnect from (or to reject a pending invite from) */
 	EOS_ProductUserId RemoteUserId;
 	/** The socket ID of the connection to close (or optionally NULL to not accept any connection requests from the Remote User) */
 	const EOS_P2P_SocketId* SocketId;
 ));
 
 
+/** The most recent version of the EOS_P2P_CloseConnections API. */
 #define EOS_P2P_CLOSECONNECTIONS_API_LATEST 1
+
 /**
  * Structure containing information about who would like to close connections, and by what socket ID
  */
 EOS_STRUCT(EOS_P2P_CloseConnectionsOptions, (
-	/** API Version of the EOS_P2P_CloseConnectionsOptions structure */
+	/** API Version: Set this to EOS_P2P_CLOSECONNECTIONS_API_LATEST. */
 	int32_t ApiVersion;
-	/** The local user who would like to close all connections that use a particular socket ID */
+	/** The Product User ID of the local user who would like to close all connections that use a particular socket ID */
 	EOS_ProductUserId LocalUserId;
 	/** The socket ID of the connections to close */
 	const EOS_P2P_SocketId* SocketId;
 ));
 
 
+/** The most recent version of the EOS_P2P_QueryNATType API. */
 #define EOS_P2P_QUERYNATTYPE_API_LATEST 1
+
 /**
  * Structure containing information needed to query NAT-types
  */
 EOS_STRUCT(EOS_P2P_QueryNATTypeOptions, (
-	/** API Version of the EOS_P2P_QueryNATTypeOptions structure */
+	/** API Version: Set this to EOS_P2P_QUERYNATTYPE_API_LATEST. */
 	int32_t ApiVersion;
 ));
 
@@ -293,12 +313,14 @@ EOS_STRUCT(EOS_P2P_OnQueryNATTypeCompleteInfo, (
 EOS_DECLARE_CALLBACK(EOS_P2P_OnQueryNATTypeCompleteCallback, const EOS_P2P_OnQueryNATTypeCompleteInfo* Data);
 
 
+/** The most recent version of the EOS_P2P_GetNATType API. */
 #define EOS_P2P_GETNATTYPE_API_LATEST 1
+
 /**
  * Structure containing information needed to get perviously queried NAT-types
  */
 EOS_STRUCT(EOS_P2P_GetNATTypeOptions, (
-	/** API Version of the EOS_P2P_GetNATTypeOptions structure */
+	/** API Version: Set this to EOS_P2P_GETNATTYPE_API_LATEST. */
 	int32_t ApiVersion;
 ));
 
@@ -314,12 +336,14 @@ EOS_ENUM(EOS_ERelayControl,
 	EOS_RC_ForceRelays = 2
 );
 
+/** The most recent version of the EOS_P2P_SetRelayControl API. */
 #define EOS_P2P_SETRELAYCONTROL_API_LATEST 1
+
 /**
  * Structure containing information about new relay configurations.
  */
 EOS_STRUCT(EOS_P2P_SetRelayControlOptions, (
-	/** API Version of the EOS_P2P_SetRelayControlOptions structure */
+	/** API Version: Set this to EOS_P2P_SETRELAYCONTROL_API_LATEST. */
 	int32_t ApiVersion;
 	/**
 	 * The requested level of relay servers for P2P connections. This setting is only applied to new P2P connections, or when existing P2P connections
@@ -328,21 +352,25 @@ EOS_STRUCT(EOS_P2P_SetRelayControlOptions, (
 	EOS_ERelayControl RelayControl;
 ));
 
+/** The most recent version of the EOS_P2P_GetRelayControl API. */
 #define EOS_P2P_GETRELAYCONTROL_API_LATEST 1
+
 /**
  * Structure containing information about getting the relay control setting.
  */
 EOS_STRUCT(EOS_P2P_GetRelayControlOptions, (
-	/** API Version of the EOS_P2P_GetRelayControlOptions structure */
+	/** API Version: Set this to EOS_P2P_GETRELAYCONTROL_API_LATEST. */
 	int32_t ApiVersion;
 ));
 
+/** The most recent version of the EOS_P2P_SetPortRange API. */
 #define EOS_P2P_SETPORTRANGE_API_LATEST 1
+
 /**
  * Structure containing information about new port range settings.
  */
 EOS_STRUCT(EOS_P2P_SetPortRangeOptions, (
-	/** API Version of the EOS_P2P_SetPortRangeOptions structure */
+	/** API Version: Set this to EOS_P2P_SETPORTRANGE_API_LATEST. */
 	int32_t ApiVersion;
 	/** The ideal port to use for P2P traffic. The default value is 7777. If set to 0, the OS will choose a port. If set to 0, MaxAdditionalPortsToTry must be set to 0. */
 	uint16_t Port;
@@ -353,12 +381,14 @@ EOS_STRUCT(EOS_P2P_SetPortRangeOptions, (
 	uint16_t MaxAdditionalPortsToTry;
 ));
 
+/** The most recent version of the EOS_P2P_GetPortRange API. */
 #define EOS_P2P_GETPORTRANGE_API_LATEST 1
+
 /**
  * Structure containing information about getting the configured port range settings.
  */
 EOS_STRUCT(EOS_P2P_GetPortRangeOptions, (
-	/** API Version of the EOS_P2P_GetPortRangeOptions structure */
+	/** API Version: Set this to EOS_P2P_GETPORTRANGE_API_LATEST. */
 	int32_t ApiVersion;
 ));
 

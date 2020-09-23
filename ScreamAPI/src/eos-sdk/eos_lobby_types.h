@@ -35,7 +35,7 @@ EOS_DECLARE_FUNC(void) EOS_LobbyDetails_Release(EOS_HLobbyDetails LobbyHandle);
  */
 EOS_DECLARE_FUNC(void) EOS_LobbySearch_Release(EOS_HLobbySearch LobbySearchHandle);
 
-/** All lobbies are referenced by a unique lobby id */
+/** All lobbies are referenced by a unique lobby ID */
 EXTERN_C typedef const char* EOS_LobbyId;
 
 #define EOS_LOBBY_MAX_LOBBIES 4
@@ -84,11 +84,11 @@ EOS_ENUM(EOS_ELobbyMemberStatus,
 #define EOS_LOBBYDETAILS_INFO_API_LATEST 1
 
 EOS_STRUCT(EOS_LobbyDetails_Info, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYDETAILS_INFO_API_LATEST. */
 	int32_t ApiVersion;
-	/** Lobby id */
+	/** Lobby ID */
 	EOS_LobbyId LobbyId;
-	/** Current owner of the lobby */
+	/** The Product User ID of the current owner of the lobby */
 	EOS_ProductUserId LobbyOwnerUserId;
 	/** Permission level of the lobby */
 	EOS_ELobbyPermissionLevel PermissionLevel;
@@ -96,7 +96,7 @@ EOS_STRUCT(EOS_LobbyDetails_Info, (
 	uint32_t AvailableSlots;
 	/** Max allowed members in the lobby */
 	uint32_t MaxMembers;
-	/** Are invites allowed */
+	/** If true, users can invite others to this lobby */
 	EOS_Bool bAllowInvites;
 ));
 
@@ -106,20 +106,29 @@ EOS_DECLARE_FUNC(void) EOS_LobbyDetails_Info_Release(EOS_LobbyDetails_Info* Lobb
 #define EOS_LOBBY_CREATELOBBY_API_LATEST 2
 
 /**
- * Input parameters for the EOS_Lobby_CreateLobby Function.
+ * Input parameters for the EOS_Lobby_CreateLobby function.
  */
 EOS_STRUCT(EOS_Lobby_CreateLobbyOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBY_CREATELOBBY_API_LATEST. */
 	int32_t ApiVersion;
-	/** Local user creating the lobby */
+	/** The Product User ID of the local user creating the lobby; this user will automatically join the lobby as its owner */
 	EOS_ProductUserId LocalUserId;
-	/** Max members allowed in the lobby */
+	/** The maximum number of users who can be in the lobby at a time */
 	uint32_t MaxLobbyMembers;
 	/** The initial permission level of the lobby */
 	EOS_ELobbyPermissionLevel PermissionLevel;
-	/** 
-	 * If true then this lobby will be used as the one lobby associated with presence.
-	 * Only one lobby at a time can have this flag true.
+	/** If true, this lobby will be associated with presence information. A user's presence can only be associated with one lobby at a time.
+	 * This affects the ability of the Social Overlay to show game related actions to take in the user's social graph.
+	 *
+	 * @note The Social Overlay can handle only one of the following three options at a time:
+	 * * using the bPresenceEnabled flags within the Sessions interface
+	 * * using the bPresenceEnabled flags within the Lobby interface
+	 * * using EOS_PresenceModification_SetJoinInfo
+	 *
+	 * @see EOS_PresenceModification_SetJoinInfoOptions
+	 * @see EOS_Lobby_JoinLobbyOptions
+	 * @see EOS_Sessions_CreateSessionModificationOptions
+	 * @see EOS_Sessions_JoinSessionOptions
 	 */
 	EOS_Bool bPresenceEnabled;
 ));
@@ -128,11 +137,11 @@ EOS_STRUCT(EOS_Lobby_CreateLobbyOptions, (
  * Output parameters for the EOS_Lobby_CreateLobby function.
  */
 EOS_STRUCT(EOS_Lobby_CreateLobbyCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned for a successful operation, otherwise one of the error codes is returned. See eos_common.h */
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Lobby_CreateLobby */
 	void* ClientData;
-	/** Newly created lobby id */
+	/** The new lobby's ID */
 	EOS_LobbyId LobbyId;
 ));
 
@@ -146,14 +155,14 @@ EOS_DECLARE_CALLBACK(EOS_Lobby_OnCreateLobbyCallback, const EOS_Lobby_CreateLobb
 #define EOS_LOBBY_DESTROYLOBBY_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Lobby_DestroyLobby Function.
+ * Input parameters for the EOS_Lobby_DestroyLobby function.
  */
 EOS_STRUCT(EOS_Lobby_DestroyLobbyOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBY_DESTROYLOBBY_API_LATEST. */
 	int32_t ApiVersion;
-	/** Local user destroying the lobby, must own the lobby */
+	/** The Product User ID of the local user requesting destruction of the lobby; this user must currently own the lobby */
 	EOS_ProductUserId LocalUserId;
-	/** Lobby Id to destroy */
+	/** The ID of the lobby to destroy */
 	EOS_LobbyId LobbyId;
 ));
 
@@ -161,11 +170,11 @@ EOS_STRUCT(EOS_Lobby_DestroyLobbyOptions, (
  * Output parameters for the EOS_Lobby_DestroyLobby function.
  */
 EOS_STRUCT(EOS_Lobby_DestroyLobbyCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned for a successful operation, otherwise one of the error codes is returned. See eos_common.h */
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Lobby_DestroyLobby */
 	void* ClientData;
-	/** Destroyed lobby id */
+	/** The destroyed lobby's ID */
 	EOS_LobbyId LobbyId;
 ));
 
@@ -180,18 +189,28 @@ EOS_DECLARE_CALLBACK(EOS_Lobby_OnDestroyLobbyCallback, const EOS_Lobby_DestroyLo
 #define EOS_LOBBY_JOINLOBBY_API_LATEST 2
 
 /**
- * Input parameters for the EOS_Lobby_JoinLobby Function.
+ * Input parameters for the EOS_Lobby_JoinLobby function.
  */
 EOS_STRUCT(EOS_Lobby_JoinLobbyOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBY_JOINLOBBY_API_LATEST. */
 	int32_t ApiVersion;
-	/** Lobby handle to join */
+	/** The handle of the lobby to join */
 	EOS_HLobbyDetails LobbyDetailsHandle;
-	/** Local user joining the lobby */
+	/** The Product User ID of the local user joining the lobby */
 	EOS_ProductUserId LocalUserId;
-	/** 
-	 * If true then this lobby will be used as the one lobby associated with presence.
-	 * Only one lobby at a time can have this flag true.
+	/** If true, this lobby will be associated with the user's presence information. A user can only associate one lobby at a time with their presence information.
+	 * This affects the ability of the Social Overlay to show game related actions to take in the user's social graph.
+	 *
+	 * @note The Social Overlay can handle only one of the following three options at a time:
+	 * * using the bPresenceEnabled flags within the Sessions interface
+	 * * using the bPresenceEnabled flags within the Lobby interface
+	 * * using EOS_PresenceModification_SetJoinInfo
+	 *
+	 * @see EOS_PresenceModification_SetJoinInfoOptions
+	 * @see EOS_Lobby_CreateLobbyOptions
+	 * @see EOS_Lobby_JoinLobbyOptions
+	 * @see EOS_Sessions_CreateSessionModificationOptions
+	 * @see EOS_Sessions_JoinSessionOptions
 	 */
 	EOS_Bool bPresenceEnabled;
 ));
@@ -200,11 +219,11 @@ EOS_STRUCT(EOS_Lobby_JoinLobbyOptions, (
  * Output parameters for the EOS_Lobby_JoinLobby function.
  */
 EOS_STRUCT(EOS_Lobby_JoinLobbyCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned for a successful operation, otherwise one of the error codes is returned. See eos_common.h */
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Lobby_JoinLobby */
 	void* ClientData;
-	/** The id of the lobby affected */
+	/** The ID of the lobby */
 	EOS_LobbyId LobbyId;
 ));
 
@@ -218,14 +237,14 @@ EOS_DECLARE_CALLBACK(EOS_Lobby_OnJoinLobbyCallback, const EOS_Lobby_JoinLobbyCal
 #define EOS_LOBBY_LEAVELOBBY_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Lobby_LeaveLobby Function.
+ * Input parameters for the EOS_Lobby_LeaveLobby function.
  */
 EOS_STRUCT(EOS_Lobby_LeaveLobbyOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBY_LEAVELOBBY_API_LATEST. */
 	int32_t ApiVersion;
-	/** Local user leaving the lobby */
+	/** The Product User ID of the local user leaving the lobby */
 	EOS_ProductUserId LocalUserId;
-	/** The id of the lobby affected */
+	/** The ID of the lobby */
 	EOS_LobbyId LobbyId;
 ));
 
@@ -233,11 +252,11 @@ EOS_STRUCT(EOS_Lobby_LeaveLobbyOptions, (
  * Output parameters for the EOS_Lobby_LeaveLobby function.
  */
 EOS_STRUCT(EOS_Lobby_LeaveLobbyCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned for a successful operation, otherwise one of the error codes is returned. See eos_common.h */
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Lobby_LeaveLobby */
 	void* ClientData;
-	/** The id of the lobby affected */
+	/** The ID of the lobby */
 	EOS_LobbyId LobbyId;
 ));
 
@@ -251,14 +270,14 @@ EOS_DECLARE_CALLBACK(EOS_Lobby_OnLeaveLobbyCallback, const EOS_Lobby_LeaveLobbyC
 #define EOS_LOBBY_UPDATELOBBYMODIFICATION_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Lobby_UpdateLobbyModification Function.
+ * Input parameters for the EOS_Lobby_UpdateLobbyModification function.
  */
 EOS_STRUCT(EOS_Lobby_UpdateLobbyModificationOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBY_UPDATELOBBYMODIFICATION_API_LATEST. */
 	int32_t ApiVersion;
-	/** The id of the local user making modifications, must be the owner to modify lobby data, but may be a lobby member to modify their own attributes */
+	/** The ID of the local user making modifications. Must be the owner to modify lobby data, but any lobby member can modify their own attributes. */
 	EOS_ProductUserId LocalUserId;
-	/** The id of the lobby affected */
+	/** The ID of the lobby */
 	EOS_LobbyId LobbyId;
 ));
 
@@ -266,10 +285,10 @@ EOS_STRUCT(EOS_Lobby_UpdateLobbyModificationOptions, (
 #define EOS_LOBBY_UPDATELOBBY_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Lobby_UpdateLobby Function.
+ * Input parameters for the EOS_Lobby_UpdateLobby function.
  */
 EOS_STRUCT(EOS_Lobby_UpdateLobbyOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBY_UPDATELOBBY_API_LATEST. */
 	int32_t ApiVersion;
 	/** Builder handle */
 	EOS_HLobbyModification LobbyModificationHandle;
@@ -279,11 +298,11 @@ EOS_STRUCT(EOS_Lobby_UpdateLobbyOptions, (
  * Output parameters for the EOS_Lobby_UpdateLobby function.
  */
 EOS_STRUCT(EOS_Lobby_UpdateLobbyCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned for a successful operation, otherwise one of the error codes is returned. See eos_common.h */
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Lobby_UpdateLobby */
 	void* ClientData;
-	/** The id of the lobby affected */
+	/** The ID of the lobby */
 	EOS_LobbyId LobbyId;
 ));
 
@@ -297,16 +316,16 @@ EOS_DECLARE_CALLBACK(EOS_Lobby_OnUpdateLobbyCallback, const EOS_Lobby_UpdateLobb
 #define EOS_LOBBY_PROMOTEMEMBER_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Lobby_PromoteMember Function.
+ * Input parameters for the EOS_Lobby_PromoteMember function.
  */
 EOS_STRUCT(EOS_Lobby_PromoteMemberOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBY_PROMOTEMEMBER_API_LATEST. */
 	int32_t ApiVersion;
-	/** Lobby id of interest */
+	/** The ID of the lobby */
 	EOS_LobbyId LobbyId;
-	/** Local User making the request */
+	/** The Product User ID of the local user making the request */
 	EOS_ProductUserId LocalUserId;
-	/** Member to promote to owner of the lobby */
+	/** The Product User ID of the member to promote to owner of the lobby */
 	EOS_ProductUserId TargetUserId;
 ));
 
@@ -314,11 +333,11 @@ EOS_STRUCT(EOS_Lobby_PromoteMemberOptions, (
  * Output parameters for the EOS_Lobby_PromoteMember function.
  */
 EOS_STRUCT(EOS_Lobby_PromoteMemberCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned for a successful operation, otherwise one of the error codes is returned. See eos_common.h */
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Lobby_PromoteMember */
 	void* ClientData;
-	/** Lobby id of interest */
+	/** The ID of the lobby where the user was promoted */
 	EOS_LobbyId LobbyId;
 ));
 
@@ -333,16 +352,16 @@ EOS_DECLARE_CALLBACK(EOS_Lobby_OnPromoteMemberCallback, const EOS_Lobby_PromoteM
 #define EOS_LOBBY_KICKMEMBER_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Lobby_KickMember Function.
+ * Input parameters for the EOS_Lobby_KickMember function.
  */
 EOS_STRUCT(EOS_Lobby_KickMemberOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBY_KICKMEMBER_API_LATEST. */
 	int32_t ApiVersion;
-	/** Lobby id of interest */
+	/** The ID of the lobby */
 	EOS_LobbyId LobbyId;
-	/** Local User making the request */
+	/** The Product User ID of the local user requesting the removal; this user must be the lobby owner */
 	EOS_ProductUserId LocalUserId;
-	/** Member to kick from the lobby */
+	/** The Product User ID of the lobby member to remove */
 	EOS_ProductUserId TargetUserId;
 ));
 
@@ -350,11 +369,11 @@ EOS_STRUCT(EOS_Lobby_KickMemberOptions, (
  * Output parameters for the EOS_Lobby_KickMember function.
  */
 EOS_STRUCT(EOS_Lobby_KickMemberCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned for a successful operation, otherwise one of the error codes is returned. See eos_common.h */
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Lobby_KickMember */
 	void* ClientData;
-	/** Lobby id of interest */
+	/** The ID of the lobby */
 	EOS_LobbyId LobbyId;
 ));
 
@@ -368,7 +387,7 @@ EOS_DECLARE_CALLBACK(EOS_Lobby_OnKickMemberCallback, const EOS_Lobby_KickMemberC
 #define EOS_LOBBY_ADDNOTIFYLOBBYUPDATERECEIVED_API_LATEST 1
 
 EOS_STRUCT(EOS_Lobby_AddNotifyLobbyUpdateReceivedOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBY_ADDNOTIFYLOBBYUPDATERECEIVED_API_LATEST. */
 	int32_t ApiVersion;
 ));
 
@@ -378,7 +397,7 @@ EOS_STRUCT(EOS_Lobby_AddNotifyLobbyUpdateReceivedOptions, (
 EOS_STRUCT(EOS_Lobby_LobbyUpdateReceivedCallbackInfo, (
 	/** Context that was passed into EOS_Lobby_AddNotifyLobbyUpdateReceived */
 	void* ClientData;
-	/** The id of the lobby affected */
+	/** The ID of the lobby */
 	EOS_LobbyId LobbyId;
 ));
 
@@ -393,7 +412,7 @@ EOS_DECLARE_CALLBACK(EOS_Lobby_OnLobbyUpdateReceivedCallback, const EOS_Lobby_Lo
 #define EOS_LOBBY_ADDNOTIFYLOBBYMEMBERUPDATERECEIVED_API_LATEST 1
 
 EOS_STRUCT(EOS_Lobby_AddNotifyLobbyMemberUpdateReceivedOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBY_ADDNOTIFYLOBBYMEMBERUPDATERECEIVED_API_LATEST. */
 	int32_t ApiVersion;
 ));
 
@@ -403,9 +422,9 @@ EOS_STRUCT(EOS_Lobby_AddNotifyLobbyMemberUpdateReceivedOptions, (
 EOS_STRUCT(EOS_Lobby_LobbyMemberUpdateReceivedCallbackInfo, (
 	/** Context that was passed into EOS_Lobby_AddNotifyLobbyMemberUpdateReceived */
 	void* ClientData;
-	/** The id of the lobby affected */
+	/** The ID of the lobby */
 	EOS_LobbyId LobbyId;
-	/** Target user that was affected */
+	/** The Product User ID of the lobby member */
 	EOS_ProductUserId TargetUserId;
 ));
 
@@ -420,10 +439,10 @@ EOS_DECLARE_CALLBACK(EOS_Lobby_OnLobbyMemberUpdateReceivedCallback, const EOS_Lo
 #define EOS_LOBBY_ADDNOTIFYLOBBYMEMBERSTATUSRECEIVED_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Lobby_AddNotifyLobbyMemberStatusReceived Function.
+ * Input parameters for the EOS_Lobby_AddNotifyLobbyMemberStatusReceived function.
  */
 EOS_STRUCT(EOS_Lobby_AddNotifyLobbyMemberStatusReceivedOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBY_ADDNOTIFYLOBBYMEMBERSTATUSRECEIVED_API_LATEST. */
 	int32_t ApiVersion;
 ));
 
@@ -433,9 +452,9 @@ EOS_STRUCT(EOS_Lobby_AddNotifyLobbyMemberStatusReceivedOptions, (
 EOS_STRUCT(EOS_Lobby_LobbyMemberStatusReceivedCallbackInfo, (
 	/** Context that was passed into EOS_Lobby_AddNotifyLobbyMemberStatusReceived */
 	void* ClientData;
-	/** The id of the lobby affected */
+	/** The ID of the lobby */
 	EOS_LobbyId LobbyId;
-	/** Target user that was affected */
+	/** The Product User ID of the lobby member */
 	EOS_ProductUserId TargetUserId;
 	/** Latest status of the user */
 	EOS_ELobbyMemberStatus CurrentStatus;
@@ -447,14 +466,14 @@ EOS_STRUCT(EOS_Lobby_LobbyMemberStatusReceivedCallbackInfo, (
  */
 EOS_DECLARE_CALLBACK(EOS_Lobby_OnLobbyMemberStatusReceivedCallback, const EOS_Lobby_LobbyMemberStatusReceivedCallbackInfo* Data);
 
-/** Max length of an invite id */
+/** Max length of an invite ID */
 #define EOS_LOBBY_INVITEID_MAX_LENGTH 64
 
 /** The most recent version of the EOS_Lobby_AddNotifyLobbyInviteReceived API. */
 #define EOS_LOBBY_ADDNOTIFYLOBBYINVITERECEIVED_API_LATEST 1
 
 EOS_STRUCT(EOS_Lobby_AddNotifyLobbyInviteReceivedOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBY_ADDNOTIFYLOBBYINVITERECEIVED_API_LATEST. */
 	int32_t ApiVersion;
 ));
 
@@ -464,11 +483,11 @@ EOS_STRUCT(EOS_Lobby_AddNotifyLobbyInviteReceivedOptions, (
 EOS_STRUCT(EOS_Lobby_LobbyInviteReceivedCallbackInfo, (
 	/** Context that was passed into EOS_Lobby_AddNotifyLobbyInviteReceived */
 	void* ClientData;
-	/** The invite id */
+	/** The ID of the invitation */
 	const char* InviteId;
-	/** User that received the invite */
+	/** The Product User ID of the local user who received the invitation */
 	EOS_ProductUserId LocalUserId;
-	/** Target user that sent the invite */
+	/** The Product User ID of the user who sent the invitation */
 	EOS_ProductUserId TargetUserId;
 ));
 
@@ -483,7 +502,7 @@ EOS_DECLARE_CALLBACK(EOS_Lobby_OnLobbyInviteReceivedCallback, const EOS_Lobby_Lo
 #define EOS_LOBBY_ADDNOTIFYLOBBYINVITEACCEPTED_API_LATEST 1
 
 EOS_STRUCT(EOS_Lobby_AddNotifyLobbyInviteAcceptedOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBY_ADDNOTIFYLOBBYINVITEACCEPTED_API_LATEST. */
 	int32_t ApiVersion;
 ));
 
@@ -493,11 +512,11 @@ EOS_STRUCT(EOS_Lobby_AddNotifyLobbyInviteAcceptedOptions, (
 EOS_STRUCT(EOS_Lobby_LobbyInviteAcceptedCallbackInfo, (
 	/** Context that was passed into EOS_Lobby_AddNotifyLobbyInviteAccepted */
 	void* ClientData;
-	/** The invite id */
+	/** The invite ID */
 	const char* InviteId;
-	/** User that received the invite */
+	/** The Product User ID of the local user who received the invitation */
 	EOS_ProductUserId LocalUserId;
-	/** Target user that sent the invite */
+	/** The Product User ID of the user who sent the invitation */
 	EOS_ProductUserId TargetUserId;
 ));
 
@@ -508,10 +527,11 @@ EOS_STRUCT(EOS_Lobby_LobbyInviteAcceptedCallbackInfo, (
  */
 EOS_DECLARE_CALLBACK(EOS_Lobby_OnLobbyInviteAcceptedCallback, const EOS_Lobby_LobbyInviteAcceptedCallbackInfo* Data);
 
-/** The most recent version of the EOS_Lobby_AddNotifyJoinGameAccepted API. */
+/** The most recent version of the EOS_Lobby_AddNotifyJoinLobbyAccepted API. */
 #define EOS_LOBBY_ADDNOTIFYJOINLOBBYACCEPTED_API_LATEST 1
+
 EOS_STRUCT(EOS_Lobby_AddNotifyJoinLobbyAcceptedOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBY_ADDNOTIFYJOINLOBBYACCEPTED_API_LATEST. */
 	int32_t ApiVersion;
 ));
 
@@ -521,7 +541,7 @@ EOS_STRUCT(EOS_Lobby_AddNotifyJoinLobbyAcceptedOptions, (
 EOS_STRUCT(EOS_Lobby_JoinLobbyAcceptedCallbackInfo, (
 	/** Context that was passed into EOS_Lobby_AddNotifyJoinLobbyAccepted */
 	void* ClientData;
-	/** User that initialized the join game */
+	/** The Product User ID of the local user who is joining */
 	EOS_ProductUserId LocalUserId;
 	/** 
 	 * The UI Event associated with this Join Game event.
@@ -548,12 +568,12 @@ EOS_DECLARE_CALLBACK(EOS_Lobby_OnJoinLobbyAcceptedCallback, const EOS_Lobby_Join
 #define EOS_LOBBY_COPYLOBBYDETAILSHANDLEBYINVITEID_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Lobby_CopyLobbyDetailsHandleByInviteId Function.
+ * Input parameters for the EOS_Lobby_CopyLobbyDetailsHandleByInviteId function.
  */
 EOS_STRUCT(EOS_Lobby_CopyLobbyDetailsHandleByInviteIdOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBY_COPYLOBBYDETAILSHANDLEBYINVITEID_API_LATEST. */
 	int32_t ApiVersion;
-	/** Lobby invite id */
+	/** The ID of an invitation to join the lobby */
 	const char* InviteId;
 ));
 
@@ -561,10 +581,10 @@ EOS_STRUCT(EOS_Lobby_CopyLobbyDetailsHandleByInviteIdOptions, (
 #define EOS_LOBBY_COPYLOBBYDETAILSHANDLEBYUIEVENTID_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Lobby_CopyLobbyDetailsHandleByUiEventId Function.
+ * Input parameters for the EOS_Lobby_CopyLobbyDetailsHandleByUiEventId function.
  */
 EOS_STRUCT(EOS_Lobby_CopyLobbyDetailsHandleByUiEventIdOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBY_COPYLOBBYDETAILSHANDLEBYUIEVENTID_API_LATEST. */
 	int32_t ApiVersion;
 	/** UI Event associated with the session */
 	EOS_UI_EventId UiEventId;
@@ -574,10 +594,10 @@ EOS_STRUCT(EOS_Lobby_CopyLobbyDetailsHandleByUiEventIdOptions, (
 #define EOS_LOBBY_CREATELOBBYSEARCH_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Lobby_CreateLobbySearch Function.
+ * Input parameters for the EOS_Lobby_CreateLobbySearch function.
  */
 EOS_STRUCT(EOS_Lobby_CreateLobbySearchOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBY_CREATELOBBYSEARCH_API_LATEST. */
 	int32_t ApiVersion;
 	/** Maximum number of results allowed from the search */
 	uint32_t MaxResults;
@@ -587,16 +607,16 @@ EOS_STRUCT(EOS_Lobby_CreateLobbySearchOptions, (
 #define EOS_LOBBY_SENDINVITE_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Lobby_SendInvite Function.
+ * Input parameters for the EOS_Lobby_SendInvite function.
  */
 EOS_STRUCT(EOS_Lobby_SendInviteOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBY_SENDINVITE_API_LATEST. */
 	int32_t ApiVersion;
-	/** The id of the lobby affected */
+	/** The ID of the lobby associated with the invitation */
 	EOS_LobbyId LobbyId;
-	/** Local user sending the invite */
+	/** The Product User ID of the local user sending the invitation */
 	EOS_ProductUserId LocalUserId;
-	/** Target user receiving the invite */
+	/** The Product User ID of the user receiving the invitation */
 	EOS_ProductUserId TargetUserId;
 ));
 
@@ -604,11 +624,11 @@ EOS_STRUCT(EOS_Lobby_SendInviteOptions, (
  * Output parameters for the EOS_Lobby_SendInvite function.
  */
 EOS_STRUCT(EOS_Lobby_SendInviteCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned for a successful operation, otherwise one of the error codes is returned. See eos_common.h */
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Lobby_SendInvite */
 	void* ClientData;
-	/** The id of the lobby affected */
+	/** The ID of the lobby */
 	EOS_LobbyId LobbyId;
 ));
 
@@ -622,14 +642,14 @@ EOS_DECLARE_CALLBACK(EOS_Lobby_OnSendInviteCallback, const EOS_Lobby_SendInviteC
 #define EOS_LOBBY_REJECTINVITE_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Lobby_RejectInvite Function.
+ * Input parameters for the EOS_Lobby_RejectInvite function.
  */
 EOS_STRUCT(EOS_Lobby_RejectInviteOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBY_REJECTINVITE_API_LATEST. */
 	int32_t ApiVersion;
-	/** The invite id to reject */
+	/** The ID of the lobby associated with the invitation */
 	const char* InviteId;
-	/** Local user rejecting the invite */
+	/** The Product User ID of the local user who is rejecting the invitation */
 	EOS_ProductUserId LocalUserId;
 ));
 
@@ -637,11 +657,11 @@ EOS_STRUCT(EOS_Lobby_RejectInviteOptions, (
  * Output parameters for the EOS_Lobby_RejectInvite function.
  */
 EOS_STRUCT(EOS_Lobby_RejectInviteCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned for a successful operation, otherwise one of the error codes is returned. See eos_common.h */
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Lobby_RejectInvite */
 	void* ClientData;
-	/** The invite id to reject */
+	/** The ID of the invitation being rejected */
 	const char* InviteId;
 ));
 
@@ -655,12 +675,12 @@ EOS_DECLARE_CALLBACK(EOS_Lobby_OnRejectInviteCallback, const EOS_Lobby_RejectInv
 #define EOS_LOBBY_QUERYINVITES_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Lobby_QueryInvites Function.
+ * Input parameters for the EOS_Lobby_QueryInvites function.
  */
 EOS_STRUCT(EOS_Lobby_QueryInvitesOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBY_QUERYINVITES_API_LATEST. */
 	int32_t ApiVersion;
-	/** Local User Id to query invites */
+	/** The Product User ID of the local user whose invitations you want to retrieve */
 	EOS_ProductUserId LocalUserId;
 ));
 
@@ -668,11 +688,11 @@ EOS_STRUCT(EOS_Lobby_QueryInvitesOptions, (
  * Output parameters for the EOS_Lobby_QueryInvites function.
  */
 EOS_STRUCT(EOS_Lobby_QueryInvitesCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned for a successful operation, otherwise one of the error codes is returned. See eos_common.h */
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Lobby_QueryInvites */
 	void* ClientData;
-	/** Local User Id that made the request */
+	/** The Product User ID of the local user that made the request */
 	EOS_ProductUserId LocalUserId;
 ));
 
@@ -687,12 +707,12 @@ EOS_DECLARE_CALLBACK(EOS_Lobby_OnQueryInvitesCallback, const EOS_Lobby_QueryInvi
 #define EOS_LOBBY_GETINVITECOUNT_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Lobby_GetInviteCount Function.
+ * Input parameters for the EOS_Lobby_GetInviteCount function.
  */
 EOS_STRUCT(EOS_Lobby_GetInviteCountOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBY_GETINVITECOUNT_API_LATEST. */
 	int32_t ApiVersion;
-	/** Local user that has invites */
+	/** The Product User ID of the local user whose cached lobby invitations you want to count */
 	EOS_ProductUserId LocalUserId;
 ));
 
@@ -700,29 +720,29 @@ EOS_STRUCT(EOS_Lobby_GetInviteCountOptions, (
 #define EOS_LOBBY_GETINVITEIDBYINDEX_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Lobby_GetInviteIdByIndex Function.
+ * Input parameters for the EOS_Lobby_GetInviteIdByIndex function.
  */
 EOS_STRUCT(EOS_Lobby_GetInviteIdByIndexOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBY_GETINVITEIDBYINDEX_API_LATEST. */
 	int32_t ApiVersion;
-	/** Local user that has invites */
+	/** The Product User ID of the local user who received the cached invitation */
 	EOS_ProductUserId LocalUserId;
-	/** Index of the invite id to retrieve */
+	/** The index of the invitation ID to retrieve */
 	uint32_t Index;
 ));
 
-/** The most recent version of the EOS_Lobby_CopyLobbyHandle API. */
+/** The most recent version of the EOS_Lobby_CopyLobbyDetailsHandle API. */
 #define EOS_LOBBY_COPYLOBBYDETAILSHANDLE_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Lobby_CopyLobbyDetailsHandle Function.
+ * Input parameters for the EOS_Lobby_CopyLobbyDetailsHandle function.
  */
 EOS_STRUCT(EOS_Lobby_CopyLobbyDetailsHandleOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBY_COPYLOBBYDETAILSHANDLE_API_LATEST. */
 	int32_t ApiVersion;
-	/** The id of the lobby affected */
+	/** The ID of the lobby */
 	EOS_LobbyId LobbyId;
-	/** Local user making the request */
+	/** The Product User ID of the local user making the request */
 	EOS_ProductUserId LocalUserId;
 ));
 
@@ -738,7 +758,7 @@ EOS_STRUCT(EOS_Lobby_CopyLobbyDetailsHandleOptions, (
  * Contains information about lobby and lobby member data
  */
 EOS_STRUCT(EOS_Lobby_AttributeData, (
-	/** API Version */
+	/** API Version: Set this to EOS_LOBBY_ATTRIBUTEDATA_API_LATEST. */
 	int32_t ApiVersion;
 	/** Name of the lobby attribute */
 	const char* Key;
@@ -766,12 +786,12 @@ EOS_STRUCT(EOS_Lobby_AttributeData, (
  *  Used to store both lobby and lobby member data
  */
 EOS_STRUCT(EOS_Lobby_Attribute, (
-	/** API Version */
+	/** API Version: Set this to EOS_LOBBY_ATTRIBUTE_API_LATEST. */
 	int32_t ApiVersion;
 	/** Key/Value pair describing the attribute */
 	EOS_Lobby_AttributeData* Data;
 	/** Is this attribute public or private to the lobby and its members */
-	EOS_ELobbyAttributeVisibility Visbility;
+	EOS_ELobbyAttributeVisibility Visibility;
 ));
 
 EOS_DECLARE_FUNC(void) EOS_Lobby_Attribute_Release(EOS_Lobby_Attribute* LobbyAttribute);
@@ -780,10 +800,10 @@ EOS_DECLARE_FUNC(void) EOS_Lobby_Attribute_Release(EOS_Lobby_Attribute* LobbyAtt
 #define EOS_LOBBYMODIFICATION_SETPERMISSIONLEVEL_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbyModification_SetPermissionLevel Function.
+ * Input parameters for the EOS_LobbyModification_SetPermissionLevel function.
  */
 EOS_STRUCT(EOS_LobbyModification_SetPermissionLevelOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYMODIFICATION_SETPERMISSIONLEVEL_API_LATEST. */
 	int32_t ApiVersion;
 	/** Permission level of the lobby */
 	EOS_ELobbyPermissionLevel PermissionLevel;
@@ -793,10 +813,10 @@ EOS_STRUCT(EOS_LobbyModification_SetPermissionLevelOptions, (
 #define EOS_LOBBYMODIFICATION_SETMAXMEMBERS_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbyModification_SetMaxMembers Function.
+ * Input parameters for the EOS_LobbyModification_SetMaxMembers function.
  */
 EOS_STRUCT(EOS_LobbyModification_SetMaxMembersOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYMODIFICATION_SETMAXMEMBERS_API_LATEST. */
 	int32_t ApiVersion;
 	/** New maximum number of lobby members */
 	uint32_t MaxMembers;
@@ -807,10 +827,10 @@ EOS_STRUCT(EOS_LobbyModification_SetMaxMembersOptions, (
 #define EOS_LOBBYMODIFICATION_ADDATTRIBUTE_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbyModification_AddAttribute Function.
+ * Input parameters for the EOS_LobbyModification_AddAttribute function.
  */
 EOS_STRUCT(EOS_LobbyModification_AddAttributeOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYMODIFICATION_ADDATTRIBUTE_API_LATEST. */
 	int32_t ApiVersion;
 	/** Key/Value pair describing the attribute to add to the lobby */
 	const EOS_Lobby_AttributeData* Attribute;
@@ -823,10 +843,10 @@ EOS_STRUCT(EOS_LobbyModification_AddAttributeOptions, (
 #define EOS_LOBBYMODIFICATION_REMOVEATTRIBUTE_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbyModification_RemoveAttribute Function.
+ * Input parameters for the EOS_LobbyModification_RemoveAttribute function.
  */
 EOS_STRUCT(EOS_LobbyModification_RemoveAttributeOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYMODIFICATION_REMOVEATTRIBUTE_API_LATEST. */
 	int32_t ApiVersion;
 	/** Name of the key */
 	const char* Key;
@@ -836,10 +856,10 @@ EOS_STRUCT(EOS_LobbyModification_RemoveAttributeOptions, (
 #define EOS_LOBBYMODIFICATION_ADDMEMBERATTRIBUTE_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbyModification_AddMemberAttribute Function.
+ * Input parameters for the EOS_LobbyModification_AddMemberAttribute function.
  */
 EOS_STRUCT(EOS_LobbyModification_AddMemberAttributeOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYMODIFICATION_ADDMEMBERATTRIBUTE_API_LATEST. */
 	int32_t ApiVersion;
 	/** Key/Value pair describing the attribute to add to the lobby member */
 	const EOS_Lobby_AttributeData* Attribute;
@@ -851,10 +871,10 @@ EOS_STRUCT(EOS_LobbyModification_AddMemberAttributeOptions, (
 #define EOS_LOBBYMODIFICATION_REMOVEMEMBERATTRIBUTE_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbyModification_RemoveMemberAttribute Function.
+ * Input parameters for the EOS_LobbyModification_RemoveMemberAttribute function.
  */
 EOS_STRUCT(EOS_LobbyModification_RemoveMemberAttributeOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYMODIFICATION_REMOVEMEMBERATTRIBUTE_API_LATEST. */
 	int32_t ApiVersion;
 	/** Name of the key */
 	const char* Key;
@@ -864,10 +884,10 @@ EOS_STRUCT(EOS_LobbyModification_RemoveMemberAttributeOptions, (
 #define EOS_LOBBYDETAILS_GETLOBBYOWNER_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbyDetails_GetLobbyOwner Function.
+ * Input parameters for the EOS_LobbyDetails_GetLobbyOwner function.
  */
 EOS_STRUCT(EOS_LobbyDetails_GetLobbyOwnerOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYDETAILS_GETLOBBYOWNER_API_LATEST. */
 	int32_t ApiVersion;
 ));
 
@@ -875,10 +895,10 @@ EOS_STRUCT(EOS_LobbyDetails_GetLobbyOwnerOptions, (
 #define EOS_LOBBYDETAILS_COPYINFO_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbyDetails_CopyInfo Function.
+ * Input parameters for the EOS_LobbyDetails_CopyInfo function.
  */
 EOS_STRUCT(EOS_LobbyDetails_CopyInfoOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYDETAILS_COPYINFO_API_LATEST. */
 	int32_t ApiVersion;
 ));
 
@@ -887,10 +907,10 @@ EOS_STRUCT(EOS_LobbyDetails_CopyInfoOptions, (
 #define EOS_LOBBYDETAILS_GETATTRIBUTECOUNT_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbyDetails_GetAttributeCount Function.
+ * Input parameters for the EOS_LobbyDetails_GetAttributeCount function.
  */
 EOS_STRUCT(EOS_LobbyDetails_GetAttributeCountOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYDETAILS_GETATTRIBUTECOUNT_API_LATEST. */
 	int32_t ApiVersion;
 ));
 
@@ -899,10 +919,10 @@ EOS_STRUCT(EOS_LobbyDetails_GetAttributeCountOptions, (
 #define EOS_LOBBYDETAILS_COPYATTRIBUTEBYINDEX_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbyDetails_CopyAttributeByIndex Function.
+ * Input parameters for the EOS_LobbyDetails_CopyAttributeByIndex function.
  */
 EOS_STRUCT(EOS_LobbyDetails_CopyAttributeByIndexOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYDETAILS_COPYATTRIBUTEBYINDEX_API_LATEST. */
 	int32_t ApiVersion;
 	/**
 	 * The index of the attribute to retrieve
@@ -916,10 +936,10 @@ EOS_STRUCT(EOS_LobbyDetails_CopyAttributeByIndexOptions, (
 #define EOS_LOBBYDETAILS_COPYATTRIBUTEBYKEY_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbyDetails_CopyAttributeByKey Function.
+ * Input parameters for the EOS_LobbyDetails_CopyAttributeByKey function.
  */
 EOS_STRUCT(EOS_LobbyDetails_CopyAttributeByKeyOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYDETAILS_COPYATTRIBUTEBYKEY_API_LATEST. */
 	int32_t ApiVersion;
 	/** Name of the attribute */
 	const char* AttrKey;
@@ -929,12 +949,12 @@ EOS_STRUCT(EOS_LobbyDetails_CopyAttributeByKeyOptions, (
 #define EOS_LOBBYDETAILS_GETMEMBERATTRIBUTECOUNT_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbyDetails_GetMemberAttributeCount Function.
+ * Input parameters for the EOS_LobbyDetails_GetMemberAttributeCount function.
  */
 EOS_STRUCT(EOS_LobbyDetails_GetMemberAttributeCountOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYDETAILS_GETMEMBERATTRIBUTECOUNT_API_LATEST. */
 	int32_t ApiVersion;
-	/** Lobby member of interest */
+	/** The Product User ID of the lobby member */
 	EOS_ProductUserId TargetUserId;
 ));
 
@@ -942,14 +962,14 @@ EOS_STRUCT(EOS_LobbyDetails_GetMemberAttributeCountOptions, (
 #define EOS_LOBBYDETAILS_COPYMEMBERATTRIBUTEBYINDEX_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbyDetails_CopyMemberAttributeByIndex Function.
+ * Input parameters for the EOS_LobbyDetails_CopyMemberAttributeByIndex function.
  */
 EOS_STRUCT(EOS_LobbyDetails_CopyMemberAttributeByIndexOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYDETAILS_COPYMEMBERATTRIBUTEBYINDEX_API_LATEST. */
 	int32_t ApiVersion;
-	/** Lobby member of interest */
+	/** The Product User ID of the lobby member */
 	EOS_ProductUserId TargetUserId;
-	/** Attribute index */
+	/** The index of the attribute to copy */
 	uint32_t AttrIndex;
 ));
 
@@ -957,14 +977,14 @@ EOS_STRUCT(EOS_LobbyDetails_CopyMemberAttributeByIndexOptions, (
 #define EOS_LOBBYDETAILS_COPYMEMBERATTRIBUTEBYKEY_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbyDetails_CopyMemberAttributeByKey Function.
+ * Input parameters for the EOS_LobbyDetails_CopyMemberAttributeByKey function.
  */
 EOS_STRUCT(EOS_LobbyDetails_CopyMemberAttributeByKeyOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYDETAILS_COPYMEMBERATTRIBUTEBYKEY_API_LATEST. */
 	int32_t ApiVersion;
-	/** Lobby member of interest */
+	/** The Product User ID of the lobby member */
 	EOS_ProductUserId TargetUserId;
-	/** Name of the attribute */
+	/** Name of the attribute to copy */
 	const char* AttrKey;
 ));
 
@@ -972,10 +992,10 @@ EOS_STRUCT(EOS_LobbyDetails_CopyMemberAttributeByKeyOptions, (
 #define EOS_LOBBYDETAILS_GETMEMBERCOUNT_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbyDetails_GetMemberCount Function.
+ * Input parameters for the EOS_LobbyDetails_GetMemberCount function.
  */
 EOS_STRUCT(EOS_LobbyDetails_GetMemberCountOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYDETAILS_GETMEMBERCOUNT_API_LATEST. */
 	int32_t ApiVersion;
 ));
 
@@ -983,10 +1003,10 @@ EOS_STRUCT(EOS_LobbyDetails_GetMemberCountOptions, (
 #define EOS_LOBBYDETAILS_GETMEMBERBYINDEX_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbyDetails_GetMemberByIndex Function.
+ * Input parameters for the EOS_LobbyDetails_GetMemberByIndex function.
  */
 EOS_STRUCT(EOS_LobbyDetails_GetMemberByIndexOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYDETAILS_GETMEMBERBYINDEX_API_LATEST. */
 	int32_t ApiVersion;
 	/** Index of the member to retrieve */
 	uint32_t MemberIndex;
@@ -996,12 +1016,12 @@ EOS_STRUCT(EOS_LobbyDetails_GetMemberByIndexOptions, (
 #define EOS_LOBBYSEARCH_FIND_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbySearch_Find Function.
+ * Input parameters for the EOS_LobbySearch_Find function.
  */
 EOS_STRUCT(EOS_LobbySearch_FindOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYSEARCH_FIND_API_LATEST. */
 	int32_t ApiVersion;
-	/** User making the search request */
+	/** The Product User ID of the user making the search request */
 	EOS_ProductUserId LocalUserId;
 ));
 
@@ -1009,7 +1029,7 @@ EOS_STRUCT(EOS_LobbySearch_FindOptions, (
  * Output parameters for the EOS_LobbySearch_Find function.
  */
 EOS_STRUCT(EOS_LobbySearch_FindCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned for a successful operation, otherwise one of the error codes is returned. See eos_common.h */
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_LobbySearch_Find */
 	void* ClientData;
@@ -1021,29 +1041,29 @@ EOS_STRUCT(EOS_LobbySearch_FindCallbackInfo, (
  */
 EOS_DECLARE_CALLBACK(EOS_LobbySearch_OnFindCallback, const EOS_LobbySearch_FindCallbackInfo* Data);
 
-/** The most recent version of the EOS_Lobby_SetLobbyId API. */
+/** The most recent version of the EOS_LobbySearch_SetLobbyId API. */
 #define EOS_LOBBYSEARCH_SETLOBBYID_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbySearch_SetLobbyId Function.
+ * Input parameters for the EOS_LobbySearch_SetLobbyId function.
  */
 EOS_STRUCT(EOS_LobbySearch_SetLobbyIdOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYSEARCH_SETLOBBYID_API_LATEST. */
 	int32_t ApiVersion;
-	/** The id of the lobby to set */
+	/** The ID of the lobby to find */
 	EOS_LobbyId LobbyId;
 ));
 
-/** The most recent version of the EOS_Lobby_SetTargetUserId API. */
+/** The most recent version of the EOS_LobbySearch_SetTargetUserId API. */
 #define EOS_LOBBYSEARCH_SETTARGETUSERID_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbySearch_SetTargetUserId Function.
+ * Input parameters for the EOS_LobbySearch_SetTargetUserId function.
  */
 EOS_STRUCT(EOS_LobbySearch_SetTargetUserIdOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYSEARCH_SETTARGETUSERID_API_LATEST. */
 	int32_t ApiVersion;
-	/** Search lobbies for given user, returning any lobbies where this user is currently registered */
+	/** Search lobbies for given user by Product User ID, returning any lobbies where this user is currently registered */
 	EOS_ProductUserId TargetUserId;
 ));
 
@@ -1051,10 +1071,10 @@ EOS_STRUCT(EOS_LobbySearch_SetTargetUserIdOptions, (
 #define EOS_LOBBYSEARCH_SETPARAMETER_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbySearch_SetParameter Function.
+ * Input parameters for the EOS_LobbySearch_SetParameter function.
  */
 EOS_STRUCT(EOS_LobbySearch_SetParameterOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYSEARCH_SETPARAMETER_API_LATEST. */
 	int32_t ApiVersion;
 	/** Search parameter describing a key and a value to compare */
 	const EOS_Lobby_AttributeData* Parameter;
@@ -1066,10 +1086,10 @@ EOS_STRUCT(EOS_LobbySearch_SetParameterOptions, (
 #define EOS_LOBBYSEARCH_REMOVEPARAMETER_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbySearch_RemoveParameter Function.
+ * Input parameters for the EOS_LobbySearch_RemoveParameter function.
  */
 EOS_STRUCT(EOS_LobbySearch_RemoveParameterOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYSEARCH_REMOVEPARAMETER_API_LATEST. */
 	int32_t ApiVersion;
 	/** Search parameter key to remove from the search */
 	const char* Key;
@@ -1081,10 +1101,10 @@ EOS_STRUCT(EOS_LobbySearch_RemoveParameterOptions, (
 #define EOS_LOBBYSEARCH_SETMAXRESULTS_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbySearch_SetMaxResults Function.
+ * Input parameters for the EOS_LobbySearch_SetMaxResults function.
  */
 EOS_STRUCT(EOS_LobbySearch_SetMaxResultsOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYSEARCH_SETMAXRESULTS_API_LATEST. */
 	int32_t ApiVersion;
 	/** Maximum number of search results to return from the query */
 	uint32_t MaxResults;
@@ -1094,10 +1114,10 @@ EOS_STRUCT(EOS_LobbySearch_SetMaxResultsOptions, (
 #define EOS_LOBBYSEARCH_GETSEARCHRESULTCOUNT_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbySearch_GetSearchResultCount Function.
+ * Input parameters for the EOS_LobbySearch_GetSearchResultCount function.
  */
 EOS_STRUCT(EOS_LobbySearch_GetSearchResultCountOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYSEARCH_GETSEARCHRESULTCOUNT_API_LATEST. */
 	int32_t ApiVersion;
 ));
 
@@ -1105,10 +1125,10 @@ EOS_STRUCT(EOS_LobbySearch_GetSearchResultCountOptions, (
 #define EOS_LOBBYSEARCH_COPYSEARCHRESULTBYINDEX_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbySearch_CopySearchResultByIndex Function.
+ * Input parameters for the EOS_LobbySearch_CopySearchResultByIndex function.
  */
 EOS_STRUCT(EOS_LobbySearch_CopySearchResultByIndexOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_LOBBYSEARCH_COPYSEARCHRESULTBYINDEX_API_LATEST. */
 	int32_t ApiVersion;
 	/**
 	 * The index of the lobby to retrieve within the completed search query

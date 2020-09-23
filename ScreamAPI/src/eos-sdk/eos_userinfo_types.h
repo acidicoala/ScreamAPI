@@ -16,14 +16,14 @@ EXTERN_C typedef struct EOS_UserInfoHandle* EOS_HUserInfo;
 #define EOS_USERINFO_QUERYUSERINFO_API_LATEST 1
 
 /**
- * Input parameters for the EOS_UserInfo_QueryUserInfo Function.
+ * Input parameters for the EOS_UserInfo_QueryUserInfo function.
  */
 EOS_STRUCT(EOS_UserInfo_QueryUserInfoOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_USERINFO_QUERYUSERINFO_API_LATEST. */
 	int32_t ApiVersion;
-	/** Account ID of the local player requesting the information */
+	/** The Epic Online Services Account ID of the local player requesting the information */
 	EOS_EpicAccountId LocalUserId;
-	/** Account ID of the player whose information is being retrieved */
+	/** The Epic Online Services Account ID of the player whose information is being retrieved */
 	EOS_EpicAccountId TargetUserId;
 ));
 
@@ -31,13 +31,13 @@ EOS_STRUCT(EOS_UserInfo_QueryUserInfoOptions, (
  * Output parameters for the EOS_UserInfo_QueryUserInfo Function.
  */
 EOS_STRUCT(EOS_UserInfo_QueryUserInfoCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned for a successful query, otherwise one of the error codes is returned. See eos_common.h */
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_UserInfo_QueryUserInfo */
 	void* ClientData;
-	/** Account ID of the local player requesting the information */
+	/** The Epic Online Services Account ID of the local player requesting the information */
 	EOS_EpicAccountId LocalUserId;
-	/** Account ID of the player whose information is being retrieved */
+	/** The Epic Online Services Account ID of the player whose information is being retrieved */
 	EOS_EpicAccountId TargetUserId;
 ));
 
@@ -57,12 +57,12 @@ EOS_DECLARE_CALLBACK(EOS_UserInfo_OnQueryUserInfoCallback, const EOS_UserInfo_Qu
 #define EOS_USERINFO_QUERYUSERINFOBYDISPLAYNAME_API_LATEST 1
 
 /**
- * Input parameters for the EOS_UserInfo_QueryUserInfoByDisplayName Function.
+ * Input parameters for the EOS_UserInfo_QueryUserInfoByDisplayName function.
  */
 EOS_STRUCT(EOS_UserInfo_QueryUserInfoByDisplayNameOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_USERINFO_QUERYUSERINFOBYDISPLAYNAME_API_LATEST. */
 	int32_t ApiVersion;
-	/** Account ID of the local player requesting the information */
+	/** The Epic Online Services Account ID of the local player requesting the information */
 	EOS_EpicAccountId LocalUserId;
 	/** Display name of the player being queried */
 	const char* DisplayName;
@@ -72,13 +72,13 @@ EOS_STRUCT(EOS_UserInfo_QueryUserInfoByDisplayNameOptions, (
  * Output parameters for the EOS_UserInfo_QueryUserInfoByDisplayName Function.
  */
 EOS_STRUCT(EOS_UserInfo_QueryUserInfoByDisplayNameCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned for a successful query, otherwise one of the error codes is returned. See eos_common.h */
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_UserInfo_QueryUserInfoByDisplayName */
 	void* ClientData;
-	/** Account ID of the local player requesting the information */
+	/** The Epic Online Services Account ID of the local player requesting the information */
 	EOS_EpicAccountId LocalUserId;
-	/** Account ID of the player whose information is being retrieved */
+	/** The Epic Online Services Account ID of the player whose information is being retrieved */
 	EOS_EpicAccountId TargetUserId;
 	/** Display name of the player being queried. This memory is only valid during the scope of the callback. */
 	const char* DisplayName;
@@ -92,7 +92,55 @@ EOS_DECLARE_CALLBACK(EOS_UserInfo_OnQueryUserInfoByDisplayNameCallback, const EO
 
 
 /**
- * EOS_UserInfo_CopyUserInfo is used to immediately retrieve user information for an account id, cached by a previous call to EOS_UserInfo_QueryUserInfo.
+ * EOS_UserInfo_QueryUserInfoByExternalAccount is used to start an asynchronous query to retrieve user information by external account type.
+ * This can be useful for getting the EOS_EpicAccountId for an external account.
+ * The following types are used to work with the API.
+ */
+
+ /** The most recent version of the EOS_UserInfo_QueryUserInfoByExternalAccount API. */
+#define EOS_USERINFO_QUERYUSERINFOBYEXTERNALACCOUNT_API_LATEST 1
+
+/**
+ * Input parameters for the EOS_UserInfo_QueryUserInfoByExternalAccount function.
+ */
+EOS_STRUCT(EOS_UserInfo_QueryUserInfoByExternalAccountOptions, (
+	/** API Version: Set this to EOS_USERINFO_QUERYUSERINFOBYEXTERNALACCOUNT_API_LATEST. */
+	int32_t ApiVersion;
+	/** The Epic Online Services Account ID of the local player requesting the information */
+	EOS_EpicAccountId LocalUserId;
+	/** External account ID of the user whose information is being retrieved */
+	const char* ExternalAccountId;
+	/** Account type of the external user info to query */
+	EOS_EExternalAccountType AccountType;
+));
+
+/**
+ * Output parameters for the EOS_UserInfo_QueryUserInfoByExternalAccount Function.
+ */
+EOS_STRUCT(EOS_UserInfo_QueryUserInfoByExternalAccountCallbackInfo, (
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
+	EOS_EResult ResultCode;
+	/** Context that was passed into EOS_UserInfo_QueryUserInfoByExternalAccount */
+	void* ClientData;
+	/** The Epic Online Services Account ID of the local player who requested the information */
+	EOS_EpicAccountId LocalUserId;
+	/** External account id of the user whose information has been retrieved */
+	const char* ExternalAccountId;
+	/** Account type of the external account id */
+	EOS_EExternalAccountType AccountType;
+	/** Account ID of the player whose information has been retrieved */
+	EOS_EpicAccountId TargetUserId;
+));
+
+/**
+ * Function prototype definition for callbacks passed to EOS_UserInfo_QueryUserInfo
+ * @param Data A EOS_UserInfo_QueryUserInfoByExternalAccountCallbackInfo containing the output information and result
+ */
+EOS_DECLARE_CALLBACK(EOS_UserInfo_OnQueryUserInfoByExternalAccountCallback, const EOS_UserInfo_QueryUserInfoByExternalAccountCallbackInfo* Data);
+
+
+/**
+ * EOS_UserInfo_CopyUserInfo is used to immediately retrieve user information for an account ID, cached by a previous call to EOS_UserInfo_QueryUserInfo.
  * The following types are used to work with the API.
  */
 
@@ -107,9 +155,9 @@ EOS_DECLARE_CALLBACK(EOS_UserInfo_OnQueryUserInfoByDisplayNameCallback, const EO
 
 /** A structure that contains the user information. These structures are created by EOS_UserInfo_CopyUserInfo and must be passed to EOS_UserInfo_Release. */
 EOS_STRUCT(EOS_UserInfo, (
-	/** Version of the structure. This value is matched to the API version of EOS_UserInfo_CopyUserInfo. */
+	/** API Version: Set this to EOS_USERINFO_COPYUSERINFO_API_LATEST. */
 	int32_t ApiVersion;
-	/** The account id of the user */
+	/** The Epic Online Services Account ID of the user */
 	EOS_EpicAccountId UserId;
 	/** The name of the owner's country. This may be null */
 	const char* Country;
@@ -122,19 +170,18 @@ EOS_STRUCT(EOS_UserInfo, (
 ));
 
 /**
- * Input parameters for the EOS_UserInfo_CopyUserInfo Function.
+ * Input parameters for the EOS_UserInfo_CopyUserInfo function.
  */
 EOS_STRUCT(EOS_UserInfo_CopyUserInfoOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_USERINFO_COPYUSERINFO_API_LATEST. */
 	int32_t ApiVersion;
-	/** Account ID of the local player requesting the information */
+	/** The Epic Online Services Account ID of the local player requesting the information */
 	EOS_EpicAccountId LocalUserId;
-	/** Account ID of the player whose information is being retrieved */
+	/** The Epic Online Services Account ID of the player whose information is being retrieved */
 	EOS_EpicAccountId TargetUserId;
 ));
 
 /**
- * Release the memory associated with an EOS_UserInfo structure. This must be called on data retrieved from EOS_UserInfo_CopyUserInfo.
  *
  * @param UserInfo - The user info structure to release
  *
@@ -150,11 +197,11 @@ EOS_DECLARE_FUNC(void) EOS_UserInfo_Release(EOS_UserInfo* UserInfo);
  * Contains information about a single external user info.
  */
 EOS_STRUCT(EOS_UserInfo_ExternalUserInfo, (
-	/** Version of the API. */
+	/** API Version: Set this to EOS_USERINFO_EXTERNALUSERINFO_API_LATEST. */
 	int32_t ApiVersion;
 	/** The type of the external account */
 	EOS_EExternalAccountType AccountType;
-	/** The id of the external account. Can be null */
+	/** The ID of the external account. Can be null */
 	const char* AccountId;
 	/** The display name of the external account. Can be null */
 	const char* DisplayName;
@@ -164,14 +211,14 @@ EOS_STRUCT(EOS_UserInfo_ExternalUserInfo, (
 #define EOS_USERINFO_GETEXTERNALUSERINFOCOUNT_API_LATEST 1
 
 /**
- * Input parameters for the EOS_UserInfo_GetExternalUserInfoCount Function.
+ * Input parameters for the EOS_UserInfo_GetExternalUserInfoCount function.
  */
 EOS_STRUCT(EOS_UserInfo_GetExternalUserInfoCountOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_USERINFO_GETEXTERNALUSERINFOCOUNT_API_LATEST. */
 	int32_t ApiVersion;
-	/** Account ID of the local player requesting the information */
+	/** The Epic Online Services Account ID of the local player requesting the information */
 	EOS_EpicAccountId LocalUserId;
-	/** Account ID of the player whose information is being retrieved */
+	/** The Epic Online Services Account ID of the player whose information is being retrieved */
 	EOS_EpicAccountId TargetUserId;
 ));
 
@@ -179,14 +226,14 @@ EOS_STRUCT(EOS_UserInfo_GetExternalUserInfoCountOptions, (
 #define EOS_USERINFO_COPYEXTERNALUSERINFOBYINDEX_API_LATEST 1
 
 /**
- * Input parameters for the EOS_UserInfo_CopyExternalUserInfoByIndex Function.
+ * Input parameters for the EOS_UserInfo_CopyExternalUserInfoByIndex function.
  */
 EOS_STRUCT(EOS_UserInfo_CopyExternalUserInfoByIndexOptions, (
-	/** Version of the API. */
+	/** API Version: Set this to EOS_USERINFO_COPYEXTERNALUSERINFOBYINDEX_API_LATEST. */
 	int32_t ApiVersion;
-	/** Account ID of the local player requesting the information */
+	/** The Epic Online Services Account ID of the local player requesting the information */
 	EOS_EpicAccountId LocalUserId;
-	/** Account ID of the player whose information is being retrieved */
+	/** The Epic Online Services Account ID of the player whose information is being retrieved */
 	EOS_EpicAccountId TargetUserId;
 	/** Index of the external user info to retrieve from the cache */
 	uint32_t Index;
@@ -199,11 +246,11 @@ EOS_STRUCT(EOS_UserInfo_CopyExternalUserInfoByIndexOptions, (
  * Input parameters for the EOS_UserInfo_CopyExternalUserInfoByAccountType function.
  */
 EOS_STRUCT(EOS_UserInfo_CopyExternalUserInfoByAccountTypeOptions, (
-	/** Version of the API. */
+	/** API Version: Set this to EOS_USERINFO_COPYEXTERNALUSERINFOBYACCOUNTTYPE_API_LATEST. */
 	int32_t ApiVersion;
-	/** Account ID of the local player requesting the information */
+	/** The Epic Online Services Account ID of the local player requesting the information */
 	EOS_EpicAccountId LocalUserId;
-	/** Account ID of the player whose information is being retrieved */
+	/** The Epic Online Services Account ID of the player whose information is being retrieved */
 	EOS_EpicAccountId TargetUserId;
 	/** Account type of the external user info to retrieve from the cache */
 	EOS_EExternalAccountType AccountType;
@@ -213,16 +260,16 @@ EOS_STRUCT(EOS_UserInfo_CopyExternalUserInfoByAccountTypeOptions, (
 #define EOS_USERINFO_COPYEXTERNALUSERINFOBYACCOUNTID_API_LATEST 1
 
 /**
- * Input parameters for the EOS_UserInfo_CopyExternalUserInfoByAccountId Function.
+ * Input parameters for the EOS_UserInfo_CopyExternalUserInfoByAccountId function.
  */
 EOS_STRUCT(EOS_UserInfo_CopyExternalUserInfoByAccountIdOptions, (
-	/** Version of the API. */
+	/** API Version: Set this to EOS_USERINFO_COPYEXTERNALUSERINFOBYACCOUNTID_API_LATEST. */
 	int32_t ApiVersion;
-	/** Account ID of the local player requesting the information */
+	/** The Epic Online Services Account ID of the local player requesting the information */
 	EOS_EpicAccountId LocalUserId;
-	/** Account ID of the player whose information is being retrieved */
+	/** The Epic Online Services Account ID of the player whose information is being retrieved */
 	EOS_EpicAccountId TargetUserId;
-	/** Account ID of the external user info to retrieve from the cache. Cannot be null */
+	/** The external account ID associated with the (external) user info to retrieve from the cache; cannot be null */
 	const char* AccountId;
 ));
 

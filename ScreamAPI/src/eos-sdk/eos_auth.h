@@ -6,7 +6,7 @@
 /**
  * The Auth Interface is used to manage local user permissions and access to backend services through the verification of various forms of credentials.
  * All Auth Interface calls take a handle of type EOS_HAuth as the first parameter.
- * This handle can be retrieved from a EOS_HPlatform handle by using the EOS_Platform_GetAuthInterface function.
+ * This handle can be retrieved from an EOS_HPlatform handle by using the EOS_Platform_GetAuthInterface function.
  *
  * @see EOS_Platform_GetAuthInterface
  */
@@ -28,6 +28,23 @@ EOS_DECLARE_FUNC(void) EOS_Auth_Login(EOS_HAuth Handle, const EOS_Auth_LoginOpti
  * @param CompletionDelegate a callback that is fired when the logout operation completes, either successfully or in error
  */
 EOS_DECLARE_FUNC(void) EOS_Auth_Logout(EOS_HAuth Handle, const EOS_Auth_LogoutOptions* Options, void* ClientData, const EOS_Auth_OnLogoutCallback CompletionDelegate);
+
+/**
+ * Link external account by continuing previous login attempt with a continuance token.
+ *
+ * On Desktop and Mobile platforms, the user will be presented the Epic Account Portal to resolve their identity.
+ *
+ * On Console, the user will login to their Epic Account using an external device, e.g. a mobile device or a desktop PC,
+ * by browsing to the presented authentication URL and entering the device code presented by the game on the console.
+ *
+ * On success, the user will be logged in at the completion of this action.
+ * This will commit this external account to the Epic Account and cannot be undone in the SDK.
+ *
+ * @param Options structure containing the account credentials to use during the link account operation
+ * @param ClientData arbitrary data that is passed back to you in the CompletionDelegate
+ * @param CompletionDelegate a callback that is fired when the link account operation completes, either successfully or in error
+ */
+EOS_DECLARE_FUNC(void) EOS_Auth_LinkAccount(EOS_HAuth Handle, const EOS_Auth_LinkAccountOptions* Options, void* ClientData, const EOS_Auth_OnLinkAccountCallback CompletionDelegate);
 
 /**
  * Deletes a previously received and locally stored persistent auth access token for the currently logged in user of the local device.
@@ -61,29 +78,29 @@ EOS_DECLARE_FUNC(void) EOS_Auth_VerifyUserAuth(EOS_HAuth Handle, const EOS_Auth_
 EOS_DECLARE_FUNC(int32_t) EOS_Auth_GetLoggedInAccountsCount(EOS_HAuth Handle);
 
 /**
- * Fetch an account id that is logged in.
+ * Fetch an Epic Online Services Account ID that is logged in.
  *
- * @param Index an index into the list of logged in accounts. If the index is out of bounds, the returned account id will be invalid.
+ * @param Index An index into the list of logged in accounts. If the index is out of bounds, the returned Epic Online Services Account ID will be invalid.
  *
- * @return the account id associated with the index passed
+ * @return The Epic Online Services Account ID associated with the index passed
  */
 EOS_DECLARE_FUNC(EOS_EpicAccountId) EOS_Auth_GetLoggedInAccountByIndex(EOS_HAuth Handle, int32_t Index);
 
 /**
- * Fetches the login status for an account id.
+ * Fetches the login status for an Epic Online Services Account ID.
  *
- * @param LocalUserId the account id of the user being queried
+ * @param LocalUserId The Epic Online Services Account ID of the user being queried
  *
- * @return the enum value of a user's login status
+ * @return The enum value of a user's login status
  */
 EOS_DECLARE_FUNC(EOS_ELoginStatus) EOS_Auth_GetLoginStatus(EOS_HAuth Handle, EOS_EpicAccountId LocalUserId);
 
 /**
- * Fetches a user auth token for an account id.
+ * Fetches a user auth token for an Epic Online Services Account ID.
  *
- * @param Options structure containing the api version of CopyUserAuthToken to use
- * @param LocalUserId the account id of the user being queried
- * @param OutUserAuthToken the auth token for the given user, if it exists and is valid, use EOS_Auth_Token_Release when finished
+ * @param Options Structure containing the api version of CopyUserAuthToken to use
+ * @param LocalUserId The Epic Online Services Account ID of the user being queried
+ * @param OutUserAuthToken The auth token for the given user, if it exists and is valid; use EOS_Auth_Token_Release when finished
  *
  * @see EOS_Auth_Token_Release
  *

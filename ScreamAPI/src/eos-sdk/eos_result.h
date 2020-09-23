@@ -55,7 +55,7 @@ EOS_RESULT_VALUE(EOS_Disabled, 23)
 EOS_RESULT_VALUE(EOS_DuplicateNotAllowed, 24)
 /** Required parameters are missing. DEPRECATED: This error is no longer used. */
 EOS_RESULT_VALUE(EOS_MissingParameters_DEPRECATED, 25)
-/** Sandbox id is invalid */
+/** Sandbox ID is invalid */
 EOS_RESULT_VALUE(EOS_InvalidSandboxId, 26)
 /** Request timed out */
 EOS_RESULT_VALUE(EOS_TimedOut, 27)
@@ -69,9 +69,9 @@ EOS_RESULT_VALUE(EOS_Missing_Feature, 30)
 EOS_RESULT_VALUE(EOS_Invalid_Sandbox, 31)
 /** The deployment given to the backend is invalid */
 EOS_RESULT_VALUE(EOS_Invalid_Deployment, 32)
-/** The product id specified to the backend is invalid */
+/** The product ID specified to the backend is invalid */
 EOS_RESULT_VALUE(EOS_Invalid_Product, 33)
-/** The product user id specified to the backend is invalid */
+/** The product user ID specified to the backend is invalid */
 EOS_RESULT_VALUE(EOS_Invalid_ProductUserID, 34)
 /** There was a failure with the backend service */
 EOS_RESULT_VALUE(EOS_ServiceFailure, 35)
@@ -81,6 +81,8 @@ EOS_RESULT_VALUE(EOS_CacheDirectoryMissing, 36)
 EOS_RESULT_VALUE(EOS_CacheDirectoryInvalid, 37)
 /** The request failed because resource was in an invalid state */
 EOS_RESULT_VALUE(EOS_InvalidState, 38)
+/** Request is in progress */
+EOS_RESULT_VALUE(EOS_RequestInProgress, 39)
 
 /** Account locked due to login failures */
 EOS_RESULT_VALUE(EOS_Auth_AccountLocked, 1001)
@@ -153,7 +155,7 @@ EOS_RESULT_VALUE(EOS_Auth_MFARequired, 1060)
 /** Parental locks are in place */
 EOS_RESULT_VALUE(EOS_Auth_ParentalControls, 1070)
 
-/** Korea real id association required but missing */
+/** Korea real ID association required but missing */
 EOS_RESULT_VALUE(EOS_Auth_NoRealId, 1080)
 
 /** An outgoing friend invitation is awaiting acceptance; sending another invite to the same user is erroneous */
@@ -215,7 +217,7 @@ EOS_RESULT_VALUE(EOS_Sessions_SessionAlreadyExists, 5003)
 EOS_RESULT_VALUE(EOS_Sessions_InvalidLock, 5004)
 /** Invalid session reference */
 EOS_RESULT_VALUE(EOS_Sessions_InvalidSession, 5005)
-/** Sandbox id associated with auth didn't match */
+/** Sandbox ID associated with auth didn't match */
 EOS_RESULT_VALUE(EOS_Sessions_SandboxNotAllowed, 5006)
 /** Invite failed to send */
 EOS_RESULT_VALUE(EOS_Sessions_InviteFailed, 5007)
@@ -309,7 +311,7 @@ EOS_RESULT_VALUE(EOS_Lobby_TooManyPlayers, 9004)
 EOS_RESULT_VALUE(EOS_Lobby_NoPermission, 9005)
 /** Invalid session reference */
 EOS_RESULT_VALUE(EOS_Lobby_InvalidSession, 9006)
-/** Sandbox id associated with auth didn't match */
+/** Sandbox ID associated with auth didn't match */
 EOS_RESULT_VALUE(EOS_Lobby_SandboxNotAllowed, 9007)
 /** Invite failed to send */
 EOS_RESULT_VALUE(EOS_Lobby_InviteFailed, 9008)
@@ -333,6 +335,15 @@ EOS_RESULT_VALUE(EOS_Lobby_NotAllowed, 9016)
 EOS_RESULT_VALUE(EOS_Lobby_MemberUpdateOnly, 9017)
 /** Presence lobby already exists for the client */
 EOS_RESULT_VALUE(EOS_Lobby_PresenceLobbyExists, 9018)
+
+/** User callback that receives data from storage returned error. */
+EOS_RESULT_VALUE(EOS_TitleStorage_UserErrorFromDataCallback, 10000)
+/** User forgot to set Encryption key during platform init. Title Storage can't work without it. */
+EOS_RESULT_VALUE(EOS_TitleStorage_EncryptionKeyNotSet, 10001)
+/** Downloaded file is corrupted. */
+EOS_RESULT_VALUE(EOS_TitleStorage_FileCorrupted, 10002)
+/** Downloaded file's format is newer than client SDK version. */
+EOS_RESULT_VALUE(EOS_TitleStorage_FileHeaderHasNewerVersion, 10003)
 
 /** An unexpected error that we cannot identify has occurred. */
 EOS_RESULT_VALUE_LAST(EOS_UnexpectedError, 0x7FFFFFFF)

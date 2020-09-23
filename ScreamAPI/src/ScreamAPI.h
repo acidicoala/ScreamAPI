@@ -8,10 +8,7 @@ namespace ScreamAPI{
 
 extern HMODULE thisDLL;
 extern HMODULE originalDLL;
-extern EOS_HPlatform hPlatform;
-
 void init(HMODULE hModule);
-void checkSdkVersion(const int32_t apiVersion, const int32_t maxVersion);
 void destroy();
 
 // Have to define template function in header (-_-)

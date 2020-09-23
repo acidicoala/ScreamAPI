@@ -7,16 +7,17 @@
 
 EXTERN_C typedef struct EOS_ConnectHandle* EOS_HConnect;
 
-/** Max length of an external account id in string form */
+/** Max length of an external account ID in string form */
 #define EOS_CONNECT_EXTERNAL_ACCOUNT_ID_MAX_LENGTH 256
 
 /**
  * List of the supported identity providers to authenticate a user.
  *
  * The type of authentication token is specific to each provider.
- * Tokens in string format should be passed as-is to the function,
- * and tokens retrieved as raw byte arrays should be converted to string using
- * the EOS_ByteArray_ToString API before passing them to the Connect Interface API.
+ * Tokens in string format should be passed as-is to the function.
+ * Tokens retrieved as raw byte arrays should be converted into a hex-encoded UTF-8 string (e.g. "FA87097A..") before being passed to the function.
+ * For C/C++ API integration, use the EOS_ByteArray_ToString API for the conversion.
+ * For C# integration, you can use <see cref="Helper.ToHexString" /> for the conversion.
  *
  * @see EOS_Connect_Login
  * @see EOS_Connect_Credentials
@@ -32,9 +33,11 @@ EOS_ENUM(EOS_EExternalCredentialType,
 	 * Steam Encrypted App Ticket
 	 *
 	 * Generated using the ISteamUser::RequestEncryptedAppTicket API of Steamworks SDK.
-	 * As the ticket generation parameters, use pDataToInclude(NULL) and cbDataToInclude(0).
+	 * For ticket generation parameters, use pDataToInclude(NULL) and cbDataToInclude(0).
 	 *
-	 * Use the EOS_ByteArray_ToString API to pass the retrieved ticket buffer as a hex-encoded string for the EOS_Connect_Login API.
+	 * The retrieved App Ticket byte buffer needs to be converted into a hex-encoded UTF-8 string (e.g. "FA87097A..") before passing it to the EOS_Auth_Login or EOS_Connect_Login APIs.
+	 * For C/C++ API integration, use the EOS_ByteArray_ToString API for the conversion.
+	 * For C# integration, you can use <see cref="Helper.ToHexString" /> for the conversion.
 	 */
 	EOS_ECT_STEAM_APP_TICKET = 1,
 	/**
@@ -112,11 +115,11 @@ EOS_ENUM(EOS_EExternalCredentialType,
  * @see EOS_Connect_Login
  */ 
 EOS_STRUCT(EOS_Connect_Credentials, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_CONNECT_CREDENTIALS_API_LATEST. */
 	int32_t ApiVersion;
 	/** External token associated with the user logging in */
 	const char* Token;
-	/** Type of external login. Needed to identify the auth method to use */
+	/** Type of external login; identifies the auth method to use */
 	EOS_EExternalCredentialType Type;
 ));
 
@@ -132,7 +135,7 @@ EOS_STRUCT(EOS_Connect_Credentials, (
  * As the information passed here is client-controlled and not part of the user authentication tokens, it is only treated as non-authoritative informational data to be used by some of the feature services. For example displaying player names in Leaderboards rankings.
  */
 EOS_STRUCT(EOS_Connect_UserLoginInfo, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_CONNECT_USERLOGININFO_API_LATEST. */
 	int32_t ApiVersion;
 	/** The user’s display name on the identity provider systems as UTF-8 encoded null-terminated string. The length of the name can be at maximum up to EOS_CONNECT_USERLOGININFO_DISPLAYNAME_MAX_LENGTH bytes. */
 	const char* DisplayName;
@@ -143,10 +146,10 @@ EOS_STRUCT(EOS_Connect_UserLoginInfo, (
 #define EOS_CONNECT_LOGIN_API_LATEST 2
 
 /**
- * Input parameters for the EOS_Connect_Login Function.
+ * Input parameters for the EOS_Connect_Login function.
  */
 EOS_STRUCT(EOS_Connect_LoginOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_CONNECT_LOGIN_API_LATEST. */
 	int32_t ApiVersion;
 	/** Credentials specified for a given login method */
 	const EOS_Connect_Credentials* Credentials;
@@ -159,14 +162,14 @@ EOS_STRUCT(EOS_Connect_LoginOptions, (
 ));
 
 /**
- * Output parameters for the EOS_Connect_Login Function.
+ * Output parameters for the EOS_Connect_Login function.
  */
 EOS_STRUCT(EOS_Connect_LoginCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned for a successful query, otherwise one of the error codes is returned. See eos_result.h */
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Connect_Login */
 	void* ClientData;
-	/** If login was succesful, this is the account ID of the local player that logged in */
+	/** If login was succesful, this is the Product User ID of the local player that logged in */
 	EOS_ProductUserId LocalUserId;
 	/** 
 	 * If the user was not found with credentials passed into EOS_Connect_Login, 
@@ -186,24 +189,24 @@ EOS_DECLARE_CALLBACK(EOS_Connect_OnLoginCallback, const EOS_Connect_LoginCallbac
 #define EOS_CONNECT_CREATEUSER_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Connect_CreateUser Function.
+ * Input parameters for the EOS_Connect_CreateUser function.
  */
 EOS_STRUCT(EOS_Connect_CreateUserOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_CONNECT_CREATEUSER_API_LATEST. */
 	int32_t ApiVersion;
 	/** Continuance token from previous call to EOS_Connect_Login */
 	EOS_ContinuanceToken ContinuanceToken;
 ));
 
 /**
- * Output parameters for the EOS_Connect_CreateUser Function.
+ * Output parameters for the EOS_Connect_CreateUser function.
  */
 EOS_STRUCT(EOS_Connect_CreateUserCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned for a successful query, otherwise one of the error codes is returned. See eos_result.h */
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Connect_CreateUser */
 	void* ClientData;
-	/** Account ID of the local player created by this operation */
+	/** If the operation succeeded, this is the Product User ID of the local user who was created */
 	EOS_ProductUserId LocalUserId;
 ));
 
@@ -213,26 +216,26 @@ EOS_DECLARE_CALLBACK(EOS_Connect_OnCreateUserCallback, const EOS_Connect_CreateU
 #define EOS_CONNECT_LINKACCOUNT_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Connect_LinkAccount Function.
+ * Input parameters for the EOS_Connect_LinkAccount function.
  */
 EOS_STRUCT(EOS_Connect_LinkAccountOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_CONNECT_LINKACCOUNT_API_LATEST. */
 	int32_t ApiVersion;
-	/** Existing logged in user that will link to the external account referenced by the continuance token */
+	/** If the operation suceeded, this is The Product User ID of the existing, logged-in user that is linked to the external account referenced by the continuance token */
 	EOS_ProductUserId LocalUserId;
 	/** Continuance token from previous call to EOS_Connect_Login */
 	EOS_ContinuanceToken ContinuanceToken;
 ));
 
 /**
- * Output parameters for the EOS_Connect_LinkAccount Function.
+ * Output parameters for the EOS_Connect_LinkAccount function.
  */
 EOS_STRUCT(EOS_Connect_LinkAccountCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned for a successful query, otherwise one of the error codes is returned. See eos_result.h */
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Connect_LinkAccount */
 	void* ClientData;
-	/** Existing logged in user that had external auth linked */
+	/** The Product User ID of the existing, logged-in user whose account was linked (on success) */
 	EOS_ProductUserId LocalUserId;
 ));
 
@@ -242,6 +245,47 @@ EOS_STRUCT(EOS_Connect_LinkAccountCallbackInfo, (
  */
 EOS_DECLARE_CALLBACK(EOS_Connect_OnLinkAccountCallback, const EOS_Connect_LinkAccountCallbackInfo* Data);
 
+/** The most recent version of the EOS_Connect_UnlinkAccount API. */
+#define EOS_CONNECT_UNLINKACCOUNT_API_LATEST 1
+
+/**
+ * Input parameters for the EOS_Connect_UnlinkAccount Function.
+ */
+EOS_STRUCT(EOS_Connect_UnlinkAccountOptions, (
+	/** API Version: Set this to EOS_CONNECT_UNLINKACCOUNT_API_LATEST. */
+	int32_t ApiVersion;
+	/**
+	 * Existing logged in product user that is subject for the unlinking operation.
+	 * The external account that was used to login to the product user will be unlinked from the owning keychain.
+	 *
+	 * On a successful operation, the product user will be logged out as the external account used to authenticate the user was unlinked from the owning keychain.
+	 */
+	EOS_ProductUserId LocalUserId;
+));
+
+/**
+ * Output parameters for the EOS_Connect_UnlinkAccount Function.
+ */
+EOS_STRUCT(EOS_Connect_UnlinkAccountCallbackInfo, (
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
+	EOS_EResult ResultCode;
+	/** Context that was passed into EOS_Connect_UnlinkAccount */
+	void* ClientData;
+	/**
+	 * The product user that was subject for the unlinking operation.
+	 *
+	 * On a successful operation, the local authentication session for the product user will have been invalidated.
+	 * As such, the LocalUserId value will no longer be valid in any context unless the user is logged into it again.
+	 */
+	EOS_ProductUserId LocalUserId;
+));
+
+/**
+ * Function prototype definition for callbacks passed to EOS_Connect_UnlinkAccount
+ * @param Data A EOS_Connect_UnlinkAccountCallbackInfo containing the output information and result
+ */
+EOS_DECLARE_CALLBACK(EOS_Connect_OnUnlinkAccountCallback, const EOS_Connect_UnlinkAccountCallbackInfo* Data);
+
 /** The most recent version of the EOS_Connect_CreateDeviceId API. */
 #define EOS_CONNECT_CREATEDEVICEID_API_LATEST 1
 
@@ -249,10 +293,10 @@ EOS_DECLARE_CALLBACK(EOS_Connect_OnLinkAccountCallback, const EOS_Connect_LinkAc
 #define EOS_CONNECT_CREATEDEVICEID_DEVICEMODEL_MAX_LENGTH 64
 
 /**
- * Input parameters for the EOS_Connect_CreateDeviceId Function.
+ * Input parameters for the EOS_Connect_CreateDeviceId function.
  */
 EOS_STRUCT(EOS_Connect_CreateDeviceIdOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_CONNECT_CREATEDEVICEID_API_LATEST. */
 	int32_t ApiVersion;
 	/**
 	 * A freeform text description identifying the device type and model,
@@ -269,10 +313,10 @@ EOS_STRUCT(EOS_Connect_CreateDeviceIdOptions, (
 ));
 
 /**
- * Output parameters for the EOS_Connect_CreateDeviceId Function.
+ * Output parameters for the EOS_Connect_CreateDeviceId function.
  */
 EOS_STRUCT(EOS_Connect_CreateDeviceIdCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned for a successful query, otherwise one of the error codes is returned. See eos_result.h */
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Connect_CreateDeviceId */
 	void* ClientData;
@@ -284,18 +328,18 @@ EOS_DECLARE_CALLBACK(EOS_Connect_OnCreateDeviceIdCallback, const EOS_Connect_Cre
 #define EOS_CONNECT_DELETEDEVICEID_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Connect_DeleteDeviceId Function.
+ * Input parameters for the EOS_Connect_DeleteDeviceId function.
  */
 EOS_STRUCT(EOS_Connect_DeleteDeviceIdOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_CONNECT_DELETEDEVICEID_API_LATEST. */
 	int32_t ApiVersion;
 ));
 
 /**
- * Output parameters for the EOS_Connect_DeleteDeviceId Function.
+ * Output parameters for the EOS_Connect_DeleteDeviceId function.
  */
 EOS_STRUCT(EOS_Connect_DeleteDeviceIdCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned for a successful query, otherwise one of the error codes is returned. See eos_result.h */
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Connect_DeleteDeviceId */
 	void* ClientData;
@@ -303,37 +347,94 @@ EOS_STRUCT(EOS_Connect_DeleteDeviceIdCallbackInfo, (
 
 EOS_DECLARE_CALLBACK(EOS_Connect_OnDeleteDeviceIdCallback, const EOS_Connect_DeleteDeviceIdCallbackInfo* Data);
 
+/** The most recent version of the EOS_Connect_TransferDeviceIdAccount API. */
+#define EOS_CONNECT_TRANSFERDEVICEIDACCOUNT_API_LATEST 1
+
+/**
+ * Input parameters for the EOS_Connect_TransferDeviceIdAccount Function.
+ */
+EOS_STRUCT(EOS_Connect_TransferDeviceIdAccountOptions, (
+	/** API Version: Set this to EOS_CONNECT_TRANSFERDEVICEIDACCOUNT_API_LATEST. */
+	int32_t ApiVersion;
+	/**
+	 * The primary product user id, currently logged in, that is already associated with a real external user account (such as Epic Games, Playstation, Xbox and other).
+	 *
+	 * The account linking keychain that owns this product user will be preserved and receive
+	 * the Device ID login credentials under it.
+	 */
+	EOS_ProductUserId PrimaryLocalUserId;
+	/**
+	 * The product user id, currently logged in, that has been originally created using the anonymous local Device ID login type,
+	 * and whose Device ID login will be transferred to the keychain of the PrimaryLocalUserId.
+	 */
+	EOS_ProductUserId LocalDeviceUserId;
+	/**
+	 * Specifies which EOS_ProductUserId (i.e. game progression) will be preserved in the operation.
+	 *
+	 * After a successful transfer operation, subsequent logins using the same external account or
+	 * the same local Device ID login will return user session for the ProductUserIdToPreserve.
+	 *
+	 * Set to either PrimaryLocalUserId or LocalDeviceUserId.
+	 */
+	EOS_ProductUserId ProductUserIdToPreserve;
+));
+
+/**
+ * Output parameters for the EOS_Connect_TransferDeviceIdAccount Function.
+ */
+EOS_STRUCT(EOS_Connect_TransferDeviceIdAccountCallbackInfo, (
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
+	EOS_EResult ResultCode;
+	/** Context that was passed into EOS_Connect_TransferDeviceIdAccount */
+	void* ClientData;
+	/**
+	 * The ProductUserIdToPreserve that was passed to the original EOS_Connect_TransferDeviceIdAccount call.
+	 *
+	 * On successful operation, this EOS_ProductUserId will have a valid authentication session
+	 * and the other EOS_ProductUserId value has been discarded and lost forever.
+	 *
+	 * The application should remove any registered notification callbacks for the discarded EOS_ProductUserId as obsolete.
+	 */
+	EOS_ProductUserId LocalUserId;
+));
+
+/**
+ * Function prototype definition for callbacks passed to EOS_Connect_TransferDeviceIdAccount
+ * @param Data A EOS_Connect_TransferDeviceIdAccountCallbackInfo containing the output information and result
+ */
+EOS_DECLARE_CALLBACK(EOS_Connect_OnTransferDeviceIdAccountCallback, const EOS_Connect_TransferDeviceIdAccountCallbackInfo* Data);
+
 /** The most recent version of the EOS_Connect_QueryExternalAccountMappings API. */
 #define EOS_CONNECT_QUERYEXTERNALACCOUNTMAPPINGS_API_LATEST 1
 
-/** Maximum number of account ids that can be queried at once */
+/** Maximum number of account IDs that can be queried at once */
 #define EOS_CONNECT_QUERYEXTERNALACCOUNTMAPPINGS_MAX_ACCOUNT_IDS 128
 
 /**
- * Input parameters for the EOS_Connect_QueryExternalAccountMappings Function.
+ * Input parameters for the EOS_Connect_QueryExternalAccountMappings function.
  */
 EOS_STRUCT(EOS_Connect_QueryExternalAccountMappingsOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_CONNECT_QUERYEXTERNALACCOUNTMAPPINGS_API_LATEST. */
 	int32_t ApiVersion;
-	/** Existing logged in user that is querying account mappings */
+	/** The Product User ID of the existing, logged-in user who is querying account mappings */
 	EOS_ProductUserId LocalUserId;
-	/** External auth service supplying the account ids in string form */
+	/** External auth service supplying the account IDs in string form */
 	EOS_EExternalAccountType AccountIdType;
-	/** An array of external account ids to map to the product user id representation */
+	/** An array of external account IDs to map to the product user ID representation */
 	const char** ExternalAccountIds;
-	/** Number of account ids to query */
+	/** Number of account IDs to query */
 	uint32_t ExternalAccountIdCount;
 ));
 
 /**
- * Output parameters for the EOS_Connect_QueryExternalAccountMappings Function.
+ * Output parameters for the EOS_Connect_QueryExternalAccountMappings function.
  */
 EOS_STRUCT(EOS_Connect_QueryExternalAccountMappingsCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned for a successful query, otherwise one of the error codes is returned. See eos_result.h */
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Connect_QueryExternalAccountMappings */
 	void* ClientData;
-	/** Existing logged in user that made the request */
+	/** The Product User ID of the existing, logged-in user who made the request */
 	EOS_ProductUserId LocalUserId;
 ));
 
@@ -343,20 +444,23 @@ EOS_STRUCT(EOS_Connect_QueryExternalAccountMappingsCallbackInfo, (
  */
 EOS_DECLARE_CALLBACK(EOS_Connect_OnQueryExternalAccountMappingsCallback, const EOS_Connect_QueryExternalAccountMappingsCallbackInfo* Data);
 
-/** The most recent version of the EOS_Connect_GetExternalAccountMappings API. */
-#define EOS_CONNECT_GETEXTERNALACCOUNTMAPPINGS_API_LATEST 1
+/** The most recent version of the EOS_Connect_GetExternalAccountMapping API. */
+#define EOS_CONNECT_GETEXTERNALACCOUNTMAPPING_API_LATEST 1
+
+/** DEPRECATED! Use EOS_CONNECT_GETEXTERNALACCOUNTMAPPING_API_LATEST instead. */
+#define EOS_CONNECT_GETEXTERNALACCOUNTMAPPINGS_API_LATEST EOS_CONNECT_GETEXTERNALACCOUNTMAPPING_API_LATEST
 
 /**
- * Input parameters for the EOS_Connect_GetExternalAccountMappings Function.
+ * Input parameters for the EOS_Connect_GetExternalAccountMapping function.
  */
 EOS_STRUCT(EOS_Connect_GetExternalAccountMappingsOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_CONNECT_GETEXTERNALACCOUNTMAPPING_API_LATEST. */
 	int32_t ApiVersion;
-	/** Existing logged in user that is querying account mappings */
+	/** The Product User ID of the existing, logged-in user who is querying account mappings */
 	EOS_ProductUserId LocalUserId;
-	/** External auth service supplying the account ids in string form */
+	/** External auth service supplying the account IDs in string form */
 	EOS_EExternalAccountType AccountIdType;
-	/** Target user to retrieve the mapping for, as an external account id */
+	/** Target user to retrieve the mapping for, as an external account ID */
 	const char* TargetExternalUserId;
 ));
 
@@ -364,30 +468,30 @@ EOS_STRUCT(EOS_Connect_GetExternalAccountMappingsOptions, (
 #define EOS_CONNECT_QUERYPRODUCTUSERIDMAPPINGS_API_LATEST 2
 
 /**
- * Input parameters for the EOS_Connect_QueryProductUserIdMappings Function.
+ * Input parameters for the EOS_Connect_QueryProductUserIdMappings function.
  */
 EOS_STRUCT(EOS_Connect_QueryProductUserIdMappingsOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_CONNECT_QUERYPRODUCTUSERIDMAPPINGS_API_LATEST. */
 	int32_t ApiVersion;
-	/** Existing logged in user that is querying account mappings */
+	/** The Product User ID of the existing, logged-in user who is querying account mappings */
 	EOS_ProductUserId LocalUserId;
 	/** Deprecated - all external mappings are included in this call, it is no longer necessary to specify this value */
 	EOS_EExternalAccountType AccountIdType_DEPRECATED;
-	/** An array of product user ids to query for the given external account representation */
+	/** An array of Product User IDs to query for the given external account representation */
 	EOS_ProductUserId* ProductUserIds;
-	/** Number of account ids to query */
+	/** Number of Product User IDs to query */
 	uint32_t ProductUserIdCount;
 ));
 
 /**
- * Output parameters for the EOS_Connect_QueryProductUserIdMappings Function.
+ * Output parameters for the EOS_Connect_QueryProductUserIdMappings function.
  */
 EOS_STRUCT(EOS_Connect_QueryProductUserIdMappingsCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned for a successful query, otherwise one of the error codes is returned. See eos_result.h */
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Connect_QueryProductUserIdMappings */
 	void* ClientData;
-	/** Existing logged in user that made the request */
+	/** The Product User ID of the existing, logged-in user who made the request */
 	EOS_ProductUserId LocalUserId;
 ));
 
@@ -401,16 +505,16 @@ EOS_DECLARE_CALLBACK(EOS_Connect_OnQueryProductUserIdMappingsCallback, const EOS
 #define EOS_CONNECT_GETPRODUCTUSERIDMAPPING_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Connect_GetProductUserIdMapping Function.
+ * Input parameters for the EOS_Connect_GetProductUserIdMapping function.
  */
 EOS_STRUCT(EOS_Connect_GetProductUserIdMappingOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_CONNECT_GETPRODUCTUSERIDMAPPING_API_LATEST. */
 	int32_t ApiVersion;
-	/** Existing logged in user that is querying account mappings */
+	/** The Product User ID of the existing, logged-in user that is querying account mappings */
 	EOS_ProductUserId LocalUserId;
 	/** External auth service mapping to retrieve */
 	EOS_EExternalAccountType AccountIdType;
-	/** Target product user id to retrieve */
+	/** The Product User ID of the user whose information is being requested */
 	EOS_ProductUserId TargetProductUserId;
 ));
 
@@ -418,12 +522,12 @@ EOS_STRUCT(EOS_Connect_GetProductUserIdMappingOptions, (
 #define EOS_CONNECT_GETPRODUCTUSEREXTERNALACCOUNTCOUNT_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Connect_GetProductUserExternalAccountCount Function.
+ * Input parameters for the EOS_Connect_GetProductUserExternalAccountCount function.
  */
 EOS_STRUCT(EOS_Connect_GetProductUserExternalAccountCountOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_CONNECT_GETPRODUCTUSEREXTERNALACCOUNTCOUNT_API_LATEST. */
 	int32_t ApiVersion;
-	/** Product user id to look for when getting external account info count from the cache. */
+	/** The Product User ID to look for when getting external account info count from the cache. */
 	EOS_ProductUserId TargetUserId;
 ));
 
@@ -431,12 +535,12 @@ EOS_STRUCT(EOS_Connect_GetProductUserExternalAccountCountOptions, (
 #define EOS_CONNECT_COPYPRODUCTUSEREXTERNALACCOUNTBYINDEX_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Connect_CopyProductUserExternalAccountByIndex Function.
+ * Input parameters for the EOS_Connect_CopyProductUserExternalAccountByIndex function.
  */
 EOS_STRUCT(EOS_Connect_CopyProductUserExternalAccountByIndexOptions, (
-	/** API Version of the EOS_Connect_CopyProductUserExternalAccountByIndex function. */
+	/** API Version: Set this to EOS_CONNECT_COPYPRODUCTUSEREXTERNALACCOUNTBYINDEX_API_LATEST. */
 	int32_t ApiVersion;
-	/** Product user id to look for when copying external account info from the cache. */
+	/** The Product User ID to look for when copying external account info from the cache. */
 	EOS_ProductUserId TargetUserId;
 	/** Index of the external account info to retrieve from the cache. */
 	uint32_t ExternalAccountInfoIndex;
@@ -446,12 +550,12 @@ EOS_STRUCT(EOS_Connect_CopyProductUserExternalAccountByIndexOptions, (
 #define EOS_CONNECT_COPYPRODUCTUSEREXTERNALACCOUNTBYACCOUNTTYPE_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Connect_CopyProductUserExternalAccountByAccountType Function.
+ * Input parameters for the EOS_Connect_CopyProductUserExternalAccountByAccountType function.
  */
 EOS_STRUCT(EOS_Connect_CopyProductUserExternalAccountByAccountTypeOptions, (
-	/** API Version of the EOS_Connect_CopyProductUserExternalAccountByAccountType function. */
+	/** API Version: Set this to EOS_CONNECT_COPYPRODUCTUSEREXTERNALACCOUNTBYACCOUNTTYPE_API_LATEST. */
 	int32_t ApiVersion;
-	/** Product user id to look for when copying external account info from the cache. */
+	/** The Product User ID to look for when copying external account info from the cache. */
 	EOS_ProductUserId TargetUserId;
 	/** External auth service account type to look for when copying external account info from the cache. */
 	EOS_EExternalAccountType AccountIdType;
@@ -461,14 +565,14 @@ EOS_STRUCT(EOS_Connect_CopyProductUserExternalAccountByAccountTypeOptions, (
 #define EOS_CONNECT_COPYPRODUCTUSEREXTERNALACCOUNTBYACCOUNTID_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Connect_CopyProductUserExternalAccountByAccountId Function.
+ * Input parameters for the EOS_Connect_CopyProductUserExternalAccountByAccountId function.
  */
 EOS_STRUCT(EOS_Connect_CopyProductUserExternalAccountByAccountIdOptions, (
-	/** API Version of the EOS_Connect_CopyProductUserExternalAccountByAccountId function. */
+	/** API Version: Set this to EOS_CONNECT_COPYPRODUCTUSEREXTERNALACCOUNTBYACCOUNTID_API_LATEST. */
 	int32_t ApiVersion;
-	/** Product user id to look for when copying external account info from the cache. */
+	/** The Product User ID to look for when copying external account info from the cache. */
 	EOS_ProductUserId TargetUserId;
-	/** External auth service account id to look for when copying external account info from the cache. */
+	/** External auth service account ID to look for when copying external account info from the cache. */
 	const char* AccountId;
 ));
 
@@ -476,12 +580,12 @@ EOS_STRUCT(EOS_Connect_CopyProductUserExternalAccountByAccountIdOptions, (
 #define EOS_CONNECT_COPYPRODUCTUSERINFO_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Connect_CopyProductUserInfo Function.
+ * Input parameters for the EOS_Connect_CopyProductUserInfo function.
  */
 EOS_STRUCT(EOS_Connect_CopyProductUserInfoOptions, (
-	/** API Version of the EOS_Connect_CopyProductUserInfo function. */
+	/** API Version: Set this to EOS_CONNECT_COPYPRODUCTUSERINFO_API_LATEST. */
 	int32_t ApiVersion;
-	/** Product user id to look for when copying external account info from the cache. */
+	/** Product user ID to look for when copying external account info from the cache. */
 	EOS_ProductUserId TargetUserId;
 ));
 
@@ -495,13 +599,13 @@ EOS_STRUCT(EOS_Connect_CopyProductUserInfoOptions, (
  * Contains information about an external account info
  */
 EOS_STRUCT(EOS_Connect_ExternalAccountInfo, (
-	/** Version of the API. */
+	/** API Version: Set this to EOS_CONNECT_EXTERNALACCOUNTINFO_API_LATEST. */
 	int32_t ApiVersion;
-	/** Product user id of the target user. */
+	/** The Product User ID of the target user. */
 	EOS_ProductUserId ProductUserId;
 	/** Display name, can be null if not set. */
 	const char* DisplayName;
-	/** External account id. */
+	/** External account ID. */
 	const char* AccountId;
 	/** The identity provider that owns the external account. */
 	EOS_EExternalAccountType AccountIdType;
@@ -529,7 +633,7 @@ EOS_DECLARE_FUNC(void) EOS_Connect_ExternalAccountInfo_Release(EOS_Connect_Exter
  * Structure containing information for the auth expiration notification callback
  */
 EOS_STRUCT(EOS_Connect_AddNotifyAuthExpirationOptions, (
-	/** API Version of the EOS_Connect_AddNotifyAuthExpirationOptions structure */
+	/** API Version: Set this to EOS_CONNECT_ADDNOTIFYAUTHEXPIRATION_API_LATEST. */
 	int32_t ApiVersion;
 ));
 
@@ -537,12 +641,12 @@ EOS_STRUCT(EOS_Connect_AddNotifyAuthExpirationOptions, (
 #define EOS_CONNECT_ONAUTHEXPIRATIONCALLBACK_API_LATEST 1
 
 /**
- * Output parameters for the EOS_Connect_OnAuthExpirationCallback Function.
+ * Output parameters for the EOS_Connect_OnAuthExpirationCallback function.
  */
 EOS_STRUCT(EOS_Connect_AuthExpirationCallbackInfo, (
 	/** Context that was passed into EOS_Connect_AddNotifyAuthExpiration */
 	void* ClientData;
-	/** Account ID of the local player whose status has changed */
+	/** The Product User ID of the local player whose status has changed */
 	EOS_ProductUserId LocalUserId;
 ));
 
@@ -554,23 +658,23 @@ EOS_STRUCT(EOS_Connect_AuthExpirationCallbackInfo, (
 EOS_DECLARE_CALLBACK(EOS_Connect_OnAuthExpirationCallback, const EOS_Connect_AuthExpirationCallbackInfo* Data);
 
 
-/** The most recent version of the EOS_Connect_AddNotifyLoginStatusChangedOptions API. */
+/** The most recent version of the EOS_Connect_AddNotifyLoginStatusChanged API. */
 #define EOS_CONNECT_ADDNOTIFYLOGINSTATUSCHANGED_API_LATEST 1
 /**
  * Structure containing information or the connect user login status change callback
  */
 EOS_STRUCT(EOS_Connect_AddNotifyLoginStatusChangedOptions, (
-	/** API Version of the EOS_Connect_AddNotifyLoginStatusChangedOptions structure */
+	/** API Version: Set this to EOS_CONNECT_ADDNOTIFYLOGINSTATUSCHANGED_API_LATEST. */
 	int32_t ApiVersion;
 ));
 
 /**
- * Output parameters for the EOS_Connect_OnLoginStatusChangedCallback Function.
+ * Output parameters for the EOS_Connect_OnLoginStatusChangedCallback function.
  */
 EOS_STRUCT(EOS_Connect_LoginStatusChangedCallbackInfo, (
 	/** Context that was passed into EOS_Connect_AddNotifyLoginStatusChanged */
 	void* ClientData;
-	/** Account ID of the local player whose status has changed */
+	/** The Product User ID of the local player whose status has changed */
 	EOS_ProductUserId LocalUserId;
 	/** The status prior to the change */
 	EOS_ELoginStatus PreviousStatus;

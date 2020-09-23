@@ -13,6 +13,7 @@
 #include "eos_lobby_types.h"
 #include "eos_userinfo_types.h"
 #include "eos_playerdatastorage_types.h"
+#include "eos_titlestorage_types.h"
 #include "eos_connect.h"
 #include "eos_achievements_types.h"
 #include "eos_stats_types.h"
@@ -143,6 +144,15 @@ EOS_DECLARE_FUNC(EOS_HP2P) EOS_Platform_GetP2PInterface(EOS_HPlatform Handle);
  * @see eos_playerdatastorage_types.h
  */
 EOS_DECLARE_FUNC(EOS_HPlayerDataStorage) EOS_Platform_GetPlayerDataStorageInterface(EOS_HPlatform Handle);
+
+/**
+ * Get a handle to the TitleStorage Interface.
+ * @return EOS_HTitleStorage handle
+ *
+ * @see eos_titlestorage.h
+ * @see eos_titlestorage_types.h
+ */
+EOS_DECLARE_FUNC(EOS_HTitleStorage) EOS_Platform_GetTitleStorageInterface(EOS_HPlatform Handle);
 
 /**
  * Get a handle to the Achievements Interface.

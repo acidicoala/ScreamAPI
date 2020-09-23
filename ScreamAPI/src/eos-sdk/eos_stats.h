@@ -4,6 +4,15 @@
 #include "eos_stats_types.h"
 
 /**
+ * The Stats Interface manages user stats like number of items collected, fastest completion time for a level, number of wins/losses, number of times that a user has performed a certain action, and so on.
+ * You can use stats to determine when to unlock achievements and how to use rank users in leaderboards.
+ * All Stats Interface calls take a handle of type EOS_HStats as the first parameter.
+ * This handle can be retrieved from an EOS_HPlatform handle by using the EOS_Platform_GetStatsInterface function.
+ * 
+ * @see EOS_Platform_GetStatsInterface
+ */
+
+/**
  * Ingest a stat by the amount specified in Options.
  * When the operation is complete and the delegate is triggered the stat will be uploaded to the backend to be processed.
  * The stat may not be updated immediately and an achievement using the stat may take a while to be unlocked once the stat has been uploaded.
@@ -41,10 +50,10 @@ EOS_DECLARE_FUNC(void) EOS_Stats_QueryStats(EOS_HStats Handle, const EOS_Stats_Q
 EOS_DECLARE_FUNC(uint32_t) EOS_Stats_GetStatsCount(EOS_HStats Handle, const EOS_Stats_GetStatCountOptions* Options);
 
 /**
- * Fetches a stat from a given index.
+ * Fetches a stat from a given index. Use EOS_Stats_Stat_Release when finished with the data.
  *
- * @param Options Structure containing the account id and index being accessed
- * @param OutAchievement The stat data for the given index, if it exists and is valid, use EOS_Stats_Stat_Release when finished
+ * @param Options Structure containing the Epic Online Services Account ID and index being accessed
+ * @param OutStat The stat data for the given index, if it exists and is valid
  *
  * @see EOS_Stats_Stat_Release
  *
@@ -55,10 +64,10 @@ EOS_DECLARE_FUNC(uint32_t) EOS_Stats_GetStatsCount(EOS_HStats Handle, const EOS_
 EOS_DECLARE_FUNC(EOS_EResult) EOS_Stats_CopyStatByIndex(EOS_HStats Handle, const EOS_Stats_CopyStatByIndexOptions* Options, EOS_Stats_Stat ** OutStat);
 
 /**
- * Fetches a stat from cached stats by name.
+ * Fetches a stat from cached stats by name. Use EOS_Stats_Stat_Release when finished with the data.
  *
- * @param Options Structure containing the account id and name being accessed
- * @param OutAchievement The stat data for the given name, if it exists and is valid, use EOS_Stats_Stat_Release when finished
+ * @param Options Structure containing the Epic Online Services Account ID and name being accessed
+ * @param OutStat The stat data for the given name, if it exists and is valid
  *
  * @see EOS_Stats_Stat_Release
  *

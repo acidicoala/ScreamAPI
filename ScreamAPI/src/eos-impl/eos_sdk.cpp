@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "eos-sdk/eos_sdk.h"
-#include <ScreamAPI.h>
+#include "ScreamAPI.h"
 
 EOS_DECLARE_FUNC(EOS_HAuth) EOS_Platform_GetAuthInterface(EOS_HPlatform Handle){
 	Logger::debug(__func__);

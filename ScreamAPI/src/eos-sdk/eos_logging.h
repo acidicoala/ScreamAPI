@@ -70,6 +70,8 @@ EOS_ENUM(EOS_ELogCategory,
 	EOS_LC_Keychain = 20,
 	/** Logs related to external identity providers */
 	EOS_LC_IdentityProvider = 21,
+	/** Logs related to Title Storage */
+	EOS_LC_TitleStorage = 22,
 
 	/** Not a real log category. Used by EOS_Logging_SetLogLevel to set the log level for all categories at the same time */
 	EOS_LC_ALL_CATEGORIES = 0x7fffffff

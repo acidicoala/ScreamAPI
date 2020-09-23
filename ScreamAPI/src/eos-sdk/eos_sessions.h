@@ -6,7 +6,7 @@
 /**
  * The Session Interface is used to manage sessions that can be advertised with the backend service
  * All Session Interface calls take a handle of type EOS_HSessions as the first parameter.
- * This handle can be retrieved from a EOS_HPlatform handle by using the EOS_Platform_GetSessionsInterface function.
+ * This handle can be retrieved from an EOS_HPlatform handle by using the EOS_Platform_GetSessionsInterface function.
  *
  * @see EOS_Platform_GetSessionsInterface
  */
@@ -40,7 +40,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Sessions_CreateSessionModification(EOS_HSessio
 EOS_DECLARE_FUNC(EOS_EResult) EOS_Sessions_UpdateSessionModification(EOS_HSessions Handle, const EOS_Sessions_UpdateSessionModificationOptions* Options, EOS_HSessionModification* OutSessionModificationHandle);
 
 /**
- * Update a session given a session modification handle created via EOS_Sessions_CreateSessionModification or EOS_Sessions_UpdateSessionModification
+ * Update a session given a session modification handle created by EOS_Sessions_CreateSessionModification or EOS_Sessions_UpdateSessionModification
  *
  * @param Options Structure containing information about the session to be updated
  * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate
@@ -184,11 +184,11 @@ EOS_DECLARE_FUNC(void) EOS_Sessions_QueryInvites(EOS_HSessions Handle, const EOS
 EOS_DECLARE_FUNC(uint32_t) EOS_Sessions_GetInviteCount(EOS_HSessions Handle, const EOS_Sessions_GetInviteCountOptions* Options);
 
 /**
- * Retrieve an invite id from a list of active invites for a given user
+ * Retrieve an invite ID from a list of active invites for a given user
  *
  * @param Options Structure containing the input parameters
  *
- * @return EOS_Success if the input is valid and an invite id was returned
+ * @return EOS_Success if the input is valid and an invite ID was returned
  *         EOS_InvalidParameters if any of the options are incorrect
  *         EOS_NotFound if the invite doesn't exist
  *
@@ -200,8 +200,8 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Sessions_GetInviteIdByIndex(EOS_HSessions Hand
 /**
  * Create a session search handle.  This handle may be modified to include various search parameters.
  * Searching is possible in three methods, all mutually exclusive
- * - set the session id to find a specific session
- * - set the target user id to find a specific user
+ * - set the session ID to find a specific session
+ * - set the target user ID to find a specific user
  * - set session parameters to find an array of sessions that match the search criteria
  *
  * @param Options Structure containing required parameters such as the maximum number of search results
@@ -231,7 +231,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Sessions_CopyActiveSessionHandle(EOS_HSessions
  *
  * @param Options Structure containing information about the session invite notification
  * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate
- * @param Notification A callback that is fired when a session invite for a user has been received
+ * @param NotificationFn A callback that is fired when a session invite for a user has been received
  *
  * @return handle representing the registered callback
  */
@@ -250,7 +250,7 @@ EOS_DECLARE_FUNC(void) EOS_Sessions_RemoveNotifySessionInviteReceived(EOS_HSessi
  *
  * @param Options Structure containing information about the request.
  * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate.
- * @param Notification A callback that is fired when a a notification is received.
+ * @param NotificationFn A callback that is fired when a a notification is received.
  *
  * @return handle representing the registered callback
  */
@@ -269,7 +269,7 @@ EOS_DECLARE_FUNC(void) EOS_Sessions_RemoveNotifySessionInviteAccepted(EOS_HSessi
  *
  * @param Options Structure containing information about the request.
  * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate.
- * @param Notification A callback that is fired when a a notification is received.
+ * @param NotificationFn A callback that is fired when a a notification is received.
  *
  * @return handle representing the registered callback
  */
@@ -290,9 +290,9 @@ EOS_DECLARE_FUNC(void) EOS_Sessions_RemoveNotifyJoinSessionAccepted(EOS_HSession
  * @param OutSessionHandle out parameter used to receive the session handle
  *
  * @return EOS_Success if the information is available and passed out in OutSessionHandle
- *         EOS_InvalidParameters if you pass an invalid invite id or a null pointer for the out parameter
+ *         EOS_InvalidParameters if you pass an invalid invite ID or a null pointer for the out parameter
  *         EOS_IncompatibleVersion if the API version passed in is incorrect
- *         EOS_NotFound if the invite id cannot be found
+ *         EOS_NotFound if the invite ID cannot be found
  *
  * @see EOS_Sessions_CopySessionHandleByInviteIdOptions
  * @see EOS_SessionDetails_Release
@@ -307,9 +307,9 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Sessions_CopySessionHandleByInviteId(EOS_HSess
  * @param OutSessionHandle out parameter used to receive the session handle
  *
  * @return EOS_Success if the information is available and passed out in OutSessionHandle
- *         EOS_InvalidParameters if you pass an invalid invite id or a null pointer for the out parameter
+ *         EOS_InvalidParameters if you pass an invalid invite ID or a null pointer for the out parameter
  *         EOS_IncompatibleVersion if the API version passed in is incorrect
- *         EOS_NotFound if the invite id cannot be found
+ *         EOS_NotFound if the invite ID cannot be found
  *
  * @see EOS_Sessions_CopySessionHandleByUiEventIdOptions
  * @see EOS_SessionDetails_Release
@@ -324,7 +324,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Sessions_CopySessionHandleByUiEventId(EOS_HSes
  * @param OutSessionHandle out parameter used to receive the session handle
  *
  * @return EOS_Success if the information is available and passed out in OutSessionHandle
- *         EOS_InvalidParameters if you pass an invalid invite id or a null pointer for the out parameter
+ *         EOS_InvalidParameters if you pass an invalid invite ID or a null pointer for the out parameter
  *         EOS_IncompatibleVersion if the API version passed in is incorrect
  *         EOS_NotFound if there is no session with bPresenceEnabled
  *
@@ -340,7 +340,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Sessions_CopySessionHandleForPresence(EOS_HSes
  *
  * @return EOS_Success if the user is found in the specified session
  *		   EOS_NotFound if the user is not found in the specified session
- *		   EOS_InvalidParameters if you pass an invalid invite id or a null pointer for the out parameter
+ *		   EOS_InvalidParameters if you pass an invalid invite ID or a null pointer for the out parameter
  *		   EOS_IncompatibleVersion if the API version passed in is incorrect
  *		   EOS_Invalid_ProductUserID if an invalid target user is specified
  *		   EOS_Sessions_InvalidSession if the session specified is invalid
@@ -365,14 +365,14 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Sessions_DumpSessionState(EOS_HSessions Handle
  */
 
 /**
- * Set the bucket id associated with this session.
+ * Set the bucket ID associated with this session.
  * Values such as region, game mode, etc can be combined here depending on game need.
  * Setting this is strongly recommended to improve search performance.
  *
- * @param Options Options associated with the bucket id of the session
+ * @param Options Options associated with the bucket ID of the session
  *
  * @return EOS_Success if setting this parameter was successful
- *         EOS_InvalidParameters if the bucket id is invalid or null
+ *         EOS_InvalidParameters if the bucket ID is invalid or null
  *         EOS_IncompatibleVersion if the API version passed in is incorrect
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_SessionModification_SetBucketId(EOS_HSessionModification Handle, const EOS_SessionModification_SetBucketIdOptions* Options);
@@ -382,12 +382,12 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_SessionModification_SetBucketId(EOS_HSessionMo
  * Setting this is optional, if the value is not set the SDK will fill the value in from the service.
  * It is useful to set if other addressing mechanisms are desired or if LAN addresses are preferred during development
  *
- * NOTE: No validation of this value occurs to allow for flexibility in addressing methods
+ * @note No validation of this value occurs to allow for flexibility in addressing methods
  *
  * @param Options Options associated with the host address of the session
  *
  * @return EOS_Success if setting this parameter was successful
- *         EOS_InvalidParameters if the host id is an empty string
+ *         EOS_InvalidParameters if the host ID is an empty string
  *         EOS_IncompatibleVersion if the API version passed in is incorrect
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_SessionModification_SetHostAddress(EOS_HSessionModification Handle, const EOS_SessionModification_SetHostAddressOptions* Options);
@@ -495,7 +495,7 @@ EOS_DECLARE_FUNC(uint32_t) EOS_ActiveSession_GetRegisteredPlayerCount(EOS_HActiv
  *
  * @param Options Structure containing the input parameters
  *
- * @return the product user id for the registered player at a given index or null if that index is invalid
+ * @return the product user ID for the registered player at a given index or null if that index is invalid
  *
  * @see EOS_ActiveSession_GetRegisteredPlayerCount
  * @see EOS_ActiveSession_GetRegisteredPlayerByIndexOptions
@@ -574,24 +574,24 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_SessionDetails_CopySessionAttributeByKey(EOS_H
  */
 
 /**
- * Set a session id to find and will return at most one search result.  Setting TargetUserId or SearchParameters will result in EOS_SessionSearch_Find failing
+ * Set a session ID to find and will return at most one search result.  Setting TargetUserId or SearchParameters will result in EOS_SessionSearch_Find failing
  *
- * @param Options A specific session id for which to search
+ * @param Options A specific session ID for which to search
  *
- * @return EOS_Success if setting this session id was successful
- *         EOS_InvalidParameters if the session id is invalid or null
+ * @return EOS_Success if setting this session ID was successful
+ *         EOS_InvalidParameters if the session ID is invalid or null
  *         EOS_IncompatibleVersion if the API version passed in is incorrect
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_SessionSearch_SetSessionId(EOS_HSessionSearch Handle, const EOS_SessionSearch_SetSessionIdOptions* Options);
 
 /**
- * Set a target user id to find and will return at most one search result.  Setting SessionId or SearchParameters will result in EOS_SessionSearch_Find failing
- * NOTE: a search result will only be found if this user is in a public session
+ * Set a target user ID to find and will return at most one search result.  Setting SessionId or SearchParameters will result in EOS_SessionSearch_Find failing
+ * @note a search result will only be found if this user is in a public session
  *
- * @param Options a specific target user id to find
+ * @param Options a specific target user ID to find
  *
- * @return EOS_Success if setting this target user id was successful
- *         EOS_InvalidParameters if the target user id is invalid or null
+ * @return EOS_Success if setting this target user ID was successful
+ *         EOS_InvalidParameters if the target user ID is invalid or null
  *         EOS_IncompatibleVersion if the API version passed in is incorrect
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_SessionSearch_SetTargetUserId(EOS_HSessionSearch Handle, const EOS_SessionSearch_SetTargetUserIdOptions* Options);

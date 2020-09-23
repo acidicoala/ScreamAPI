@@ -91,7 +91,7 @@ EOS_DECLARE_FUNC(uint32_t) EOS_Achievements_GetPlayerAchievementCount(EOS_HAchie
 /**
  * Fetches a player achievement from a given index.
  *
- * @param Options Structure containing the account id and index being accessed
+ * @param Options Structure containing the Epic Online Services Account ID and index being accessed
  * @param OutAchievement The player achievement data for the given index, if it exists and is valid, use EOS_Achievements_PlayerAchievement_Release when finished
  *
  * @see EOS_Achievements_PlayerAchievement_Release
@@ -103,10 +103,10 @@ EOS_DECLARE_FUNC(uint32_t) EOS_Achievements_GetPlayerAchievementCount(EOS_HAchie
 EOS_DECLARE_FUNC(EOS_EResult) EOS_Achievements_CopyPlayerAchievementByIndex(EOS_HAchievements Handle, const EOS_Achievements_CopyPlayerAchievementByIndexOptions* Options, EOS_Achievements_PlayerAchievement ** OutAchievement);
 
 /**
- * Fetches a player achievement from a given achievement id.
+ * Fetches a player achievement from a given achievement ID.
  *
- * @param Options Structure containing the account id and achievement id being accessed
- * @param OutAchievement The player achievement data for the given achievement id, if it exists and is valid, use EOS_Achievements_PlayerAchievement_Release when finished
+ * @param Options Structure containing the Epic Online Services Account ID and achievement ID being accessed
+ * @param OutAchievement The player achievement data for the given achievement ID, if it exists and is valid, use EOS_Achievements_PlayerAchievement_Release when finished
  *
  * @see EOS_Achievements_PlayerAchievement_Release
  *
@@ -203,7 +203,7 @@ EOS_DECLARE_FUNC(uint32_t) EOS_Achievements_GetUnlockedAchievementCount(EOS_HAch
  *
  * Fetches an unlocked achievement from a given index.
  *
- * @param Options Structure containing the account id and index being accessed
+ * @param Options Structure containing the Epic Online Services Account ID and index being accessed
  * @param OutAchievement The unlocked achievement data for the given index, if it exists and is valid, use EOS_Achievements_UnlockedAchievement_Release when finished
  *
  * @see EOS_Achievements_UnlockedAchievement_Release
@@ -219,7 +219,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Achievements_CopyUnlockedAchievementByIndex(EO
  *
  * Fetches an unlocked achievement from a given achievement ID.
  *
- * @param Options Structure containing the account id and achievement ID being accessed
+ * @param Options Structure containing the Epic Online Services Account ID and achievement ID being accessed
  * @param OutAchievement The unlocked achievement data for the given achievement ID, if it exists and is valid, use EOS_Achievements_UnlockedAchievement_Release when finished
  *
  * @see EOS_Achievements_UnlockedAchievement_Release

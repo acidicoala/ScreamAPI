@@ -53,7 +53,7 @@ EOS_DECLARE_FUNC(void) EOS_Friends_RejectInvite(EOS_HFriends Handle, const EOS_F
 /**
  * Retrieves the number of friends on the friends list that has already been retrieved by the EOS_Friends_QueryFriends API.
  *
- * @param Options structure containing the account id of the friends list
+ * @param Options structure containing the Epic Online Services Account ID of user who owns the friends list
  * @return the number of friends on the list
  *
  * @see EOS_Friends_GetFriendAtIndex
@@ -61,12 +61,12 @@ EOS_DECLARE_FUNC(void) EOS_Friends_RejectInvite(EOS_HFriends Handle, const EOS_F
 EOS_DECLARE_FUNC(int32_t) EOS_Friends_GetFriendsCount(EOS_HFriends Handle, const EOS_Friends_GetFriendsCountOptions* Options);
 
 /**
- * Retrieves the account id of an entry from the friends list that has already been retrieved by the EOS_Friends_QueryFriends API.
- * The account id returned by this function may belong to an account that has been invited to be a friend or that has invited the local user to be a friend.
- * To determine if the account id returned by this function is a friend or a pending friend invitation, use the EOS_Friends_GetStatus function.
+ * Retrieves the Epic Online Services Account ID of an entry from the friends list that has already been retrieved by the EOS_Friends_QueryFriends API.
+ * The Epic Online Services Account ID returned by this function may belong to an account that has been invited to be a friend or that has invited the local user to be a friend.
+ * To determine if the Epic Online Services Account ID returned by this function is a friend or a pending friend invitation, use the EOS_Friends_GetStatus function.
  *
- * @param Options structure containing the account id of the friends list and the index into the list
- * @return the account id of the friend. Note that if the index provided is out of bounds, the returned account id will be a "null" account id.
+ * @param Options structure containing the Epic Online Services Account ID of the owner of the friends list and the index into the list
+ * @return the Epic Online Services Account ID of the friend. Note that if the index provided is out of bounds, the returned Epic Online Services Account ID will be a "null" account ID.
  *
  * @see EOS_Friends_GetFriendsCount
  * @see EOS_Friends_GetStatus
@@ -76,7 +76,7 @@ EOS_DECLARE_FUNC(EOS_EpicAccountId) EOS_Friends_GetFriendAtIndex(EOS_HFriends Ha
 /**
  * Retrieve the friendship status between the local user and another user.
  *
- * @param Options structure containing the account id of the friend list to check and the account of the user to test friendship status
+ * @param Options structure containing the Epic Online Services Account ID of the friend list to check and the account of the user to test friendship status
  * @return A value indicating whether the two accounts have a friendship, pending invites in either direction, or no relationship
  *         EOS_FS_Friends is returned for two users that have confirmed friendship
  *         EOS_FS_InviteSent is returned when the local user has sent a friend invitation but the other user has not accepted or rejected it

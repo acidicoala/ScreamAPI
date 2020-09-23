@@ -40,7 +40,7 @@ EXTERN_C typedef void (EOS_MEMORY_CALL * EOS_ReleaseMemoryFunc)(void* Pointer);
  * Options for initializing the Epic Online Services SDK.
  */
 EOS_STRUCT(EOS_InitializeOptions, (
-	/** API version of EOS_Initialize. */
+	/** API Version: Set this to EOS_INITIALIZE_API_LATEST. */
 	int32_t ApiVersion;
 	/** A custom memory allocator, if desired. */
 	EOS_AllocateMemoryFunc AllocateMemoryFunction;

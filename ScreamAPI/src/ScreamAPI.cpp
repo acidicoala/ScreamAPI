@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ScreamAPI.h"
 #include "constants.h"
-#include "eos-sdk\eos_achievements.h"
+#include "eos-sdk/eos_achievements.h"
 #include "util.h"
 #include <Overlay.h>
 
@@ -12,7 +12,6 @@ namespace ScreamAPI{
 // Initialize extern variables
 HMODULE thisDLL = nullptr;
 HMODULE originalDLL = nullptr;
-EOS_HPlatform hPlatform = nullptr;
 bool isScreamAPIinitialized = false;
 
 void ScreamAPI::init(HMODULE hModule){
@@ -48,16 +47,6 @@ void ScreamAPI::init(HMODULE hModule){
 		Logger::error("Failed to load original EOS SDK: %s", SCREAM_API_ORIG_DLL);
 }
 
-// Checks against Options->ApiVersion and warns user if version is newer
-void ScreamAPI::checkSdkVersion(const int32_t apiVersion, const int32_t maxVersion){
-	if(apiVersion > maxVersion){
-		static bool warned = false; // Warn only once
-		if(!warned){
-			Logger::warn("Game uses newer EOS SDK (%d) than what ScreamAPI is built for (%d)!", apiVersion, maxVersion);
-			warned = true;
-		}
-	}
-}
 
 void proxyCallback(void* callbackInfoData, void** clientData, std::function<void()> customCallback){
 	auto container = reinterpret_cast<OriginalDataContainer*>(*clientData);

@@ -33,7 +33,7 @@ EOS_ENUM(EOS_EMetricsAccountIdType,
 
 /** BeginPlayerSession. */
 EOS_STRUCT(EOS_Metrics_BeginPlayerSessionOptions, (
-	/** API Version */
+	/** API Version: Set this to EOS_METRICS_BEGINPLAYERSESSION_API_LATEST. */
 	int32_t ApiVersion;
 	/** Account ID type that is set in the union. */
 	EOS_EMetricsAccountIdType AccountIdType;
@@ -50,23 +50,19 @@ EOS_STRUCT(EOS_Metrics_BeginPlayerSessionOptions, (
 	/** The user's game controller type. */
 	EOS_EUserControllerType ControllerType;
 	/**
-	 * IP address of the game server hosting the game session.
-	 * For a localhost session, set to NULL.
+	 * IP address of the game server hosting the game session. For a localhost session, set to NULL.
 	 *
-	 * Must be in either one of the following IPv4 or IPv6 string formats:
-	 * - "127.0.0.1".
-	 * - "1200:0000:AB00:1234:0000:2552:7777:1313".
-	 *
+	 * @details Must be in either one of the following IPv4 or IPv6 string formats:
+	 * * "127.0.0.1".
+	 * * "1200:0000:AB00:1234:0000:2552:7777:1313".
 	 * If both IPv4 and IPv6 addresses are available, use the IPv6 address.
 	 */
 	const char* ServerIp;
 	/**
-	 * Optional, application-defined custom match session identifier.
+	 * Optional, application-defined custom match session identifier. If the identifier is not used, set to NULL.
 	 *
-	 * The game can tag each game session with a custom session match identifier,
-	 * which will be shown in the played sessions listing at the user profile dashboard.
-	 *
-	 * If the identifier is not used, set to NULL.
+	 * @details The game can tag each game session with a custom session match identifier,
+	 * which will be shown in the Played Sessions listing at the user profile dashboard.
 	 */
 	const char* GameSessionId;
 ));
@@ -76,9 +72,9 @@ EOS_STRUCT(EOS_Metrics_BeginPlayerSessionOptions, (
 
 /** EndPlayerSession. */
 EOS_STRUCT(EOS_Metrics_EndPlayerSessionOptions, (
-	/** API Version */
+	/** API Version: Set this to EOS_METRICS_ENDPLAYERSESSION_API_LATEST. */
 	int32_t ApiVersion;
-	/** Account ID type that is set in the union. */
+	/** The Account ID type that is set in the union. */
 	EOS_EMetricsAccountIdType AccountIdType;
 	/** The Account ID for the player whose session is ending. */
 	union

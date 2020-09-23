@@ -6,7 +6,7 @@
 /**
  * The UI Interface is used to access the Social Overlay UI.  Each UI component will have a function for
  * opening it.  All UI Interface calls take a handle of type EOS_HUI as the first parameter.
- * This handle can be retrieved from a EOS_HPlatform handle by using the EOS_Platform_GetUIInterface function.
+ * This handle can be retrieved from an EOS_HPlatform handle by using the EOS_Platform_GetUIInterface function.
  *
  * @see EOS_Platform_GetUIInterface
  */
@@ -14,7 +14,7 @@
 /**
  * Opens the Social Overlay with a request to show the friends list.
  *
- * @param Options Structure containing the account id of the friends list to show.
+ * @param Options Structure containing the Epic Online Services Account ID of the friends list to show.
  * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate.
  * @param CompletionDelegate A callback that is fired when the request to show the friends list has been sent to the Social Overlay, or on an error.
  *
@@ -28,7 +28,7 @@ EOS_DECLARE_FUNC(void) EOS_UI_ShowFriends(EOS_HUI Handle, const EOS_UI_ShowFrien
 /**
  * Hides the active Social Overlay.
  *
- * @param Options Structure containing the account id of the browser to close.
+ * @param Options Structure containing the Epic Online Services Account ID of the browser to close.
  * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate.
  * @param CompletionDelegate A callback that is fired when the request to hide the friends list has been processed, or on an error.
  *
@@ -42,7 +42,7 @@ EOS_DECLARE_FUNC(void) EOS_UI_HideFriends(EOS_HUI Handle, const EOS_UI_HideFrien
 /**
  * Gets the friends overlay visibility.
  *
- * @param Options Structure containing the account id of the friends Social Overlay owner.
+ * @param Options Structure containing the Epic Online Services Account ID of the friends Social Overlay owner.
  *
  * @return EOS_TRUE If the overlay is visible.
  */
@@ -55,7 +55,7 @@ EOS_DECLARE_FUNC(EOS_Bool) EOS_UI_GetFriendsVisible(EOS_HUI Handle, const EOS_UI
  *
  * @param Options Structure containing information about the request.
  * @param ClientData Arbitrary data that is passed back to you in the NotificationFn.
- * @param Notification A callback that is fired when the overlay display settings are updated.
+ * @param NotificationFn A callback that is fired when the overlay display settings are updated.
  *
  * @return handle representing the registered callback
  */
@@ -64,7 +64,7 @@ EOS_DECLARE_FUNC(EOS_NotificationId) EOS_UI_AddNotifyDisplaySettingsUpdated(EOS_
 /**
  * Unregister from receiving notifications when the overlay display settings are updated.
  *
- * @param InId Handle representing the registered callback
+ * @param Id Handle representing the registered callback
  */
 EOS_DECLARE_FUNC(void) EOS_UI_RemoveNotifyDisplaySettingsUpdated(EOS_HUI Handle, EOS_NotificationId Id);
 

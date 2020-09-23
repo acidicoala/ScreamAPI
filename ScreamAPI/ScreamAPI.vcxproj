@@ -78,7 +78,6 @@
     <ClCompile Include="src\eos-impl\eos_common.cpp" />
     <ClCompile Include="src\eos-impl\eos_connect.cpp" />
     <ClCompile Include="src\eos-impl\eos_ecom_entitlements.cpp" />
-    <ClCompile Include="src\eos-impl\eos_ecom_offers.cpp" />
     <ClCompile Include="src\eos-impl\eos_ecom_ownership.cpp" />
     <ClCompile Include="src\eos-impl\eos_ecom_transactions.cpp" />
     <ClCompile Include="src\eos-impl\eos_init.cpp" />

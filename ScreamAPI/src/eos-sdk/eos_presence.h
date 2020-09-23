@@ -4,7 +4,7 @@
 #include "eos_presence_types.h"
 
 /**
- * The Presence methods allow you to query, read other player's presence information, as well as to modify your own.
+ * The Presence methods enable you to query and read other player's presence information, or modify your own.
  *
  * QueryPresence must be called once per login, per remote user, before data will be available. It is currently only possible to query presence for
  * users that are on your friends list, all other queries will return no results.
@@ -96,7 +96,7 @@ EOS_DECLARE_FUNC(void) EOS_Presence_RemoveNotifyOnPresenceChanged(EOS_HPresence 
  *
  * @param Options Structure containing information about the request.
  * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate.
- * @param Notification A callback that is fired when a a notification is received.
+ * @param NotificationFn A callback that is fired when a a notification is received.
  *
  * @return handle representing the registered callback
  */

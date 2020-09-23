@@ -17,7 +17,7 @@
  * Contains information about a single achievement definition with localized text.
  */
 EOS_STRUCT(EOS_Achievements_Definition, (
-	/** Version of the API. */
+	/** API Version: Set this to EOS_ACHIEVEMENTS_DEFINITION_API_LATEST. */
 	int32_t ApiVersion;
 	/** Achievement ID that can be used to uniquely identify the achievement. */
 	const char* AchievementId;
@@ -61,10 +61,10 @@ EOS_DECLARE_FUNC(void) EOS_Achievements_Definition_Release(EOS_Achievements_Defi
 #define EOS_ACHIEVEMENTS_COPYDEFINITIONBYINDEX_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Achievements_CopyAchievementDefinitionByIndex Function.
+ * Input parameters for the EOS_Achievements_CopyAchievementDefinitionByIndex function.
  */
 EOS_STRUCT(EOS_Achievements_CopyAchievementDefinitionByIndexOptions, (
-	/** API Version of the EOS_Achievements_CopyAchievementDefinitionByIndexOptions function */
+	/** API Version: Set this to EOS_ACHIEVEMENTS_COPYDEFINITIONBYINDEX_API_LATEST. */
 	int32_t ApiVersion;
 	/** Index of the achievement definition to retrieve from the cache */
 	uint32_t AchievementIndex;
@@ -74,10 +74,10 @@ EOS_STRUCT(EOS_Achievements_CopyAchievementDefinitionByIndexOptions, (
 #define EOS_ACHIEVEMENTS_COPYDEFINITIONBYACHIEVEMENTID_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Achievements_CopyAchievementDefinitionByAchievementId Function.
+ * Input parameters for the EOS_Achievements_CopyAchievementDefinitionByAchievementId function.
  */
 EOS_STRUCT(EOS_Achievements_CopyAchievementDefinitionByAchievementIdOptions, (
-	/** API Version of the EOS_Achievements_CopyAchievementDefinitionByAchievementIdOptions function */
+	/** API Version: Set this to EOS_ACHIEVEMENTS_COPYDEFINITIONBYACHIEVEMENTID_API_LATEST. */
 	int32_t ApiVersion;
 	/** Achievement ID to look for when copying definition from the cache */
 	const char* AchievementId;
@@ -90,7 +90,7 @@ EOS_STRUCT(EOS_Achievements_CopyAchievementDefinitionByAchievementIdOptions, (
  * Contains information about a single unlocked achievement.
  */
 EOS_STRUCT(EOS_Achievements_UnlockedAchievement, (
-	/** Version of the API. */
+	/** API Version: Set this to EOS_ACHIEVEMENTS_UNLOCKEDACHIEVEMENT_API_LATEST. */
 	int32_t ApiVersion;
 	/** Achievement ID that can be used to uniquely identify the unlocked achievement. */
 	const char* AchievementId;
@@ -102,12 +102,12 @@ EOS_STRUCT(EOS_Achievements_UnlockedAchievement, (
 #define EOS_ACHIEVEMENTS_GETUNLOCKEDACHIEVEMENTCOUNT_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Achievements_GetUnlockedAchievementCount Function.
+ * Input parameters for the EOS_Achievements_GetUnlockedAchievementCount function.
  */
 EOS_STRUCT(EOS_Achievements_GetUnlockedAchievementCountOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_ACHIEVEMENTS_GETUNLOCKEDACHIEVEMENTCOUNT_API_LATEST. */
 	int32_t ApiVersion;
-	/** Account ID for user for which to retrieve the unlocked achievement count */
+	/** Product User ID for which to retrieve the unlocked achievement count */
 	EOS_ProductUserId UserId;
 ));
 
@@ -115,12 +115,12 @@ EOS_STRUCT(EOS_Achievements_GetUnlockedAchievementCountOptions, (
 #define EOS_ACHIEVEMENTS_COPYUNLOCKEDACHIEVEMENTBYINDEX_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Achievements_CopyUnlockedAchievementByIndex Function.
+ * Input parameters for the EOS_Achievements_CopyUnlockedAchievementByIndex function.
  */
 EOS_STRUCT(EOS_Achievements_CopyUnlockedAchievementByIndexOptions, (
-	/** API Version of the EOS_Achievements_CopyUnlockedAchievementByIndexOptions function */
+	/** API Version: Set this to EOS_ACHIEVEMENTS_COPYUNLOCKEDACHIEVEMENTBYINDEX_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Account ID for the user who is copying the unlocked achievement. */
+	/** The Product User ID for the user who is copying the unlocked achievement */
 	EOS_ProductUserId UserId;
 	/** Index of the unlocked achievement to retrieve from the cache */
 	uint32_t AchievementIndex;
@@ -130,12 +130,12 @@ EOS_STRUCT(EOS_Achievements_CopyUnlockedAchievementByIndexOptions, (
 #define EOS_ACHIEVEMENTS_COPYUNLOCKEDACHIEVEMENTBYACHIEVEMENTID_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Achievements_CopyUnlockedAchievementByAchievementId Function.
+ * Input parameters for the EOS_Achievements_CopyUnlockedAchievementByAchievementId function.
  */
 EOS_STRUCT(EOS_Achievements_CopyUnlockedAchievementByAchievementIdOptions, (
-	/** API Version of the EOS_Achievements_CopyUnlockedAchievementByAchievementIdOptions function */
+	/** API Version: Set this to EOS_ACHIEVEMENTS_COPYUNLOCKEDACHIEVEMENTBYACHIEVEMENTID_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Account ID for the user who is copying the unlocked achievement. */
+	/** The Product User ID for the user who is copying the unlocked achievement */
 	EOS_ProductUserId UserId;
 	/** AchievementId of the unlocked achievement to retrieve from the cache */
 	const char* AchievementId;
@@ -146,10 +146,10 @@ EOS_STRUCT(EOS_Achievements_CopyUnlockedAchievementByAchievementIdOptions, (
 #define EOS_ACHIEVEMENTS_ADDNOTIFYACHIEVEMENTSUNLOCKED_API_LATEST 1
 
 /**
- * Input parameters for the EOS_Achievements_AddNotifyAchievementsUnlocked Function.
+ * Input parameters for the EOS_Achievements_AddNotifyAchievementsUnlocked function.
  */
 EOS_STRUCT(EOS_Achievements_AddNotifyAchievementsUnlockedOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_ACHIEVEMENTS_ADDNOTIFYACHIEVEMENTSUNLOCKED_API_LATEST. */
 	int32_t ApiVersion;
 ));
 
@@ -159,7 +159,7 @@ EOS_STRUCT(EOS_Achievements_AddNotifyAchievementsUnlockedOptions, (
 EOS_STRUCT(EOS_Achievements_OnAchievementsUnlockedCallbackInfo, (
 	/** Context that was passed into EOS_Achievements_AddNotifyAchievementsUnlocked */
 	void* ClientData;
-	/** Account ID for user that received the unlocked achievements notification */
+	/** The Product User ID for the user who received the unlocked achievements notification */
 	EOS_ProductUserId UserId;
 	/** The number of achievements. */
 	uint32_t AchievementsCount;

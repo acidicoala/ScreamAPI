@@ -31,13 +31,14 @@ EOS_ENUM(EOS_Presence_EStatus,
 
 
 #define EOS_PRESENCE_DATARECORD_API_LATEST 1
+
 /**
  * An individual presence data record that belongs to a EOS_Presence_Info object. This object is released when its parent EOS_Presence_Info object is released.
  *
  * @see EOS_Presence_Info
  */
 EOS_STRUCT(EOS_Presence_DataRecord, (
-	/** API Version for the EOS_Presence_DataRecord struct */
+	/** API Version: Set this to EOS_PRESENCE_DATARECORD_API_LATEST. */
 	int32_t ApiVersion;
 	/** The name of this data */
 	const char* Key;
@@ -47,6 +48,7 @@ EOS_STRUCT(EOS_Presence_DataRecord, (
 
 
 #define EOS_PRESENCE_INFO_API_LATEST 2
+
 /**
  * All the known presence information for a specific user. This object must be released by calling EOS_Presence_Info_Release.
  *
@@ -54,13 +56,13 @@ EOS_STRUCT(EOS_Presence_DataRecord, (
  * @see EOS_Presence_Info_Release
  */
 EOS_STRUCT(EOS_Presence_Info, (
-	/** API Version for the EOS_Presence_Info struct */
+	/** API Version: Set this to EOS_PRESENCE_INFO_API_LATEST. */
 	int32_t ApiVersion;
 	/** The status of the user */
 	EOS_Presence_EStatus Status;
-	/** The account id of the user */
+	/** The Epic Online Services Account ID of the user */
 	EOS_EpicAccountId UserId;
-	/** The product id that the user is logged in from */
+	/** The product ID that the user is logged in from */
 	const char* ProductId;
 	/** The version of the product the user is logged in from */
 	const char* ProductVersion;
@@ -78,15 +80,16 @@ EOS_STRUCT(EOS_Presence_Info, (
 
 
 #define EOS_PRESENCE_QUERYPRESENCE_API_LATEST 1
+
 /**
  * Data for the EOS_Presence_QueryPresence function
  */
 EOS_STRUCT(EOS_Presence_QueryPresenceOptions, (
-	/** API Version for the EOS_Presence_QueryPresenceOptions struct */
+	/** API Version: Set this to EOS_PRESENCE_QUERYPRESENCE_API_LATEST. */
 	int32_t ApiVersion;
-	/** The account id of the local user starting this query */
+	/** The Epic Online Services Account ID of the local, logged-in user making the request */
 	EOS_EpicAccountId LocalUserId;
-	/** The account id of the user to query presence for */
+	/** The Epic Online Services Account ID of the user whose presence data you want to retrieve; this value must be either the user making the request, or a friend of that user */
 	EOS_EpicAccountId TargetUserId;
 ));
 
@@ -98,9 +101,9 @@ EOS_STRUCT(EOS_Presence_QueryPresenceCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** Client-specified data passed into EOS_Presence_QueryPresence */
 	void* ClientData;
-	/** The Local User who made this request */
+	/** The Epic Online Services Account ID of the local user who made this request */
 	EOS_EpicAccountId LocalUserId;
-	/** The user whose presence was potentially queried */
+	/** The Epic Online Services Account ID of the user whose presence was potentially queried */
 	EOS_EpicAccountId TargetUserId;
 ));
 
@@ -111,29 +114,30 @@ EOS_DECLARE_CALLBACK(EOS_Presence_OnQueryPresenceCompleteCallback, const EOS_Pre
 
 
 #define EOS_PRESENCE_HASPRESENCE_API_LATEST 1
+
 /**
  * Data for the EOS_Presence_HasPresence function.
  */
 EOS_STRUCT(EOS_Presence_HasPresenceOptions, (
-	/** API Version for the EOS_Presence_HasPresenceOptions struct */
+	/** API Version: Set this to EOS_PRESENCE_HASPRESENCE_API_LATEST. */
 	int32_t ApiVersion;
-	/** The local user's cache to check for TargetUserId */
+	/** The Epic Online Services Account ID of the local, logged-in user making the request */
 	EOS_EpicAccountId LocalUserId;
-	/** The user to check if we have presence information for */
+	/** The Epic Online Services Account ID of the user whose cached presence data you want to locate */
 	EOS_EpicAccountId TargetUserId;
 ));
 
 
 #define EOS_PRESENCE_COPYPRESENCE_API_LATEST 2
 /**
- * Data for the EOS_Presence_CopyPresenceOptions function.
+ * Data for the EOS_Presence_CopyPresence function.
  */
 EOS_STRUCT(EOS_Presence_CopyPresenceOptions, (
-	/** API Version of the EOS_Presence_CopyPresenceOptions function */
+	/** API Version: Set this to EOS_PRESENCE_COPYPRESENCE_API_LATEST. */
 	int32_t ApiVersion;
-	/** The local user account id */
+	/** The Epic Online Services Account ID of the local, logged-in user making the request */
 	EOS_EpicAccountId LocalUserId;
-	/** The account id of the presence info to retrieve */
+	/** The Epic Online Services Account ID of the user whose cached presence data you want to copy from the cache */
 	EOS_EpicAccountId TargetUserId;
 ));
 
@@ -149,12 +153,12 @@ EOS_DECLARE_FUNC(void) EOS_Presence_Info_Release(EOS_Presence_Info* PresenceInfo
 
 #define EOS_PRESENCE_CREATEPRESENCEMODIFICATION_API_LATEST 1
 /**
- * Data for the EOS_Presence_CreatePresenceModificationOptions function.
+ * Data for the EOS_Presence_CreatePresenceModification function.
  */
 EOS_STRUCT(EOS_Presence_CreatePresenceModificationOptions, (
-	/** API Version of the EOS_Presence_CreatePresenceModificationOptions function */
+	/** API Version: Set this to EOS_PRESENCE_CREATEPRESENCEMODIFICATION_API_LATEST. */
 	int32_t ApiVersion;
-	/** The local user account id */
+	/** The Epic Online Services Account ID of the local user's Epic Online Services Account ID */
 	EOS_EpicAccountId LocalUserId;
 ));
 
@@ -172,12 +176,12 @@ EOS_DECLARE_FUNC(void) EOS_PresenceModification_Release(EOS_HPresenceModificatio
 
 #define EOS_PRESENCE_SETPRESENCE_API_LATEST 1
 /**
- * Data for the EOS_Presence_SetPresenceOptions function.
+ * Data for the EOS_Presence_SetPresence function.
  */
 EOS_STRUCT(EOS_Presence_SetPresenceOptions, (
-	/** API Version of the EOS_Presence_SetPresenceOptions function */
+	/** API Version: Set this to EOS_PRESENCE_SETPRESENCE_API_LATEST. */
 	int32_t ApiVersion;
-	/** The local user account id */
+	/** The Epic Online Services Account ID of the local user's Epic Online Services Account ID */
 	EOS_EpicAccountId LocalUserId;
 	/** The handle to the presence update */
 	EOS_HPresenceModification PresenceModificationHandle;
@@ -191,7 +195,7 @@ EOS_STRUCT(EOS_Presence_SetPresenceCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** Client-specified data passed into EOS_Presence_SetPresence */
 	void* ClientData;
-	/** The local user that had their presence set */
+	/** The Epic Online Services Account ID of the local user that had their presence set */
 	EOS_EpicAccountId LocalUserId;
 ));
 
@@ -203,10 +207,10 @@ EOS_DECLARE_CALLBACK(EOS_Presence_SetPresenceCompleteCallback, const EOS_Presenc
 
 #define EOS_PRESENCE_ADDNOTIFYONPRESENCECHANGED_API_LATEST 1
 /**
- * Data for the EOS_Presence_AddNotifyOnPresenceChangedOptions function.
+ * Data for the EOS_Presence_AddNotifyOnPresenceChanged function.
  */
 EOS_STRUCT(EOS_Presence_AddNotifyOnPresenceChangedOptions, (
-	/** API Version of the EOS_Presence_AddNotifyOnPresenceChangedOptions function */
+	/** API Version: Set this to EOS_PRESENCE_ADDNOTIFYONPRESENCECHANGED_API_LATEST. */
 	int32_t ApiVersion;
 ));
 
@@ -216,16 +220,17 @@ EOS_STRUCT(EOS_Presence_AddNotifyOnPresenceChangedOptions, (
 EOS_STRUCT(EOS_Presence_PresenceChangedCallbackInfo, (
 	/** Client-specified data passed into EOS_Presence_AddNotifyOnPresenceChanged */
 	void* ClientData;
-	/** The local user who is being informed for PresenceUserId's presence change */
+	/** The Epic Online Services Account ID of the local user who is being informed for PresenceUserId's presence change */
 	EOS_EpicAccountId LocalUserId;
-	/** The user who had their presence changed */
+	/** The Epic Online Services Account ID of the user who had their presence changed */
 	EOS_EpicAccountId PresenceUserId;
 ));
 
 /** The most recent version of the EOS_Presence_AddNotifyJoinGameAccepted API. */
 #define EOS_PRESENCE_ADDNOTIFYJOINGAMEACCEPTED_API_LATEST 2
+
 EOS_STRUCT(EOS_Presence_AddNotifyJoinGameAcceptedOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_PRESENCE_ADDNOTIFYJOINGAMEACCEPTED_API_LATEST. */
 	int32_t ApiVersion;
 ));
 
@@ -240,9 +245,9 @@ EOS_STRUCT(EOS_Presence_JoinGameAcceptedCallbackInfo, (
 	 * Set to a null pointer to delete the value.
 	 */
 	const char* JoinInfo;
-	/** User that accepted the invite */
+	/** The Epic Online Services Account ID of the user who accepted the invitation */
 	EOS_EpicAccountId LocalUserId;
-	/** Target user that sent the invite */
+	/** The Epic Online Services Account ID of the user who sent the invitation */
 	EOS_EpicAccountId TargetUserId;
 	/** 
 	 * If the value is not EOS_UI_EVENTID_INVALID then it must be passed back to the SDK using EOS_UI_AcknowledgeEventId.
@@ -271,11 +276,11 @@ EOS_DECLARE_CALLBACK(EOS_Presence_OnPresenceChangedCallback, const EOS_Presence_
  * Data for the EOS_Presence_GetJoinInfo function.
  */
 EOS_STRUCT(EOS_Presence_GetJoinInfoOptions, (
-	/** API Version of the EOS_Presence_GetJoinInfoOptions function */
+	/** API Version: Set this to EOS_PRESENCE_GETJOININFO_API_LATEST. */
 	int32_t ApiVersion;
-	/** The local user account id */
+	/** The local user's Epic Online Services Account ID */
 	EOS_EpicAccountId LocalUserId;
-	/** The target user account id to get the join info for */
+	/** The Epic Online Services Account ID to query for join info; this value must either be a logged-in local user, or a friend of that user */
 	EOS_EpicAccountId TargetUserId;
 ));
 
@@ -286,12 +291,23 @@ EOS_STRUCT(EOS_Presence_GetJoinInfoOptions, (
  * Data for the EOS_PresenceModification_SetJoinInfo function.
  */
 EOS_STRUCT(EOS_PresenceModification_SetJoinInfoOptions, (
-	/** API Version of the EOS_PresenceModification_SetJoinInfo function */
+	/** API Version: Set this to EOS_PRESENCEMODIFICATION_SETJOININFO_API_LATEST. */
 	int32_t ApiVersion;
 	/** 
 	 * The string which will be advertised as this player's join info.
 	 * An application is expected to freely define the meaning of this string to use for connecting to an active game session.
 	 * The string should not exceed EOS_PRESENCEMODIFICATION_JOININFO_MAX_LENGTH in length.
+	 * This affects the ability of the Social Overlay to show game related actions to take in the player's social graph.
+	 *
+	 * @note The Social Overlay can handle only one of the following three options at a time:
+	 * * using the bPresenceEnabled flags within the Sessions interface
+	 * * using the bPresenceEnabled flags within the Lobby interface
+	 * * using EOS_PresenceModification_SetJoinInfo
+	 *
+	 * @see EOS_Lobby_CreateLobbyOptions
+	 * @see EOS_Lobby_JoinLobbyOptions
+	 * @see EOS_Sessions_CreateSessionModificationOptions
+	 * @see EOS_Sessions_JoinSessionOptions
 	 */
 	const char* JoinInfo;
 ));
@@ -319,37 +335,49 @@ EOS_STRUCT(EOS_PresenceModification_SetJoinInfoOptions, (
  */
 #define EOS_PRESENCE_RICH_TEXT_MAX_VALUE_LENGTH 255
 
+/** The most recent version of the EOS_PresenceModification_SetStatus API. */
+#define EOS_PRESENCEMODIFICATION_SETSTATUS_API_LATEST 1
 
-#define EOS_PRESENCE_SETSTATUS_API_LATEST 1
+/** DEPRECATED! Use EOS_PRESENCEMODIFICATION_SETSTATUS_API_LATEST instead. */
+#define EOS_PRESENCE_SETSTATUS_API_LATEST EOS_PRESENCEMODIFICATION_SETSTATUS_API_LATEST
+
 /**
- * Data for the EOS_PresenceModification_SetStatusOptions function.
+ * Data for the EOS_PresenceModification_SetStatus function.
  */
 EOS_STRUCT(EOS_PresenceModification_SetStatusOptions, (
-	/** API Version of the EOS_PresenceModification_SetStatusOptions function */
+	/** API Version: Set this to EOS_PRESENCEMODIFICATION_SETSTATUS_API_LATEST. */
 	int32_t ApiVersion;
 	/** The status of the user */
 	EOS_Presence_EStatus Status;
 ));
 
+/** The most recent version of the EOS_PresenceModification_SetRawRichText function. */
+#define EOS_PRESENCEMODIFICATION_SETRAWRICHTEXT_API_LATEST 1
 
-#define EOS_PRESENCE_SETRAWRICHTEXT_API_LATEST 1
+/** DEPRECATED! Use EOS_PRESENCEMODIFICATION_SETRAWRICHTEXT_API_LATEST instead. */
+#define EOS_PRESENCE_SETRAWRICHTEXT_API_LATEST EOS_PRESENCEMODIFICATION_SETRAWRICHTEXT_API_LATEST
+
 /**
- * Data for the EOS_PresenceModification_SetRawRichTextOptions function.
+ * Data for the EOS_PresenceModification_SetRawRichText API.
  */
 EOS_STRUCT(EOS_PresenceModification_SetRawRichTextOptions, (
-	/** API Version of the EOS_PresenceModification_SetRawRichTextOptions function */
+	/** API Version: Set this to EOS_PRESENCEMODIFICATION_SETRAWRICHTEXT_API_LATEST. */
 	int32_t ApiVersion;
 	/** The status of the user */
 	const char* RichText;
 ));
 
+/** The most recent version of the EOS_PresenceModification_SetData API. */
+#define EOS_PRESENCEMODIFICATION_SETDATA_API_LATEST 1
 
-#define EOS_PRESENCE_SETDATA_API_LATEST 1
+/** DEPRECATED! Use EOS_PRESENCEMODIFICATION_SETDATA_API_LATEST instead. */
+#define EOS_PRESENCE_SETDATA_API_LATEST EOS_PRESENCEMODIFICATION_SETDATA_API_LATEST
+
 /**
- * Data for the EOS_PresenceModification_SetDataOptions function.
+ * Data for the EOS_PresenceModification_SetData function.
  */
 EOS_STRUCT(EOS_PresenceModification_SetDataOptions, (
-	/** API Version of the EOS_PresenceModification_SetDataOptions function */
+	/** API Version: Set this to EOS_PRESENCEMODIFICATION_SETDATA_API_LATEST. */
 	int32_t ApiVersion;
 	/** The count of records to set */
 	int32_t RecordsCount;
@@ -358,23 +386,28 @@ EOS_STRUCT(EOS_PresenceModification_SetDataOptions, (
 ));
 
 #define EOS_PRESENCEMODIFICATION_DATARECORDID_API_LATEST 1
+
 /**
  * Data for identifying which data records should be deleted.
  */
 EOS_STRUCT(EOS_PresenceModification_DataRecordId, (
-	/** API Version for the EOS_PresenceModification_DataRecordId struct */
+	/** API Version: Set this to EOS_PRESENCEMODIFICATION_DATARECORDID_API_LATEST. */
 	int32_t ApiVersion;
 	/** The key to be deleted from the data record */
 	const char* Key;
 ));
 
-#define EOS_PRESENCE_DELETEDATA_API_LATEST 1
+/** Most recent version of the EOS_PresenceModification_DeleteData API. */
+#define EOS_PRESENCEMODIFICATION_DELETEDATA_API_LATEST 1
+
+/** DEPRECATED! Use EOS_PRESENCEMODIFICATION_DELETEDATA_API_LATEST instead. */
+#define EOS_PRESENCE_DELETEDATA_API_LATEST EOS_PRESENCEMODIFICATION_DELETEDATA_API_LATEST
 
 /**
- * Data for the EOS_PresenceModification_DeleteDataOptions function.
+ * Data for the EOS_PresenceModification_DeleteData function.
  */
 EOS_STRUCT(EOS_PresenceModification_DeleteDataOptions, (
-	/** API Version of the EOS_PresenceModification_DeleteDataOptions function */
+	/** API Version: Set this to EOS_PRESENCEMODIFICATION_DELETEDATA_API_LATEST. */
 	int32_t ApiVersion;
 	/** The count of data keys to delete */
 	int32_t RecordsCount;

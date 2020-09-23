@@ -11,7 +11,7 @@
  * Query a specific file's metadata, such as file names, size, and a MD5 hash of the data. This is not required before a file may be opened, saved, copied, or deleted. Once a file has
  * been queried, its metadata will be available by the EOS_PlayerDataStorage_CopyFileMetadataAtIndex and EOS_PlayerDataStorage_CopyFileMetadataByFilename functions.
  *
- * @param Options Object containing properties related to which user is querying files, and what file is being queried
+ * @param QueryFileOptions Object containing properties related to which user is querying files, and what file is being queried
  * @param ClientData Optional pointer to help clients track this request, that is returned in the completion callback
  * @param CompletionCallback This function is called when the query operation completes
  *
@@ -25,7 +25,7 @@ EOS_DECLARE_FUNC(void) EOS_PlayerDataStorage_QueryFile(EOS_HPlayerDataStorage Ha
  * Query the file metadata, such as file names, size, and a MD5 hash of the data, for all files owned by this user for this application. This is not required before a file may be opened,
  * saved, copied, or deleted.
  *
- * @param Options Object containing properties related to which user is querying files
+ * @param QueryFileListOptions Object containing properties related to which user is querying files
  * @param ClientData Optional pointer to help clients track this request, that is returned in the completion callback
  * @param CompletionCallback This function is called when the query operation completes
  *
@@ -83,7 +83,7 @@ EOS_DECLARE_FUNC(void) EOS_PlayerDataStorage_DuplicateFile(EOS_HPlayerDataStorag
 /**
  * Deletes an existing file in the cloud. If successful, the file's data will be removed from our local cache.
  *
- * @param DelteOptions Object containing properties related to which user is deleting the file, and what file name is
+ * @param DeleteOptions Object containing properties related to which user is deleting the file, and what file name is
  * @param ClientData Optional pointer to help clients track this request, that is returned in the completion callback
  * @param CompletionCallback This function is called when the delete operation completes
  */

@@ -17,12 +17,12 @@ EXTERN_C typedef uint64_t EOS_UI_EventId;
 #define EOS_UI_SHOWFRIENDS_API_LATEST 1
 
 /**
- * Input parameters for the EOS_UI_ShowFriends Function.
+ * Input parameters for the EOS_UI_ShowFriends function.
  */
 EOS_STRUCT(EOS_UI_ShowFriendsOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_UI_SHOWFRIENDS_API_LATEST. */
 	int32_t ApiVersion;
-	/** Account ID of the user whose friend list is being shown. */
+	/** The Epic Online Services Account ID of the user whose friend list is being shown. */
 	EOS_EpicAccountId LocalUserId;
 ));
 
@@ -30,11 +30,11 @@ EOS_STRUCT(EOS_UI_ShowFriendsOptions, (
  * Output parameters for the EOS_UI_ShowFriends function.
  */
 EOS_STRUCT(EOS_UI_ShowFriendsCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned for a successful operation, otherwise one of the error codes is returned. See eos_common.h */
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_UI_ShowFriends */
 	void* ClientData;
-	/** Account ID of the user whose friend list is being shown. */
+	/** The Epic Online Services Account ID of the user whose friend list is being shown. */
 	EOS_EpicAccountId LocalUserId;
 ));
 
@@ -48,12 +48,12 @@ EOS_DECLARE_CALLBACK(EOS_UI_OnShowFriendsCallback, const EOS_UI_ShowFriendsCallb
 #define EOS_UI_HIDEFRIENDS_API_LATEST 1
 
 /**
- * Input parameters for the EOS_UI_HideFriends Function.
+ * Input parameters for the EOS_UI_HideFriends function.
  */
 EOS_STRUCT(EOS_UI_HideFriendsOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_UI_HIDEFRIENDS_API_LATEST. */
 	int32_t ApiVersion;
-	/** Account ID of the user whose friend list is being shown. */
+	/** The Epic Online Services Account ID of the user whose friend list is being shown. */
 	EOS_EpicAccountId LocalUserId;
 ));
 
@@ -61,11 +61,11 @@ EOS_STRUCT(EOS_UI_HideFriendsOptions, (
  * Output parameters for the EOS_UI_HideFriends function.
  */
 EOS_STRUCT(EOS_UI_HideFriendsCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned for a successful operation, otherwise one of the error codes is returned. See eos_common.h */
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_UI_HideFriends */
 	void* ClientData;
-	/** Account ID of the user whose friend list is being shown. */
+	/** The Epic Online Services Account ID of the user whose friend list is being shown. */
 	EOS_EpicAccountId LocalUserId;
 ));
 
@@ -79,12 +79,12 @@ EOS_DECLARE_CALLBACK(EOS_UI_OnHideFriendsCallback, const EOS_UI_HideFriendsCallb
 #define EOS_UI_GETFRIENDSVISIBLE_API_LATEST 1
 
 /**
- * Input parameters for the EOS_UI_GetFriendsVisible Function.
+ * Input parameters for the EOS_UI_GetFriendsVisible function.
  */
 EOS_STRUCT(EOS_UI_GetFriendsVisibleOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_UI_GETFRIENDSVISIBLE_API_LATEST. */
 	int32_t ApiVersion;
-	/** Account ID of the user whose overlay is being updated. */
+	/** The Epic Online Services Account ID of the user whose overlay is being updated. */
 	EOS_EpicAccountId LocalUserId;
 ));
 
@@ -92,10 +92,10 @@ EOS_STRUCT(EOS_UI_GetFriendsVisibleOptions, (
 #define EOS_UI_ADDNOTIFYDISPLAYSETTINGSUPDATED_API_LATEST 1
 
 /**
- * Input parameters for the EOS_UI_AddNotifyDisplaySettingsUpdated Function.
+ * Input parameters for the EOS_UI_AddNotifyDisplaySettingsUpdated function.
  */
 EOS_STRUCT(EOS_UI_AddNotifyDisplaySettingsUpdatedOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_UI_ADDNOTIFYDISPLAYSETTINGSUPDATED_API_LATEST. */
 	int32_t ApiVersion;
 ));
 
@@ -149,10 +149,10 @@ inline constexpr EOS_UI_EKeyCombination& operator^=(EOS_UI_EKeyCombination& Left
 #define EOS_UI_SETTOGGLEFRIENDSKEY_API_LATEST 1
 
 /**
- * Input parameters for the EOS_UI_SetToggleFriendsKey Function.
+ * Input parameters for the EOS_UI_SetToggleFriendsKey function.
  */
 EOS_STRUCT(EOS_UI_SetToggleFriendsKeyOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_UI_SETTOGGLEFRIENDSKEY_API_LATEST. */
 	int32_t ApiVersion;
 	/** 
 	 * The new key combination which will be used to toggle the friends overlay.
@@ -166,10 +166,10 @@ EOS_STRUCT(EOS_UI_SetToggleFriendsKeyOptions, (
 #define EOS_UI_GETTOGGLEFRIENDSKEY_API_LATEST 1
 
 /**
- * Input parameters for the EOS_UI_GetToggleFriendsKey Function.
+ * Input parameters for the EOS_UI_GetToggleFriendsKey function.
  */
 EOS_STRUCT(EOS_UI_GetToggleFriendsKeyOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_UI_GETTOGGLEFRIENDSKEY_API_LATEST. */
 	int32_t ApiVersion;
 ));
 
@@ -193,20 +193,24 @@ EOS_ENUM(EOS_UI_ENotificationLocation,
  * Input parameters for the EOS_UI_SetDisplayPreference function.
  */
 EOS_STRUCT(EOS_UI_SetDisplayPreferenceOptions, (
-	/** Version of the API */
+	/** API Version: Set this to EOS_UI_SETDISPLAYPREFERENCE_API_LATEST. */
 	int32_t ApiVersion;
 	/** Preference for notification pop-up locations. */
 	EOS_UI_ENotificationLocation NotificationLocation;
 ));
 
 
-#define EOS_UI_ACKNOWLEDGECORRELATIONID_API_LATEST 1
+/** The most recent version of the EOS_UI_AcknowledgeEventId API. */
+#define EOS_UI_ACKNOWLEDGEEVENTID_API_LATEST 1
+
+/** DEPRECATED! Use EOS_UI_ACKNOWLEDGEEVENTID_API_LATEST instead. */
+#define EOS_UI_ACKNOWLEDGECORRELATIONID_API_LATEST EOS_UI_ACKNOWLEDGEEVENTID_API_LATEST
 
 /**
  * Input parameters for the EOS_UI_AcknowledgeEventId.
  */
 EOS_STRUCT(EOS_UI_AcknowledgeEventIdOptions, (
-	/** API version of EOS_UI_AcknowledgeEventId. */
+	/** API Version: Set this to EOS_UI_ACKNOWLEDGEEVENTID_API_LATEST. */
 	int32_t ApiVersion;
 	/** The ID being acknowledged. */
 	EOS_UI_EventId UiEventId;

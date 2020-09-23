@@ -10,6 +10,7 @@ static bool vectorContains(std::vector<T> vector, T element){
 
 std::filesystem::path getDLLparentDir(HMODULE hModule);
 
+extern EOS_HPlatform hPlatform;
 EOS_HPlatform getHPlatform();
 EOS_HAuth getHAuth();
 EOS_HConnect getHConnect();
