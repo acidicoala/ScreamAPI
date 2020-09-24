@@ -339,5 +339,5 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
-/ScreamAPI/src/EOSSDK-Win32-Shipping.dll
-/ScreamAPI/src/EOSSDK-Win64-Shipping.dll
+**/EOSSDK-Win32-Shipping.dll
+**/EOSSDK-Win64-Shipping.dll

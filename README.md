@@ -2,6 +2,10 @@
 #### Legit DLC & Achievement Unlocker for Epic Games
 Welcome to the ScreamAPI repository.
 
+## Download
+You can always download the latest ScreamAPI release in this repository at the following address:
+https://github.com/acidicoala/ScreamAPI/releases/latest
+
 ## Links
 
 |![](https://i.ibb.co/zfg4kmg/cs.png)|![](https://i.ibb.co/9YrFrMH/circle-icon-16px.png)|![](https://i.ibb.co/qBZjbdc/sheets.png)                                                                                                                      |![](https://i.ibb.co/mHytW8F/forms-16px.png)                                                                                          |

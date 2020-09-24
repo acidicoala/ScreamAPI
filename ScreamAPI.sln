@@ -12,6 +12,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E63D752F-62BD-4082-A650-4018D6463A5E}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		.gitignore = .gitignore
 		LICENSE.txt = LICENSE.txt
 		README.md = README.md
 		ScreamAPI\ScreamAPI.ini = ScreamAPI\ScreamAPI.ini
