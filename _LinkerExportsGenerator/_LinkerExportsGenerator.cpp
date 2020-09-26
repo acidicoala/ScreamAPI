@@ -80,7 +80,7 @@ std::vector<std::string> getExportFunctions(std::wstring dllPath){
 }
 
 
-// #define TRANSACTION_UNLOCKER
+#define TRANSACTION_UNLOCKER false
 
 // TODO: This list is getting out of hand. I have to come up with a more convenient solution
 std::vector<std::string> overrideFunctions{
@@ -113,7 +113,7 @@ std::vector<std::string> overrideFunctions{
 
 	// Ecom Transactions
 	"EOS_Ecom_Checkout",
-#ifdef TRANSACTION_UNLOCKER
+#if TRANSACTION_UNLOCKER
 	"EOS_Ecom_CopyTransactionByIndex",
 	"EOS_Ecom_GetTransactionCount",
 	"EOS_Ecom_Transaction_GetTransactionId",

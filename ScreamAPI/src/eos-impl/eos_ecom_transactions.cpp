@@ -4,9 +4,9 @@
 #include "util.h"
 
 
-//#define TRANSACTION_UNLOCKER
+#define TRANSACTION_UNLOCKER false
 
-#ifdef TRANSACTION_UNLOCKER
+#if TRANSACTION_UNLOCKER
 EOS_Ecom_HTransaction ScreamAPITransaction;
 extern std::vector<std::string> entitlementIDs;
 constexpr auto ScreamAPITransactionId = "12345678901234567890123456789012";
@@ -22,19 +22,19 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_Checkout(EOS_HEcom Handle, const EOS_Ecom_Checko
 	static auto proxy = ScreamAPI::proxyFunction(&EOS_Ecom_Checkout, __func__);
 	auto container = new ScreamAPI::OriginalDataContainer(ClientData, CompletionDelegate);
 	proxy(Handle, Options, container, [](const EOS_Ecom_CheckoutCallbackInfo* Data){
-		auto nonConstData = const_cast<EOS_Ecom_CheckoutCallbackInfo*>(Data);
-		ScreamAPI::proxyCallback(nonConstData, &nonConstData->ClientData, [&](){
-#ifdef TRANSACTION_UNLOCKER
-			modifiedData->TransactionId = ScreamAPITransactionId;
-			modifiedData->ResultCode = EOS_EResult::EOS_Success;
+		auto mData = const_cast<EOS_Ecom_CheckoutCallbackInfo*>(Data);
+		ScreamAPI::proxyCallback(mData, &mData->ClientData, [&](){
+#if TRANSACTION_UNLOCKER
+			mData->TransactionId = ScreamAPITransactionId;
+			mData->ResultCode = EOS_EResult::EOS_Success;
 #endif
-			Logger::dlc("\t""ResultString: %s", EOS_EResult_ToString(nonConstData->ResultCode));
-			Logger::dlc("\t""TransactionId: %s", nonConstData->TransactionId);
+			Logger::dlc("\t""ResultString: %s", EOS_EResult_ToString(mData->ResultCode));
+			Logger::dlc("\t""TransactionId: %s", mData->TransactionId);
 		});
 	});
 }
 
-#ifdef TRANSACTION_UNLOCKER
+#if TRANSACTION_UNLOCKER
 
 EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyTransactionById(EOS_HEcom Handle, const EOS_Ecom_CopyTransactionByIdOptions* Options, EOS_Ecom_HTransaction* OutTransaction){
 	Logger::debug(__func__);
