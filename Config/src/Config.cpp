@@ -20,6 +20,7 @@ bool bLogOverlay = false;
 bool bLoadIcons = true;
 bool bCacheIcons = true;
 bool bValidateIcons = true;
+bool bForceEpicOverlay = false;
 // DLC
 bool bUnlockAllDLC = true;
 // DLC_List
@@ -43,6 +44,7 @@ std::map<std::string, std::map<std::string, void*>> configMap = {
 		{"LoadIcons", &bLoadIcons},
 		{"CacheIcons", &bCacheIcons},
 		{"ValidateIcons", &bValidateIcons},
+		{"ForceEpicOverlay", &bForceEpicOverlay},
 	}},
 	{"DLC", {
 		{"UnlockAllDLC", &bUnlockAllDLC},
@@ -114,6 +116,7 @@ bool LogOverlay(){ return bLogOverlay; }
 bool LoadIcons() { return bLoadIcons; }
 bool CacheIcons() { return bCacheIcons; }
 bool ValidateIcons(){ return bValidateIcons; }
+bool ForceEpicOverlay(){ return bForceEpicOverlay; }
 // DLC
 bool UnlockAllDLC(){ return bUnlockAllDLC; }
 // DLC_List

@@ -25,15 +25,8 @@ EOS_DECLARE_FUNC(uint32_t) EOS_Achievements_GetAchievementDefinitionCount(EOS_HA
 
 EOS_DECLARE_FUNC(EOS_EResult) EOS_Achievements_CopyAchievementDefinitionV2ByIndex(EOS_HAchievements Handle, const EOS_Achievements_CopyAchievementDefinitionV2ByIndexOptions* Options, EOS_Achievements_DefinitionV2** OutDefinition){
 	Logger::debug(__func__);
-
+	
 	static auto proxy = ScreamAPI::proxyFunction(&EOS_Achievements_CopyAchievementDefinitionV2ByIndex, __func__);
-	return proxy(Handle, Options, OutDefinition);
-}
-
-EOS_DECLARE_FUNC(EOS_EResult) EOS_Achievements_CopyAchievementDefinitionV2ByAchievementId(EOS_HAchievements Handle, const EOS_Achievements_CopyAchievementDefinitionV2ByAchievementIdOptions* Options, EOS_Achievements_DefinitionV2** OutDefinition){
-	Logger::debug(__func__);
-
-	static auto proxy = ScreamAPI::proxyFunction(&EOS_Achievements_CopyAchievementDefinitionV2ByAchievementId, __func__);
 	return proxy(Handle, Options, OutDefinition);
 }
 
@@ -102,5 +95,28 @@ EOS_DECLARE_FUNC(EOS_NotificationId) EOS_Achievements_AddNotifyAchievementsUnloc
 	Logger::debug(__func__);
 
 	static auto proxy = ScreamAPI::proxyFunction(&EOS_Achievements_AddNotifyAchievementsUnlockedV2, __func__);
+	return proxy(Handle, Options, ClientData, NotificationFn);
+}
+
+/* Deprecated Functions */
+
+EOS_DECLARE_FUNC(EOS_EResult) EOS_Achievements_CopyAchievementDefinitionByIndex(EOS_HAchievements Handle, const EOS_Achievements_CopyAchievementDefinitionByIndexOptions* Options, EOS_Achievements_Definition** OutDefinition){
+	Logger::debug(__func__);
+
+	static auto proxy = ScreamAPI::proxyFunction(&EOS_Achievements_CopyAchievementDefinitionByIndex, __func__);
+	return proxy(Handle, Options, OutDefinition);
+}
+
+EOS_DECLARE_FUNC(void) EOS_Achievements_Definition_Release(EOS_Achievements_Definition* AchievementDefinition){
+	Logger::debug(__func__);
+
+	static auto proxy = ScreamAPI::proxyFunction(&EOS_Achievements_Definition_Release, __func__);
+	proxy(AchievementDefinition);
+}
+
+EOS_DECLARE_FUNC(EOS_NotificationId) EOS_Achievements_AddNotifyAchievementsUnlocked(EOS_HAchievements Handle, const EOS_Achievements_AddNotifyAchievementsUnlockedOptions* Options, void* ClientData, const EOS_Achievements_OnAchievementsUnlockedCallback NotificationFn){
+	Logger::debug(__func__);
+
+	static auto proxy = ScreamAPI::proxyFunction(&EOS_Achievements_AddNotifyAchievementsUnlocked, __func__);
 	return proxy(Handle, Options, ClientData, NotificationFn);
 }

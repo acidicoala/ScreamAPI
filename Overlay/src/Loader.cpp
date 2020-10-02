@@ -103,7 +103,7 @@ void loadIconTexture(Overlay_Achievement& achievement){
 		subResource.SysMemPitch = static_cast<UINT>(desc.Width * 4);
 		subResource.SysMemSlicePitch = 0;
 
-		// FIXME: This function call somtimes messes up the Railway Empire. No idea why.
+		// FIXME: This function call crashes in the Railway Empire. No idea why.
 		auto result = Overlay::gD3D11Device->CreateTexture2D(&desc, &subResource, &pTexture);
 
 		if(SUCCEEDED(result)){
@@ -168,6 +168,12 @@ int getOnlineFileSize(const char* url){
 }
 
 void downloadIconIfNecessary(Overlay_Achievement& achievement){
+	// Return if the icon URL is invalid
+	if(std::string(achievement.UnlockedIconURL).rfind("http", 0) == std::string::npos) {
+		Logger::ovrly("Ignoring invalid icon URL: %s", achievement.UnlockedIconURL);
+		return;
+	}
+	
 	auto iconPath = getIconPath(achievement);
 
 	WIN32_FILE_ATTRIBUTE_DATA fileInfo;

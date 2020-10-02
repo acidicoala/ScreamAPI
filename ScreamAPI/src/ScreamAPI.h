@@ -11,6 +11,8 @@ extern HMODULE originalDLL;
 void init(HMODULE hModule);
 void destroy();
 
+class FunctionNotFoundException : public std::exception{};
+
 // Have to define template function in header (-_-)
 template <typename RetType, typename... ArgTypes>
 struct proxyTraits{
@@ -33,13 +35,15 @@ auto proxyFunction(RetType(EOS_CALL*)(ArgTypes...), LPCSTR rawFunctionName){
 #endif
 	// Get C-style pointer to function
 	auto funcPtr = GetProcAddress(originalDLL, functionName.c_str());
-	if(funcPtr)
+	if(funcPtr){
 		Logger::debug("Successfully proxied function: %s", functionName.c_str());
-	else
+		// Return type-safe version of that function pointer
+		return reinterpret_cast<funcType>(funcPtr);
+	} else{
 		Logger::error("Failed to proxy function: %s", functionName.c_str());
+		throw FunctionNotFoundException();
+	}
 
-	// Return type-safe version of that function pointer
-	return reinterpret_cast<funcType>(funcPtr);
 }
 
 struct OriginalDataContainer{

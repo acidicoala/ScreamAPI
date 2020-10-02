@@ -20,6 +20,7 @@ bool LogOverlay();
 bool LoadIcons();
 bool CacheIcons();
 bool ValidateIcons();
+bool ForceEpicOverlay();
 // DLC
 bool UnlockAllDLC();
 // DLC_List
