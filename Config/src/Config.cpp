@@ -23,6 +23,7 @@ bool bValidateIcons = true;
 bool bForceEpicOverlay = false;
 // DLC
 bool bUnlockAllDLC = true;
+bool bOfflineSupport = true;
 // DLC_List
 std::vector<std::string> vDLC_List;
 
@@ -48,6 +49,7 @@ std::map<std::string, std::map<std::string, void*>> configMap = {
 	}},
 	{"DLC", {
 		{"UnlockAllDLC", &bUnlockAllDLC},
+		{"OfflineSupport", &bOfflineSupport},
 	}},
 };
 
@@ -58,7 +60,6 @@ int iniHandler(void* user, const char* section_raw, const char* name_raw, const 
 
 	try{
 		if(section == "DLC_List"){
-			// TODO: separate lists for allowed/blocked DLCs
 			if(stringToBool(value)) // Add to the list only IDs set to True
 				vDLC_List.push_back(name);
 			return TRUE;
@@ -97,8 +98,8 @@ int iniHandler(void* user, const char* section_raw, const char* name_raw, const 
 void init(const std::wstring iniPath){
 	int parseResult = ini_wparse(iniPath.c_str(), iniHandler, 0);
 
-	//if(parseResult == -1)
-		//showError(L"Error opening " + iniPath + L"\nUsing defaults");
+	if(parseResult != 0)
+		exit(1);
 }
 
 // ScreamAPI
@@ -119,6 +120,7 @@ bool ValidateIcons(){ return bValidateIcons; }
 bool ForceEpicOverlay(){ return bForceEpicOverlay; }
 // DLC
 bool UnlockAllDLC(){ return bUnlockAllDLC; }
+bool OfflineSupport(){ return bOfflineSupport; }
 // DLC_List
 std::vector<std::string> DLC_List(){ return vDLC_List; }
 

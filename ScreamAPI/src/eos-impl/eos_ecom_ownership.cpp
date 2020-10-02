@@ -3,14 +3,23 @@
 #include "eos-sdk/eos_ecom.h"
 #include "util.h"
 
+std::vector<EOS_Ecom_ItemOwnership> ownerships;
+
 EOS_DECLARE_FUNC(void) EOS_Ecom_QueryOwnership(EOS_HEcom Handle, const EOS_Ecom_QueryOwnershipOptions* Options, void* ClientData, const EOS_Ecom_OnQueryOwnershipCallback CompletionDelegate){
 	Logger::debug(__func__);
 
 	// Log item IDs
 	if(Options){
 		Logger::dlc("Game requested ownership of %d items:", Options->CatalogItemIdCount);
-		for(uint32_t i = 0; i < Options->CatalogItemIdCount; i++)
+		for(uint32_t i = 0; i < Options->CatalogItemIdCount; i++){
 			Logger::dlc("\t""Item ID: %s", Options->CatalogItemIds[i]);
+
+			ownerships.emplace_back(EOS_Ecom_ItemOwnership{
+				EOS_ECOM_ITEMOWNERSHIP_API_LATEST,
+				Util::copy_c_string(Options->CatalogItemIds[i]),
+				EOS_EOwnershipStatus::EOS_OS_Owned
+			});
+		}
 	}
 	else{
 		Logger::warn("Game requested DLC ownership, but without Options parameter");
@@ -23,15 +32,24 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryOwnership(EOS_HEcom Handle, const EOS_Ecom_
 		proxy(Handle, Options, container, [](const EOS_Ecom_QueryOwnershipCallbackInfo* Data){
 			auto nonConstData = const_cast<EOS_Ecom_QueryOwnershipCallbackInfo*>(Data);
 			ScreamAPI::proxyCallback(nonConstData, &nonConstData->ClientData, [&](){
-				Logger::dlc("Responding with %d item ownerships:", nonConstData->ItemOwnershipCount);
+				// Force DLC unlocking even if something went wrong
+				if(nonConstData->ResultCode != EOS_EResult::EOS_Success && Config::OfflineSupport()){
+					Logger::warn("EOS_Ecom_QueryOwnershipCallback Result: %s", EOS_EResult_ToString(Data->ResultCode));
+					nonConstData->ItemOwnershipCount = ownerships.size();
+					nonConstData->ItemOwnership = ownerships.data();
+					nonConstData->ResultCode = EOS_EResult::EOS_Success;
+				}
 
+				Logger::dlc("Responding with %d item ownerships:", nonConstData->ItemOwnershipCount);
+				
 				// Modify ownership status of items.
 				for(unsigned int i = 0; i < nonConstData->ItemOwnershipCount; i++){
+
 					// Get non-const pointer to ownership struct
 					auto item = const_cast <EOS_Ecom_ItemOwnership*>(nonConstData->ItemOwnership + i);
 
 					// Search the id in DLC list from the config
-					bool isInOwnedList = Util::vectorContains<std::string>(Config::DLC_List(), nonConstData->ItemOwnership[i].Id);
+					bool isInOwnedList = Util::vectorContains<std::string>(Config::DLC_List(), item->Id);
 
 					// Determine if this DLC should be unlocked
 					bool unlocked = Config::UnlockAllDLC() || isInOwnedList;
