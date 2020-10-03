@@ -132,8 +132,7 @@ void EOS_CALL queryPlayerAchievementsComplete(const EOS_Achievements_OnQueryPlay
 		EOS_ACHIEVEMENTS_GETPLAYERACHIEVEMENTCOUNT_API_LATEST,
 		getProductUserId()
 	};
-	auto playerAchievementsCount = EOS_Achievements_GetPlayerAchievementCount(getHAchievements(),
-		&GetCountOptions);
+	auto playerAchievementsCount = EOS_Achievements_GetPlayerAchievementCount(getHAchievements(), &GetCountOptions);
 	// Iterate over queried player achievements and update our own structs
 	for(unsigned int i = 0; i < playerAchievementsCount; i++){
 		EOS_Achievements_CopyPlayerAchievementByIndexOptions CopyAchievementOptions{

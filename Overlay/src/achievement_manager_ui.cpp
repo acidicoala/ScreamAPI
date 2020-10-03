@@ -5,25 +5,25 @@
 namespace AchievementManagerUI{
 
 ImFont* bigFont = nullptr;
-const float mainFontSize = 17.0f;
+constexpr auto mainFontSize = 21.0f;
+// Hopefully every Windows PC should have Segoeui font installed
+auto fontPath = "C:\\Windows\\Fonts\\Segoeui.ttf"; 
 
 void InitImGui(void* pWindow, ID3D11Device* pD3D11Device, ID3D11DeviceContext* pContext){
 	ImGui::CreateContext();
 
-	// Hopefully every Windows PC should have calibri font installed
-	auto fontPath = "C:\\Windows\\Fonts\\calibri.ttf";
-
+	static const ImWchar ranges[] = { 0x0020, 0xFFFF, 0 }; // All ranges
 	auto& io = ImGui::GetIO(); // It's important to get reference (auto&) instead of copy (auto)
 	io.IniFilename = NULL;
-	io.Fonts->AddFontFromFileTTF(fontPath, mainFontSize);
+	io.Fonts->AddFontFromFileTTF(fontPath, mainFontSize, NULL, ranges);
 
 	{// Init big font
-		float pixedSize = 64;
+		float pixelSize = 64;
 		ImFontConfig config;
-		config.SizePixels = pixedSize;
+		config.SizePixels = pixelSize;
 		config.OversampleH = config.OversampleV = 1;
 		config.PixelSnapH = true;
-		bigFont = io.Fonts->AddFontFromFileTTF(fontPath, pixedSize, &config);
+		bigFont = io.Fonts->AddFontFromFileTTF(fontPath, pixelSize, &config, ranges);
 	}
 
 	ImGui_ImplWin32_Init(pWindow);
@@ -61,7 +61,7 @@ void DrawAchievementList(){
 	ImGui::SetWindowPos(ImVec2());
 	ImGui::SetWindowSize(ImVec2(400, io.DisplaySize.y));
 
-	FitTextToWindow(ImVec4(0, 1, 0, 1), "ScreamAPI Achievement Manager");
+	FitTextToWindow(ImVec4(0, 1, 0, 1), "  ScreamAPI Achievement Manager  ");
 
 	ImGui::BeginChild("AchievementList", ImVec2(0, 0), false);
 	for(unsigned int i = 0; i < Overlay::achievements->size(); i++){

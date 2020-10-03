@@ -88,13 +88,11 @@ std::vector<std::string> overrideFunctions{
 	"EOS_EResult_ToString",
 	"EOS_EpicAccountId_IsValid",
 
-	// SDK
+	// Platform & SDK
+	"EOS_Platform_Create",
 	"EOS_Platform_GetAuthInterface",
 	"EOS_Platform_GetAchievementsInterface",
 	"EOS_Platform_GetConnectInterface",
-
-	// Platform
-	"EOS_Platform_Create",
 
 	// Auth
 	"EOS_Auth_Login",
