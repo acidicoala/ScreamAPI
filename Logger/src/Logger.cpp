@@ -69,6 +69,13 @@ void log(LogLevel level, const char* const message, va_list args){
 		if(!file.is_open())
 			return; // Should not be the case, normally
 
+		// Get time in milliseconds
+		SYSTEMTIME time;
+		GetLocalTime(&time);
+		char timeStr[13];
+		sprintf_s(timeStr, 13, "%02d:%02d:%02d.%03d", time.wHour, time.wMinute, time.wSecond, time.wMilliseconds);
+
+		file << "[" << timeStr << "] ";
 		file << "[" << strLogLevels[(int) level] << "]\t";
 		file << buffer << "\n";
 
