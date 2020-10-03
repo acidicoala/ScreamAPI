@@ -3,8 +3,7 @@
 #include <ScreamAPI.h>
 
 EOS_DECLARE_FUNC(const char*) EOS_EResult_ToString(EOS_EResult Result){
-	static auto proxy = ScreamAPI::proxyFunction(&EOS_EResult_ToString, __func__);
-	return proxy(Result);
+	EOS_IMPLEMENT_FUNC(EOS_EResult_ToString, Result);
 }
 
 EOS_DECLARE_FUNC(EOS_Bool) EOS_EpicAccountId_IsValid(EOS_EpicAccountId AccountId){

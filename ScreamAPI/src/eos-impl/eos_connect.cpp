@@ -16,9 +16,7 @@ EOS_DECLARE_FUNC(void) EOS_Connect_Login(EOS_HConnect Handle, const EOS_Connect_
 	});
 }
 
-EOS_DECLARE_FUNC(EOS_ProductUserId) EOS_Connect_GetLoggedInUserByIndex(EOS_HConnect Handle, int32_t Index){
-	Logger::debug(__func__);
 
-	static auto proxy = ScreamAPI::proxyFunction(&EOS_Connect_GetLoggedInUserByIndex, __func__);
-	return proxy(Handle, Index);
+EOS_DECLARE_FUNC(EOS_ProductUserId) EOS_Connect_GetLoggedInUserByIndex(EOS_HConnect Handle, int32_t Index){
+	EOS_IMPLEMENT_FUNC(EOS_Connect_GetLoggedInUserByIndex, Handle, Index)
 }

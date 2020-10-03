@@ -57,5 +57,10 @@ struct OriginalDataContainer{
 
 void proxyCallback(void* callbackInfoData, void** clientData, std::function<void()> customCallback);
 
-}
 
+#define EOS_IMPLEMENT_FUNC(function, ...)								\
+	Logger::debug(__func__);											\
+	static auto proxy = ScreamAPI::proxyFunction(&function, __func__);	\
+	return proxy(__VA_ARGS__);
+
+}
