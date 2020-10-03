@@ -35,7 +35,7 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryOwnership(EOS_HEcom Handle, const EOS_Ecom_
 				// Force DLC unlocking even if something went wrong
 				if(nonConstData->ResultCode != EOS_EResult::EOS_Success && Config::OfflineSupport()){
 					Logger::warn("EOS_Ecom_QueryOwnershipCallback Result: %s", EOS_EResult_ToString(Data->ResultCode));
-					nonConstData->ItemOwnershipCount = ownerships.size();
+					nonConstData->ItemOwnershipCount = (uint32_t) ownerships.size();
 					nonConstData->ItemOwnership = ownerships.data();
 					nonConstData->ResultCode = EOS_EResult::EOS_Success;
 				}
