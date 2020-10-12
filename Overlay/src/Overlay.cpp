@@ -41,18 +41,18 @@ LRESULT WINAPI WindowProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		// Civilization VI mouse input fix
 		switch(uMsg)
 		{
-			case WM_POINTERDOWN:
-				uMsg = WM_LBUTTONDOWN;
-				break;
-			case WM_POINTERUP:
-				uMsg = WM_LBUTTONUP;
-				break;
-			case WM_POINTERWHEEL:
-				uMsg = WM_MOUSEWHEEL;
-				break;
-			case WM_POINTERUPDATE:
-				uMsg = WM_SETCURSOR;
-				break;
+		case WM_POINTERDOWN:
+			uMsg = WM_LBUTTONDOWN;
+			break;
+		case WM_POINTERUP:
+			uMsg = WM_LBUTTONUP;
+			break;
+		case WM_POINTERWHEEL:
+			uMsg = WM_MOUSEWHEEL;
+			break;
+		case WM_POINTERUPDATE:
+			uMsg = WM_SETCURSOR;
+			break;
 		}
 		ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam);
 		return true;
@@ -65,17 +65,17 @@ HRESULT WINAPI hookedPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT
 	static ID3D11DeviceContext* pContext = nullptr;
 
 	if(!bInit) {
-		if(SUCCEEDED(pSwapChain->GetDevice(__uuidof(ID3D11Device), (void**) &gD3D11Device))) {
+		if(SUCCEEDED(pSwapChain->GetDevice(__uuidof(ID3D11Device), (void**)&gD3D11Device))) {
 			gD3D11Device->GetImmediateContext(&pContext);
 			DXGI_SWAP_CHAIN_DESC sd;
 			pSwapChain->GetDesc(&sd);
 			gWindow = sd.OutputWindow;
 			ID3D11Texture2D* pBackBuffer;
-			pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*) &pBackBuffer);
+			pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
 #pragma warning(suppress: 6387)
 			gD3D11Device->CreateRenderTargetView(pBackBuffer, NULL, &gRenderTargetView);
 			pBackBuffer->Release();
-			originalWindowProc = (WNDPROC) SetWindowLongPtr(gWindow, GWLP_WNDPROC, (LONG_PTR) WindowProc);
+			originalWindowProc = (WNDPROC)SetWindowLongPtr(gWindow, GWLP_WNDPROC, (LONG_PTR)WindowProc);
 			if(originalWindowProc == NULL){
 				Logger::error("Failed to SetWindowLongPtr. Error code: %d", GetLastError());
 				return originalPresent(pSwapChain, SyncInterval, Flags);
@@ -120,7 +120,7 @@ HRESULT WINAPI hookedResizeBuffer(IDXGISwapChain* pThis, UINT BufferCount, UINT 
 	AchievementManagerUI::ShutdownImGui();
 
 	// Restore original WndProc. Crashes without it.
-	SetWindowLongPtr(gWindow, GWLP_WNDPROC, (LONG_PTR) originalWindowProc);
+	SetWindowLongPtr(gWindow, GWLP_WNDPROC, (LONG_PTR)originalWindowProc);
 
 	// Release RTV according to: https://www.unknowncheats.me/forum/2638258-post8.html
 	gRenderTargetView->Release();
@@ -134,48 +134,44 @@ HRESULT WINAPI hookedResizeBuffer(IDXGISwapChain* pThis, UINT BufferCount, UINT 
 #define D3D11_Present		8
 #define D3D11_ResizeBuffers	13
 
-void asyncInit() {
-#pragma warning(suppress: 26812)
-	auto result = kiero::init(kiero::RenderType::D3D11);
-	if(result != kiero::Status::Success){
-		Logger::debug("Kiero: result code = %d", result);
-		if(result == kiero::Status::ModuleNotFoundError)
-			Logger::error("Failed to initialize kiero. Are you sure you are running a DirectX 11 game?");
-		else
-			Logger::error("Failed to initialize kiero. Error code: %d", result);
-
-		return;
-	}
-	Logger::ovrly("Kiero: Successfully initialized");
-
-	// Hook Present
-	kiero::bind(D3D11_Present, (void**) &originalPresent, hookedPresent);
-	Logger::ovrly("Kiero: Successfully hooked Present");
-
-	// Hook ResizeBuffers
-	kiero::bind(D3D11_ResizeBuffers, (void**) &originalResizeBuffers, hookedResizeBuffer);
-	Logger::ovrly("Kiero: Successfully hooked ResizeBuffers");
-
-	// Hide the popup after POPUP_DURATION_MS time
-	static auto hidePopupJob = std::async(std::launch::async, [&]() {
-		Sleep(POPUP_DURATION_MS);
-		bShowInitPopup = false;
-	});
-}
-
 void Init(HMODULE hMod, Achievements* pAchievements, UnlockAchievementFunction* fnUnlockAchievement) {
 	achievements = pAchievements;
 	unlockAchievement = fnUnlockAchievement;
 
 	// Init asynchronously to keep the main thread going
-	static auto initJob = std::async(std::launch::async, [&]() {
-		asyncInit();
+	static auto initJob = std::async(std::launch::async, []() {
+#pragma warning(suppress: 26812)
+		auto result = kiero::init(kiero::RenderType::D3D11);
+		if(result != kiero::Status::Success){
+			Logger::debug("Kiero: result code = %d", result);
+			if(result == kiero::Status::ModuleNotFoundError)
+				Logger::error("Failed to initialize kiero. Are you sure you are running a DirectX 11 game?");
+			else
+				Logger::error("Failed to initialize kiero. Error code: %d", result);
+
+			return;
+		}
+		Logger::ovrly("Kiero: Successfully initialized");
+
+		// Hook Present
+		kiero::bind(D3D11_Present, (void**)&originalPresent, hookedPresent);
+		Logger::ovrly("Kiero: Successfully hooked Present");
+
+		// Hook ResizeBuffers
+		kiero::bind(D3D11_ResizeBuffers, (void**)&originalResizeBuffers, hookedResizeBuffer);
+		Logger::ovrly("Kiero: Successfully hooked ResizeBuffers");
+
+		// Hide the popup after POPUP_DURATION_MS time
+		static auto hidePopupJob = std::async(std::launch::async, [&]() {
+			Sleep(POPUP_DURATION_MS);
+			bShowInitPopup = false;
+		});
 	});
 }
 
 void Shutdown() {
 	AchievementManagerUI::ShutdownImGui();
-	SetWindowLongPtr(gWindow, GWLP_WNDPROC, (LONG_PTR) originalWindowProc);
+	SetWindowLongPtr(gWindow, GWLP_WNDPROC, (LONG_PTR)originalWindowProc);
 	kiero::shutdown();
 	Logger::ovrly("Kiero: Shutdown");
 	// TODO: Clear the achievement vector as well?

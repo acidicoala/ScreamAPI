@@ -84,43 +84,55 @@ void loadIconTexture(Overlay_Achievement& achievement){
 		}
 
 		// Create texture
-		D3D11_TEXTURE2D_DESC desc;
+		D3D11_TEXTURE2D_DESC desc{};
 		desc.Width = image_width;
 		desc.Height = image_height;
 		desc.MipLevels = 1;
 		desc.ArraySize = 1;
 		desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		desc.SampleDesc.Count = 1;
-		desc.SampleDesc.Quality = 0;
 		desc.Usage = D3D11_USAGE_DEFAULT;
 		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-		desc.CPUAccessFlags = 0;
-		desc.MiscFlags = 0;
 
-		ID3D11Texture2D* pTexture = nullptr;
+		/*
 		D3D11_SUBRESOURCE_DATA subResource;
 		subResource.pSysMem = image_data;
 		subResource.SysMemPitch = static_cast<UINT>(desc.Width * 4);
 		subResource.SysMemSlicePitch = 0;
+		*/
 
-		// FIXME: This function call crashes in the Railway Empire. No idea why.
-		auto result = Overlay::gD3D11Device->CreateTexture2D(&desc, &subResource, &pTexture);
-
-		if(SUCCEEDED(result)){
-			// Create texture view
-			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-			memset(&srvDesc, 0, sizeof(srvDesc));
-			srvDesc.Format = desc.Format;
-			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-			srvDesc.Texture2D.MipLevels = desc.MipLevels;
-			result = Overlay::gD3D11Device->CreateShaderResourceView(pTexture, &srvDesc, &achievement.IconTexture);
-			pTexture->Release();
-			if(FAILED(result))
-				Logger::error("Failed to create shader resource view. Error code: %x", result);
-		} else {
+		HRESULT result;
+		ID3D11Texture2D* pTexture = nullptr;
+		// FIXME: CreateTexture2D function call crashes in the Railway Empire. No idea why.
+		if(FAILED(result = Overlay::gD3D11Device->CreateTexture2D(&desc, nullptr, &pTexture))){
 			Logger::error("Failed to load the texture. Error code: %x", result);
+			stbi_image_free(image_data);
+			return;
 		}
 
+		// Update subresource
+		ID3D11DeviceContext* pContext = nullptr;
+		Overlay::gD3D11Device->GetImmediateContext(&pContext);
+
+		D3D11_BOX box{};
+		box.right = image_width;
+		box.bottom = image_height;
+		box.back = 1;
+		pContext->UpdateSubresource(pTexture, 0, &box, image_data, desc.Width * 4, desc.Width * 4 * desc.Height);
+
+		// Create texture view
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+		srvDesc.Format = desc.Format;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = desc.MipLevels;
+		srvDesc.Texture2D.MostDetailedMip = 0;
+
+		if(FAILED(result = Overlay::gD3D11Device->CreateShaderResourceView(pTexture, &srvDesc, &achievement.IconTexture))){
+			Logger::error("Failed to create shader resource view. Error code: %x", result);
+		}
+
+		// Clean up the memory
+		pTexture->Release();
 		stbi_image_free(image_data);
 	}
 }
@@ -149,7 +161,7 @@ int getLocalFileSize(WIN32_FILE_ATTRIBUTE_DATA& fileInfo){
 	LARGE_INTEGER size;
 	size.HighPart = fileInfo.nFileSizeHigh;
 	size.LowPart = fileInfo.nFileSizeLow;
-	return (int) size.QuadPart;
+	return (int)size.QuadPart;
 }
 
 // Downloads only the file headers and retuns the size of the file
@@ -164,7 +176,7 @@ int getOnlineFileSize(const char* url){
 	curl_easy_getinfo(curl_handle, CURLINFO_CONTENT_LENGTH_DOWNLOAD_T, &contentLength);
 	curl_easy_cleanup(curl_handle);
 
-	return (int) contentLength;
+	return (int)contentLength;
 }
 
 void downloadIconIfNecessary(Overlay_Achievement& achievement){
@@ -173,7 +185,7 @@ void downloadIconIfNecessary(Overlay_Achievement& achievement){
 		Logger::ovrly("Ignoring invalid icon URL: %s", achievement.UnlockedIconURL);
 		return;
 	}
-	
+
 	auto iconPath = getIconPath(achievement);
 
 	WIN32_FILE_ATTRIBUTE_DATA fileInfo;
@@ -220,6 +232,7 @@ void AsyncLoadIcons(){
 				// Asynchronously wait for all other async jobs to be completed
 				job.wait();
 			}
+			// Cleanup afterwards
 			asyncJobs.clear();
 			shutdown();
 		});
