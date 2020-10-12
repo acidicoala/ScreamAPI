@@ -9,9 +9,10 @@ EOS_DECLARE_FUNC(void) EOS_Connect_Login(EOS_HConnect Handle, const EOS_Connect_
 	static auto proxy = ScreamAPI::proxyFunction(&EOS_Connect_Login, __func__);
 	auto container = new ScreamAPI::OriginalDataContainer(ClientData, CompletionDelegate);
 	proxy(Handle, Options, container, [](const EOS_Connect_LoginCallbackInfo* Data){
-		auto nonConstData = const_cast<EOS_Connect_LoginCallbackInfo*>(Data);
-		ScreamAPI::proxyCallback(nonConstData, &nonConstData->ClientData, [&](){
-			AchievementManager::init();
+		ScreamAPI::proxyCallback<EOS_Connect_LoginCallbackInfo>(Data, &Data->ClientData,
+			[](EOS_Connect_LoginCallbackInfo* Data){
+			if(Data->ResultCode == EOS_EResult::EOS_Success)
+				AchievementManager::init();
 		});
 	});
 }

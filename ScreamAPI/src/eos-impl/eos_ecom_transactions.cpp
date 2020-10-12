@@ -22,8 +22,8 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_Checkout(EOS_HEcom Handle, const EOS_Ecom_Checko
 	static auto proxy = ScreamAPI::proxyFunction(&EOS_Ecom_Checkout, __func__);
 	auto container = new ScreamAPI::OriginalDataContainer(ClientData, CompletionDelegate);
 	proxy(Handle, Options, container, [](const EOS_Ecom_CheckoutCallbackInfo* Data){
-		auto mData = const_cast<EOS_Ecom_CheckoutCallbackInfo*>(Data);
-		ScreamAPI::proxyCallback(mData, &mData->ClientData, [&](){
+		ScreamAPI::proxyCallback<EOS_Ecom_CheckoutCallbackInfo>(Data, &Data->ClientData,
+			[](EOS_Ecom_CheckoutCallbackInfo* mData){
 #if TRANSACTION_UNLOCKER
 			mData->TransactionId = ScreamAPITransactionId;
 			mData->ResultCode = EOS_EResult::EOS_Success;

@@ -48,15 +48,31 @@ auto proxyFunction(RetType(EOS_CALL*)(ArgTypes...), LPCSTR rawFunctionName){
 
 struct OriginalDataContainer{
 	void* originalClientData;
-	void (*originalCompletionDelegate)(void*);
+	void (*originalCompletionDelegate)(const void*);
 	OriginalDataContainer(void* clientData, void* completionDelegate) {
 		originalClientData = clientData;
 		reinterpret_cast<void*&>(originalCompletionDelegate) = completionDelegate;
 	}
 };
 
-void proxyCallback(void* callbackInfoData, void** clientData, std::function<void()> customCallback);
+template <typename T>
+void proxyCallback(const T* Data, void* const* clientData, std::function<void(T*)> customCallback){
+	auto container = reinterpret_cast<OriginalDataContainer*>(*clientData);
 
+	// Restore original client data
+	auto mClientData = const_cast<void**>(clientData);
+	*mClientData = container->originalClientData;
+
+	// Call custom our callback
+	T* mData = const_cast<T*>(Data);
+	customCallback(mData);
+
+	// Call original completion delegate with our modified data
+	container->originalCompletionDelegate(Data);
+
+	// Free the heap
+	delete container;
+}
 
 #define EOS_IMPLEMENT_FUNC(function, ...)								\
 	Logger::debug(__func__);											\

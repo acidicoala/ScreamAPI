@@ -48,21 +48,6 @@ void ScreamAPI::init(HMODULE hModule){
 }
 
 
-void proxyCallback(void* callbackInfoData, void** clientData, std::function<void()> customCallback){
-	auto container = reinterpret_cast<OriginalDataContainer*>(*clientData);
-
-	// Restore original client data
-	*clientData = container->originalClientData;
-
-	customCallback();
-
-	// Call original completion delegate with our modified data
-	container->originalCompletionDelegate(callbackInfoData);
-
-	// Free the heap
-	delete container;
-}
-
 void ScreamAPI::destroy(){
 	Logger::info("Game requested to free the EOS SDK");
 	Overlay::Shutdown();
