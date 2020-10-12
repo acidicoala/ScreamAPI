@@ -19,6 +19,7 @@ LRESULT(WINAPI* originalWindowProc)(HWND, UINT, WPARAM, LPARAM);
 
 HWND gWindow = nullptr;
 ID3D11Device* gD3D11Device = nullptr;
+ID3D11DeviceContext* gContext = nullptr;
 ID3D11RenderTargetView* gRenderTargetView = nullptr;
 
 bool bInit = false;
@@ -62,11 +63,9 @@ LRESULT WINAPI WindowProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 }
 
 HRESULT WINAPI hookedPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags) {
-	static ID3D11DeviceContext* pContext = nullptr;
-
 	if(!bInit) {
 		if(SUCCEEDED(pSwapChain->GetDevice(__uuidof(ID3D11Device), (void**)&gD3D11Device))) {
-			gD3D11Device->GetImmediateContext(&pContext);
+			gD3D11Device->GetImmediateContext(&gContext);
 			DXGI_SWAP_CHAIN_DESC sd;
 			pSwapChain->GetDesc(&sd);
 			gWindow = sd.OutputWindow;
@@ -80,7 +79,7 @@ HRESULT WINAPI hookedPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT
 				Logger::error("Failed to SetWindowLongPtr. Error code: %d", GetLastError());
 				return originalPresent(pSwapChain, SyncInterval, Flags);
 			}
-			AchievementManagerUI::InitImGui(gWindow, gD3D11Device, pContext);
+			AchievementManagerUI::InitImGui(gWindow, gD3D11Device, gContext);
 			bInit = true;
 			Loader::AsyncLoadIcons();
 		} else {
@@ -103,7 +102,7 @@ HRESULT WINAPI hookedPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT
 	ImGui::Render();
 
 	if(gRenderTargetView)
-		pContext->OMSetRenderTargets(1, &gRenderTargetView, NULL);
+		gContext->OMSetRenderTargets(1, &gRenderTargetView, NULL);
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 	return originalPresent(pSwapChain, SyncInterval, Flags);
@@ -117,16 +116,20 @@ HRESULT WINAPI hookedPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT
 HRESULT WINAPI hookedResizeBuffer(IDXGISwapChain* pThis, UINT BufferCount, UINT Width, UINT Height, DXGI_FORMAT NewFormat, UINT SwapChainFlags){
 	Logger::debug("hookedResizeBuffer");
 
-	AchievementManagerUI::ShutdownImGui();
+	if(bInit){
+		AchievementManagerUI::ShutdownImGui();
 
-	// Restore original WndProc. Crashes without it.
-	SetWindowLongPtr(gWindow, GWLP_WNDPROC, (LONG_PTR)originalWindowProc);
+		// Restore original WndProc. Crashes without it.
+		SetWindowLongPtr(gWindow, GWLP_WNDPROC, (LONG_PTR)originalWindowProc);
 
-	// Release RTV according to: https://www.unknowncheats.me/forum/2638258-post8.html
-	gRenderTargetView->Release();
-	gRenderTargetView = nullptr;
+		// Release RTV according to: https://www.unknowncheats.me/forum/2638258-post8.html
+		if(gRenderTargetView){
+			gRenderTargetView->Release();
+			gRenderTargetView = nullptr;
+		}
 
-	bInit = false;
+		bInit = false;
+	}
 	return originalResizeBuffers(pThis, BufferCount, Width, Height, NewFormat, SwapChainFlags);
 }
 

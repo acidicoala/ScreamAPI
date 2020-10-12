@@ -49,7 +49,7 @@ void ScreamAPI::init(HMODULE hModule){
 
 
 void ScreamAPI::destroy(){
-	Logger::info("Game requested to free the EOS SDK");
+	Logger::info("Game requested to shutdown the EOS SDK");
 	Overlay::Shutdown();
 	FreeLibrary(originalDLL);
 	isScreamAPIinitialized = false;

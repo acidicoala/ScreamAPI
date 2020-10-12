@@ -94,16 +94,8 @@ void loadIconTexture(Overlay_Achievement& achievement){
 		desc.Usage = D3D11_USAGE_DEFAULT;
 		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 
-		/*
-		D3D11_SUBRESOURCE_DATA subResource;
-		subResource.pSysMem = image_data;
-		subResource.SysMemPitch = static_cast<UINT>(desc.Width * 4);
-		subResource.SysMemSlicePitch = 0;
-		*/
-
 		HRESULT result;
 		ID3D11Texture2D* pTexture = nullptr;
-		// FIXME: CreateTexture2D function call crashes in the Railway Empire. No idea why.
 		if(FAILED(result = Overlay::gD3D11Device->CreateTexture2D(&desc, nullptr, &pTexture))){
 			Logger::error("Failed to load the texture. Error code: %x", result);
 			stbi_image_free(image_data);
@@ -111,14 +103,11 @@ void loadIconTexture(Overlay_Achievement& achievement){
 		}
 
 		// Update subresource
-		ID3D11DeviceContext* pContext = nullptr;
-		Overlay::gD3D11Device->GetImmediateContext(&pContext);
-
 		D3D11_BOX box{};
 		box.right = image_width;
 		box.bottom = image_height;
 		box.back = 1;
-		pContext->UpdateSubresource(pTexture, 0, &box, image_data, desc.Width * 4, desc.Width * 4 * desc.Height);
+		Overlay::gContext->UpdateSubresource(pTexture, 0, &box, image_data, desc.Width * 4, desc.Width * 4 * desc.Height);
 
 		// Create texture view
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{};

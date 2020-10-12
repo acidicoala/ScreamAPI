@@ -6,6 +6,7 @@
 namespace Overlay{
 
 extern ID3D11Device* gD3D11Device;
+extern ID3D11DeviceContext* gContext;
 extern Achievements* achievements;
 extern UnlockAchievementFunction* unlockAchievement;
 
