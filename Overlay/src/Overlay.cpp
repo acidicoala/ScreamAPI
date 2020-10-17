@@ -177,7 +177,6 @@ void Shutdown() {
 	SetWindowLongPtr(gWindow, GWLP_WNDPROC, (LONG_PTR)originalWindowProc);
 	kiero::shutdown();
 	Logger::ovrly("Kiero: Shutdown");
-	// TODO: Clear the achievement vector as well?
 }
 
 }

@@ -97,7 +97,7 @@ void loadIconTexture(Overlay_Achievement& achievement){
 		HRESULT result;
 		ID3D11Texture2D* pTexture = nullptr;
 		if(FAILED(result = Overlay::gD3D11Device->CreateTexture2D(&desc, nullptr, &pTexture))){
-			Logger::error("Failed to load the texture. Error code: %x", result);
+			Logger::error("Failed to load the texture. Error code: 0x%x", result);
 			stbi_image_free(image_data);
 			return;
 		}
