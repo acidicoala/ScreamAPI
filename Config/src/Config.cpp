@@ -98,8 +98,10 @@ int iniHandler(void* user, const char* section_raw, const char* name_raw, const 
 void init(const std::wstring iniPath){
 	int parseResult = ini_wparse(iniPath.c_str(), iniHandler, 0);
 
-	if(parseResult != 0)
+	if(parseResult != 0 && parseResult != -1){
+		showError("Unexpected config parse result: " + std::to_string(parseResult));
 		exit(1);
+	}
 }
 
 // ScreamAPI
