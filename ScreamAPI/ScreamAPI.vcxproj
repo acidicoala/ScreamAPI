@@ -42,8 +42,11 @@
     <ClInclude Include="src\eos-sdk\eos_logging.h" />
     <ClInclude Include="src\eos-sdk\eos_metrics.h" />
     <ClInclude Include="src\eos-sdk\eos_metrics_types.h" />
+    <ClInclude Include="src\eos-sdk\eos_mods.h" />
+    <ClInclude Include="src\eos-sdk\eos_mods_types.h" />
     <ClInclude Include="src\eos-sdk\eos_p2p.h" />
     <ClInclude Include="src\eos-sdk\eos_p2p_types.h" />
+    <ClInclude Include="src\eos-sdk\eos_platform_prereqs.h" />
     <ClInclude Include="src\eos-sdk\eos_playerdatastorage.h" />
     <ClInclude Include="src\eos-sdk\eos_playerdatastorage_types.h" />
     <ClInclude Include="src\eos-sdk\eos_presence.h" />
@@ -54,6 +57,8 @@
     <ClInclude Include="src\eos-sdk\eos_sessions_types.h" />
     <ClInclude Include="src\eos-sdk\eos_stats.h" />
     <ClInclude Include="src\eos-sdk\eos_stats_types.h" />
+    <ClInclude Include="src\eos-sdk\eos_titlestorage.h" />
+    <ClInclude Include="src\eos-sdk\eos_titlestorage_types.h" />
     <ClInclude Include="src\eos-sdk\eos_types.h" />
     <ClInclude Include="src\eos-sdk\eos_ui.h" />
     <ClInclude Include="src\eos-sdk\eos_ui_keys.h" />
@@ -61,6 +66,9 @@
     <ClInclude Include="src\eos-sdk\eos_userinfo.h" />
     <ClInclude Include="src\eos-sdk\eos_userinfo_types.h" />
     <ClInclude Include="src\eos-sdk\eos_version.h" />
+    <ClInclude Include="src\eos-sdk\Linux\eos_Linux_base.h" />
+    <ClInclude Include="src\eos-sdk\Mac\eos_Mac_base.h" />
+    <ClInclude Include="src\eos-sdk\Windows\eos_Windows_base.h" />
     <ClInclude Include="src\framework.h" />
     <ClInclude Include="src\LinkerExports\LegacyExports32.h" />
     <ClInclude Include="src\LinkerExports\LegacyExports64.h" />

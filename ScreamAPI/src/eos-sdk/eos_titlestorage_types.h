@@ -210,7 +210,7 @@ EOS_STRUCT(EOS_TitleStorage_ReadFileDataCallbackInfo, (
 /**
  * Callback for when we have data ready to be read from the requested file. It is undefined how often this will be called during a single tick.
  *
- * @param EOS_TitleStorage_ReadFileDataCallbackInfo Struct containing a chunk of data to read, as well as some metadata for the file being read
+ * @param Data Struct containing a chunk of data to read, as well as some metadata for the file being read
  * @return The result of the read operation. If this value is not EOS_TS_RR_ContinueReading, this callback will not be called again for the same request
  */
 EOS_DECLARE_CALLBACK_RETVALUE(EOS_TitleStorage_EReadResult, EOS_TitleStorage_OnReadFileDataCallback, const EOS_TitleStorage_ReadFileDataCallbackInfo* Data);

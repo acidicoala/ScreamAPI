@@ -33,8 +33,30 @@ EXTERN_C typedef void* (EOS_MEMORY_CALL * EOS_ReallocateMemoryFunc)(void* Pointe
  */
 EXTERN_C typedef void (EOS_MEMORY_CALL * EOS_ReleaseMemoryFunc)(void* Pointer);
 
+/** The most recent version of the EOS_Initialize_ThreadAffinity API. */
+#define EOS_INITIALIZE_THREADAFFINITY_API_LATEST 1
+
+/**
+ * Options for initializing defining thread affinity for use by Epic Online Services SDK.
+ * Set the affinity to 0 to allow EOS SDK to use a platform specific default value.
+ */
+EOS_STRUCT(EOS_Initialize_ThreadAffinity, (
+	/** API Version: Set this to EOS_INITIALIZE_THREADAFFINITY_API_LATEST. */
+	int32_t ApiVersion;
+	/** Any thread related to network management that is not IO. */
+	uint64_t NetworkWork;
+	/** Any thread that will interact with a storage device. */
+	uint64_t StorageIo;
+	/** Any thread that will generate web socket IO. */
+	uint64_t WebSocketIo;
+	/** Any thread that will generate IO related to P2P traffic and mangement. */
+	uint64_t P2PIo;
+	/** Any thread that will generate http request IO. */
+	uint64_t HttpRequestIo;
+));
+
 /** The most recent version of the EOS_Initialize API. */
-#define EOS_INITIALIZE_API_LATEST 3
+#define EOS_INITIALIZE_API_LATEST 4
 
 /**
  * Options for initializing the Epic Online Services SDK.
@@ -71,6 +93,8 @@ EOS_STRUCT(EOS_InitializeOptions, (
 	 * The structure will be named EOS_<System>_InitializeOptions.
 	 */
 	void* SystemInitializeOptions;
+	/** The thread affinity override values for each category of thread. */
+	EOS_Initialize_ThreadAffinity* OverrideThreadAffinity;
 ));
 
 /**

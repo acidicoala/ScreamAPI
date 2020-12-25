@@ -43,7 +43,7 @@ EOS_DECLARE_FUNC(void) EOS_UserInfo_QueryUserInfoByDisplayName(EOS_HUserInfo Han
 
 /**
  * EOS_UserInfo_QueryUserInfoByExternalAccount is used to start an asynchronous query to retrieve user information by external accounts.
- * This can be useful for getting the EOS_EpicAccountIds for external accounts.
+ * This can be useful for getting the EOS_EpicAccountId for external accounts.
  * Once the callback has been fired with a successful ResultCode, it is possible to call CopyUserInfo to receive an EOS_UserInfo containing the available information.
  *
  * @param Options structure containing the input parameters

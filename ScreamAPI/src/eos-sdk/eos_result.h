@@ -291,8 +291,8 @@ EOS_RESULT_VALUE(EOS_Connect_LinkAccountFailed, 7005)
 EOS_RESULT_VALUE(EOS_Connect_ExternalServiceUnavailable, 7006)
 /** EOS Auth External Service configuration failure with Dev Portal */
 EOS_RESULT_VALUE(EOS_Connect_ExternalServiceConfigurationFailure, 7007)
-/** EOS Auth Account link failure. Tried to link Nintendo Network Service Account without first linking Nintendo Account */
-EOS_RESULT_VALUE(EOS_Connect_LinkAccountFailedMissingNintendoIdAccount, 7008)
+/** EOS Auth Account link failure. Tried to link Nintendo Network Service Account without first linking Nintendo Account. DEPRECATED: The requirement has been removed and this error is no longer used. */
+EOS_RESULT_VALUE(EOS_Connect_LinkAccountFailedMissingNintendoIdAccount_DEPRECATED, 7008)
 
 /** The social overlay page failed to load */
 EOS_RESULT_VALUE(EOS_UI_SocialOverlayLoadError, 8000)
@@ -305,11 +305,11 @@ EOS_RESULT_VALUE(EOS_Lobby_InvalidLock, 9001)
 EOS_RESULT_VALUE(EOS_Lobby_LobbyAlreadyExists, 9002)
 /** Lobby is already in progress */
 EOS_RESULT_VALUE(EOS_Lobby_SessionInProgress, 9003)
-/** Too many players to register with this session */
+/** Too many players to register with this lobby */
 EOS_RESULT_VALUE(EOS_Lobby_TooManyPlayers, 9004)
-/** Client has no permissions to access this session */
+/** Client has no permissions to access this lobby */
 EOS_RESULT_VALUE(EOS_Lobby_NoPermission, 9005)
-/** Invalid session reference */
+/** Invalid lobby session reference */
 EOS_RESULT_VALUE(EOS_Lobby_InvalidSession, 9006)
 /** Sandbox ID associated with auth didn't match */
 EOS_RESULT_VALUE(EOS_Lobby_SandboxNotAllowed, 9007)
@@ -317,7 +317,7 @@ EOS_RESULT_VALUE(EOS_Lobby_SandboxNotAllowed, 9007)
 EOS_RESULT_VALUE(EOS_Lobby_InviteFailed, 9008)
 /** Invite was not found with the service */
 EOS_RESULT_VALUE(EOS_Lobby_InviteNotFound, 9009)
-/** This client may not modify the session */
+/** This client may not modify the lobby */
 EOS_RESULT_VALUE(EOS_Lobby_UpsertNotAllowed, 9010)
 /** Backend nodes unavailable to process request */
 EOS_RESULT_VALUE(EOS_Lobby_AggregationFailed, 9011)
@@ -344,6 +344,41 @@ EOS_RESULT_VALUE(EOS_TitleStorage_EncryptionKeyNotSet, 10001)
 EOS_RESULT_VALUE(EOS_TitleStorage_FileCorrupted, 10002)
 /** Downloaded file's format is newer than client SDK version. */
 EOS_RESULT_VALUE(EOS_TitleStorage_FileHeaderHasNewerVersion, 10003)
+
+/** ModSdk process is already running. This error comes from the EOSSDK. */
+EOS_RESULT_VALUE(EOS_Mods_ModSdkProcessIsAlreadyRunning, 11000)
+/** ModSdk command is empty. Either the ModSdk configuration file is missing or the manifest location is empty. */
+EOS_RESULT_VALUE(EOS_Mods_ModSdkCommandIsEmpty, 11001)
+/** Creation of the ModSdk process failed. This error comes from the SDK. */
+EOS_RESULT_VALUE(EOS_Mods_ModSdkProcessCreationFailed, 11002)
+/** A critical error occurred in the external ModSdk process that we were unable to resolve. */
+EOS_RESULT_VALUE(EOS_Mods_CriticalError, 11003)
+/** A internal error occurred in the external ModSdk process that we were unable to resolve. */
+EOS_RESULT_VALUE(EOS_Mods_ToolInternalError, 11004)
+/** A IPC failure occurred in the external ModSdk process. */
+EOS_RESULT_VALUE(EOS_Mods_IPCFailure, 11005)
+/** A invalid IPC response received in the external ModSdk process. */
+EOS_RESULT_VALUE(EOS_Mods_InvalidIPCResponse, 11006)
+/** A URI Launch failure occurred in the external ModSdk process. */
+EOS_RESULT_VALUE(EOS_Mods_URILaunchFailure, 11007)
+/** Attempting to perform an action with a mod that is not installed. This error comes from the external ModSdk process. */
+EOS_RESULT_VALUE(EOS_Mods_ModIsNotInstalled, 11008)
+/** Attempting to perform an action on a game that the user doesn't own. This error comes from the external ModSdk process. */
+EOS_RESULT_VALUE(EOS_Mods_UserDoesNotOwnTheGame, 11009)
+/** Invalid result of the request to get the offer for the mod. This error comes from the external ModSdk process. */
+EOS_RESULT_VALUE(EOS_Mods_OfferRequestByIdInvalidResult, 11010)
+/** Could not find the offer for the mod. This error comes from the external ModSdk process. */
+EOS_RESULT_VALUE(EOS_Mods_CouldNotFindOffer, 11011)
+/** Request to get the offer for the mod failed. This error comes from the external ModSdk process. */
+EOS_RESULT_VALUE(EOS_Mods_OfferRequestByIdFailure, 11012)
+/** Request to purchase the mod failed. This error comes from the external ModSdk process. */
+EOS_RESULT_VALUE(EOS_Mods_PurchaseFailure, 11013)
+/** Attempting to perform an action on a game that is not installed or is partially installed. This error comes from the external ModSdk process. */
+EOS_RESULT_VALUE(EOS_Mods_InvalidGameInstallInfo, 11014)
+/** Failed to get manifest location. Either the ModSdk configuration file is missing or the manifest location is empty */
+EOS_RESULT_VALUE(EOS_Mods_CannotGetManifestLocation, 11015)
+/** Attempting to perform an action with a mod that does not support the current operating system. */
+EOS_RESULT_VALUE(EOS_Mods_UnsupportedOS, 11016)
 
 /** An unexpected error that we cannot identify has occurred. */
 EOS_RESULT_VALUE_LAST(EOS_UnexpectedError, 0x7FFFFFFF)

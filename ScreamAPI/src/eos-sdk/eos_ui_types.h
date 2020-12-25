@@ -135,15 +135,7 @@ EOS_ENUM_END(EOS_UI_EKeyCombination);
 #undef EOS_UI_KEY_ENTRY
 #undef EOS_UI_KEY_CONSTANT_LAST
 
-/** A set of bitwise operators provided when the enum is provided as an `enum class`. */
-#if defined(__cplusplus) && (__cplusplus >= 201103L || (defined(_MSC_VER) && defined(_MSVC_LANG) && _MSVC_LANG >= 201103L))
-inline constexpr EOS_UI_EKeyCombination operator|(EOS_UI_EKeyCombination Left, EOS_UI_EKeyCombination Right) { return static_cast<EOS_UI_EKeyCombination>((__underlying_type(EOS_UI_EKeyCombination))Left | (__underlying_type(EOS_UI_EKeyCombination))Right); }
-inline constexpr EOS_UI_EKeyCombination operator&(EOS_UI_EKeyCombination Left, EOS_UI_EKeyCombination Right) { return static_cast<EOS_UI_EKeyCombination>((__underlying_type(EOS_UI_EKeyCombination))Left & (__underlying_type(EOS_UI_EKeyCombination))Right); }
-inline constexpr EOS_UI_EKeyCombination operator^(EOS_UI_EKeyCombination Left, EOS_UI_EKeyCombination Right) { return static_cast<EOS_UI_EKeyCombination>((__underlying_type(EOS_UI_EKeyCombination))Left ^ (__underlying_type(EOS_UI_EKeyCombination))Right); }
-inline constexpr EOS_UI_EKeyCombination& operator|=(EOS_UI_EKeyCombination& Left, EOS_UI_EKeyCombination Right) { return Left = Left | Right; }
-inline constexpr EOS_UI_EKeyCombination& operator&=(EOS_UI_EKeyCombination& Left, EOS_UI_EKeyCombination Right) { return Left = Left & Right; }
-inline constexpr EOS_UI_EKeyCombination& operator^=(EOS_UI_EKeyCombination& Left, EOS_UI_EKeyCombination Right) { return Left = Left ^ Right; }
-#endif
+EOS_ENUM_BOOLEAN_OPERATORS(EOS_UI_EKeyCombination)
 
 /** The most recent version of the EOS_UI_SetToggleFriendsKey API. */
 #define EOS_UI_SETTOGGLEFRIENDSKEY_API_LATEST 1

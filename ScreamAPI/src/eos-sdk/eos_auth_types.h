@@ -235,15 +235,7 @@ EOS_ENUM(EOS_EAuthScopeFlags,
 	EOS_AS_FriendsManagement = 0x8
 );
 
-/** A set of bitwise operators provided when the enum is provided as an `enum class`. */
-#if defined(__cplusplus) && (__cplusplus >= 201103L || (defined(_MSC_VER) && defined(_MSVC_LANG) && _MSVC_LANG >= 201103L))
-inline constexpr EOS_EAuthScopeFlags operator|(EOS_EAuthScopeFlags Left, EOS_EAuthScopeFlags Right) { return static_cast<EOS_EAuthScopeFlags>((__underlying_type(EOS_EAuthScopeFlags))Left | (__underlying_type(EOS_EAuthScopeFlags))Right); }
-inline constexpr EOS_EAuthScopeFlags operator&(EOS_EAuthScopeFlags Left, EOS_EAuthScopeFlags Right) { return static_cast<EOS_EAuthScopeFlags>((__underlying_type(EOS_EAuthScopeFlags))Left & (__underlying_type(EOS_EAuthScopeFlags))Right); }
-inline constexpr EOS_EAuthScopeFlags operator^(EOS_EAuthScopeFlags Left, EOS_EAuthScopeFlags Right) { return static_cast<EOS_EAuthScopeFlags>((__underlying_type(EOS_EAuthScopeFlags))Left ^ (__underlying_type(EOS_EAuthScopeFlags))Right); }
-inline constexpr EOS_EAuthScopeFlags& operator|=(EOS_EAuthScopeFlags& Left, EOS_EAuthScopeFlags Right) { return Left = Left | Right; }
-inline constexpr EOS_EAuthScopeFlags& operator&=(EOS_EAuthScopeFlags& Left, EOS_EAuthScopeFlags Right) { return Left = Left & Right; }
-inline constexpr EOS_EAuthScopeFlags& operator^=(EOS_EAuthScopeFlags& Left, EOS_EAuthScopeFlags Right) { return Left = Left ^ Right; }
-#endif
+EOS_ENUM_BOOLEAN_OPERATORS(EOS_EAuthScopeFlags)
 
 /** The most recent version of the EOS_Auth_Login API. */
 #define EOS_AUTH_LOGIN_API_LATEST 2

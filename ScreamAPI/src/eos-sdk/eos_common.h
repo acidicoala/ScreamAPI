@@ -262,7 +262,9 @@ EOS_ENUM(EOS_EComparisonOp,
 	/** This one value is a part of a collection */
 	EOS_CO_ONEOF = 9,
 	/** This one value is NOT part of a collection */
-	EOS_CO_NOTONEOF = 10
+	EOS_CO_NOTONEOF = 10,
+	/** This value is a CASE SENSITIVE substring of an attribute stored on the lobby/session */
+	EOS_CO_CONTAINS = 11
 );
 
 typedef EOS_EComparisonOp EOS_EOnlineComparisonOp;

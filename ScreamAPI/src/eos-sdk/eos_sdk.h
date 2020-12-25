@@ -18,6 +18,7 @@
 #include "eos_achievements_types.h"
 #include "eos_stats_types.h"
 #include "eos_leaderboards_types.h"
+#include "eos_mods_types.h"
 
 /**
  * The Platform Instance is used to gain access to all other Epic Online Service interfaces and to drive internal operations through the Tick.
@@ -180,6 +181,15 @@ EOS_DECLARE_FUNC(EOS_HStats) EOS_Platform_GetStatsInterface(EOS_HPlatform Handle
  * @see eos_leaderboards_types.h
  */
 EOS_DECLARE_FUNC(EOS_HLeaderboards) EOS_Platform_GetLeaderboardsInterface(EOS_HPlatform Handle);
+
+/**
+ * Get a handle to the Mods Interface.
+ * @return EOS_HMods handle
+ *
+ * @see eos_mods.h
+ * @see eos_mods_types.h
+ */
+EOS_DECLARE_FUNC(EOS_HMods) EOS_Platform_GetModsInterface(EOS_HPlatform Handle);
 
 /**
  * This only will return the value set as the override otherwise EOS_NotFound is returned.

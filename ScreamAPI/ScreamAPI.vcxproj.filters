@@ -21,6 +21,15 @@
     <Filter Include="Header Files\LinkerExports">
       <UniqueIdentifier>{b308748e-0466-4aa4-b7c1-806333b4e3ad}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\eos-sdk\Linux">
+      <UniqueIdentifier>{41619fce-7bb6-4235-8a09-2939285275dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eos-sdk\Mac">
+      <UniqueIdentifier>{80987714-dcc1-49d6-86a7-c741e3d11a7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\eos-sdk\Windows">
+      <UniqueIdentifier>{8f4d62a7-beef-4b79-b858-1556ba4d91a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\framework.h">
@@ -172,6 +181,30 @@
     </ClInclude>
     <ClInclude Include="src\LinkerExports\LinkerExports64.h">
       <Filter>Header Files\LinkerExports</Filter>
+    </ClInclude>
+    <ClInclude Include="src\eos-sdk\eos_mods.h">
+      <Filter>Header Files\eos-sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="src\eos-sdk\eos_mods_types.h">
+      <Filter>Header Files\eos-sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="src\eos-sdk\eos_platform_prereqs.h">
+      <Filter>Header Files\eos-sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="src\eos-sdk\eos_titlestorage.h">
+      <Filter>Header Files\eos-sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="src\eos-sdk\eos_titlestorage_types.h">
+      <Filter>Header Files\eos-sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="src\eos-sdk\Linux\eos_Linux_base.h">
+      <Filter>Header Files\eos-sdk\Linux</Filter>
+    </ClInclude>
+    <ClInclude Include="src\eos-sdk\Mac\eos_Mac_base.h">
+      <Filter>Header Files\eos-sdk\Mac</Filter>
+    </ClInclude>
+    <ClInclude Include="src\eos-sdk\Windows\eos_Windows_base.h">
+      <Filter>Header Files\eos-sdk\Windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

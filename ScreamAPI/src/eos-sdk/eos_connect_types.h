@@ -57,21 +57,40 @@ EOS_ENUM(EOS_EExternalCredentialType,
 	 */
 	EOS_ECT_DISCORD_ACCESS_TOKEN = 4,
 	/**
-	 * GOG Galaxy Encrypted Session Ticket
+	 * GOG Galaxy Encrypted App Ticket
+	 *
+	 * Generated using the IUser::RequestEncryptedAppTicket API of GOG Galaxy SDK.
+	 * For ticket generation parameters, use data(NULL) and dataSize(0).
+	 *
+	 * The retrieved App Ticket byte buffer needs to be converted into a hex-encoded UTF-8 string (e.g. "FA87097A..") before passing it to the EOS_Connect_Login API.
+	 * For C/C++ API integration, use the EOS_ByteArray_ToString API for the conversion.
+	 * For C# integration, you can use <see cref="Helper.ToHexString" /> for the conversion.
 	 */
 	EOS_ECT_GOG_SESSION_TICKET = 5,
 	/**
 	 * Nintendo Account ID Token
 	 *
-	 * This token identifies the user's Nintendo account and is acquired using web flow authentication.
-	 * On Nintendo Switch, the first time login requires the user to authenticate using their Nintendo account,
-	 * after which the login is automatic and uses the primary authentication method with NSA ID Token.
+	 * Identifies a Nintendo user account and is acquired through web flow authentication where the local user logs in using their email address/sign-in ID and password.
+	 * This is the common Nintendo account that users login with outside the Nintendo Switch device.
 	 */
 	EOS_ECT_NINTENDO_ID_TOKEN = 6,
 	/**
-	 * Nintendo Service Account ID Token
+	 * Nintendo Service Account ID Token (NSA ID)
 	 *
-	 * This is the device specific authentication token that is first used on login and will be linked with a Nintendo user account.
+	 * The NSA ID identifies uniquely the local Nintendo Switch device. The authentication token is acquired locally without explicit user credentials.
+	 * As such, it is the primary authentication method for seamless login on Nintendo Switch.
+	 *
+	 * The NSA ID is not exposed directly to the user and does not provide any means for login outside the local device.
+	 * Because of this, Nintendo Switch users will need to link their Nintendo Account or another external user account
+	 * to their Product User ID in order to share their game progression across other platforms. Otherwise, the user will
+	 * not be able to login to their existing Product User ID on another platform due to missing login credentials to use.
+	 * It is recommended that the game explicitly communicates this restriction to the user so that they will know to add
+	 * the first linked external account on the Nintendo Switch device and then proceed with login on another platform.
+	 *
+	 * In addition to sharing cross-platform game progression, linking the Nintendo Account or another external account
+	 * will allow preserving the game progression permanently. Otherwise, the game progression will be tied only to the
+	 * local device. In case the user loses access to their local device, they will not be able to recover the game
+	 * progression if it is only associated with this account type.
 	 */
 	EOS_ECT_NINTENDO_NSA_ID_TOKEN = 7,
 	/**

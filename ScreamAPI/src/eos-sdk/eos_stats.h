@@ -23,6 +23,7 @@
  *
  * @return EOS_Success if the operation completes successfully
  *         EOS_InvalidParameters if any of the options are incorrect
+ *         EOS_InvalidUser if target user ID is missing or incorrect
  */
 EOS_DECLARE_FUNC(void) EOS_Stats_IngestStat(EOS_HStats Handle, const EOS_Stats_IngestStatOptions* Options, void* ClientData, const EOS_Stats_OnIngestStatCompleteCallback CompletionDelegate);
 
@@ -35,6 +36,7 @@ EOS_DECLARE_FUNC(void) EOS_Stats_IngestStat(EOS_HStats Handle, const EOS_Stats_I
  *
  * @return EOS_Success if the operation completes successfully
  *         EOS_InvalidParameters if any of the options are incorrect
+ *         EOS_InvalidUser if target user ID is missing or incorrect
  */
 EOS_DECLARE_FUNC(void) EOS_Stats_QueryStats(EOS_HStats Handle, const EOS_Stats_QueryStatsOptions* Options, void* ClientData, const EOS_Stats_OnQueryStatsCompleteCallback CompletionDelegate);
 

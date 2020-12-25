@@ -411,7 +411,7 @@ EOS_STRUCT(EOS_PresenceModification_DeleteDataOptions, (
 	int32_t ApiVersion;
 	/** The count of data keys to delete */
 	int32_t RecordsCount;
-	/** The pointer to start of a sequential array of EOS_Presence_DataRecordId */
+	/** The pointer to start of a sequential array */
 	const EOS_PresenceModification_DataRecordId* Records;
 ));
 

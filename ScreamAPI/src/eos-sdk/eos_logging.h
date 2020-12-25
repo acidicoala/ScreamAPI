@@ -3,6 +3,12 @@
 
 #include "eos_base.h"
 
+/**
+ * The Logging Interface grants access to log output coming from the SDK at various levels of detail.
+ * Unlike other interfaces, the Logging Interface does not require a handle from the Platform Interface,
+ * as it functions entirely on the local system.
+ */
+
 #pragma pack(push, 8)
 
 /**
@@ -72,6 +78,8 @@ EOS_ENUM(EOS_ELogCategory,
 	EOS_LC_IdentityProvider = 21,
 	/** Logs related to Title Storage */
 	EOS_LC_TitleStorage = 22,
+	/** Logs related to the Mods service */
+	EOS_LC_Mods = 23,
 
 	/** Not a real log category. Used by EOS_Logging_SetLogLevel to set the log level for all categories at the same time */
 	EOS_LC_ALL_CATEGORIES = 0x7fffffff

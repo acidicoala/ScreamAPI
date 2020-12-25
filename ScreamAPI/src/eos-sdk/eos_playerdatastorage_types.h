@@ -397,4 +397,32 @@ EOS_STRUCT(EOS_PlayerDataStorage_WriteFileCallbackInfo, (
  */
 EOS_DECLARE_CALLBACK(EOS_PlayerDataStorage_OnWriteFileCompleteCallback, const EOS_PlayerDataStorage_WriteFileCallbackInfo* Data);
 
+/** The most recent version of the EOS_PlayerDataStorage_DeleteCacheOptions API. */
+#define EOS_PLAYERDATASTORAGE_DELETECACHEOPTIONS_API_LATEST 1
+/**
+ * Input data for the EOS_TitleStorage_DeleteCache function
+ */
+EOS_STRUCT(EOS_PlayerDataStorage_DeleteCacheOptions, (
+	/** API Version: Set this to EOS_PLAYERDATASTORAGE_DELETECACHEOPTIONS_API_LATEST. */
+	int32_t ApiVersion;
+	/** Product User ID of the local user who is deleting his cache */
+	EOS_ProductUserId LocalUserId;
+));
+/**
+ * Structure containing the result of a delete cache operation
+ */
+EOS_STRUCT(EOS_PlayerDataStorage_DeleteCacheCallbackInfo, (
+	/** Result code for the operation. EOS_Success is returned for a successful request, other codes indicate an error */
+	EOS_EResult ResultCode;
+	/** Client-specified data passed into the delete cache request */
+	void* ClientData;
+	/** Product User ID of the local user who initiated this request */
+	EOS_ProductUserId LocalUserId;
+));
+/**
+ * Callback for when EOS_PlayerDataStorage_DeleteCache completes
+ */
+EOS_DECLARE_CALLBACK(EOS_PlayerDataStorage_OnDeleteCacheCompleteCallback, const EOS_PlayerDataStorage_DeleteCacheCallbackInfo* Data);
+
+
 #pragma pack(pop)

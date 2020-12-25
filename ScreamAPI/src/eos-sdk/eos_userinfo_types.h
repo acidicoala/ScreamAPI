@@ -190,7 +190,7 @@ EOS_STRUCT(EOS_UserInfo_CopyUserInfoOptions, (
  */
 EOS_DECLARE_FUNC(void) EOS_UserInfo_Release(EOS_UserInfo* UserInfo);
 
-/** The most recent version of the EOS_UserInfo_External struct. */
+/** The most recent version of the EOS_UserInfo_ExternalUserInfo struct. */
 #define EOS_USERINFO_EXTERNALUSERINFO_API_LATEST 1
 
 /**

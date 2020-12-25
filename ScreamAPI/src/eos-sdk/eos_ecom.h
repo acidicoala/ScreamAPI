@@ -214,7 +214,7 @@ EOS_DECLARE_FUNC(uint32_t) EOS_Ecom_GetOfferItemCount(EOS_HEcom Handle, const EO
  *
  * @return EOS_Success if the information is available and passed out in OutItem
  *         EOS_InvalidParameters if you pass a null pointer for the out parameter
- *         EOS_Ecom_CatalogItemState if the item information is stale
+ *         EOS_Ecom_CatalogItemStale if the item information is stale
  *         EOS_NotFound if the item is not found
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyOfferItemByIndex(EOS_HEcom Handle, const EOS_Ecom_CopyOfferItemByIndexOptions* Options, EOS_Ecom_CatalogItem ** OutItem);
@@ -230,7 +230,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyOfferItemByIndex(EOS_HEcom Handle, co
  * @see EOS_Ecom_GetItemReleaseCount
  *
  * @return EOS_Success if the information is available and passed out in OutItem
- *         EOS_Ecom_CatalogItemState if the item information is stale and passed out in OutItem
+ *         EOS_Ecom_CatalogItemStale if the item information is stale and passed out in OutItem
  *         EOS_InvalidParameters if you pass a null pointer for the out parameter
  *         EOS_NotFound if the offer is not found
  */
@@ -275,7 +275,7 @@ EOS_DECLARE_FUNC(uint32_t) EOS_Ecom_GetItemImageInfoCount(EOS_HEcom Handle, cons
  *
  * @return EOS_Success if the information is available and passed out in OutImageInfo
  *         EOS_InvalidParameters if you pass a null pointer for the out parameter
- *         EOS_Ecom_CatalogItemState if the associated item information is stale
+ *         EOS_Ecom_CatalogItemStale if the associated item information is stale
  *         EOS_NotFound if the image is not found
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyItemImageInfoByIndex(EOS_HEcom Handle, const EOS_Ecom_CopyItemImageInfoByIndexOptions* Options, EOS_Ecom_KeyImageInfo ** OutImageInfo);
@@ -297,7 +297,7 @@ EOS_DECLARE_FUNC(uint32_t) EOS_Ecom_GetItemReleaseCount(EOS_HEcom Handle, const 
  *
  * @return EOS_Success if the information is available and passed out in OutRelease
  *         EOS_InvalidParameters if you pass a null pointer for the out parameter
- *         EOS_Ecom_CatalogItemState if the associated item information is stale
+ *         EOS_Ecom_CatalogItemStale if the associated item information is stale
  *         EOS_NotFound if the release is not found
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyItemReleaseByIndex(EOS_HEcom Handle, const EOS_Ecom_CopyItemReleaseByIndexOptions* Options, EOS_Ecom_CatalogRelease ** OutRelease);

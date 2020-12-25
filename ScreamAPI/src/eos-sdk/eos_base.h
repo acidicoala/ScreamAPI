@@ -2,6 +2,40 @@
 
 #pragma once
 
+
+#if !defined(EOS_MEMORY_CALL) || !defined(EOS_CALL) || !defined(EOS_USE_DLLEXPORT)
+#if !defined(_WIN32) && !defined(_WIN64) && !defined(__ANDROID__) && !defined(__linux__) && !defined(__APPLE__)
+#error \
+This platform expected a `eos_<platform>_base.h` include before this header. \
+Please refer to https://dev.epicgames.com/docs/services or `eos_platform_prereqs.h` for details.
+#endif
+#endif
+
+#ifndef EOS_USE_DLLEXPORT
+#if defined(_WIN32) || defined(__CYGWIN__)
+#define EOS_USE_DLLEXPORT 1
+#else
+#define EOS_USE_DLLEXPORT 0
+#endif
+#endif
+
+#ifndef EOS_CALL
+#if defined(_WIN32) && (defined(__i386) || defined(_M_IX86))
+#define EOS_CALL __stdcall
+#define EOS_MEMORY_CALL __stdcall
+#else
+#define EOS_CALL
+#define EOS_MEMORY_CALL
+#endif
+#endif
+
+#if !defined(EOS_MEMORY_CALL) || !defined(EOS_CALL) || !defined(EOS_USE_DLLEXPORT)
+#error \
+The expected macros EOS_MEMORY_CALL, EOS_CALL, and EOS_USE_DLLEXPORT where not all defined. \
+Please refer to https://dev.epicgames.com/docs/services or `eos_platform_prereqs.h` for details.
+#endif
+
+
 #if defined(__cplusplus)
 	#if defined(_MSC_VER) && _MSC_VER >= 1800
 		/* Visual Studio 2013 or later */
@@ -22,17 +56,11 @@
 	#include <stddef.h>
 #endif
 
-#ifndef EOS_USE_DLLEXPORT
-#if defined(_WIN32) || defined(__CYGWIN__) || defined(__ORBIS__)
-#define EOS_USE_DLLEXPORT 1
-#else
-#define EOS_USE_DLLEXPORT 0
-#endif
-#endif
 
 typedef int32_t EOS_Bool;
 #define EOS_TRUE 1
 #define EOS_FALSE 0
+
 
 #if defined(EOS_BUILDING_SDK) && EOS_BUILDING_SDK > 0
 	#if EOS_USE_DLLEXPORT
@@ -76,20 +104,13 @@ typedef int32_t EOS_Bool;
 	#endif
 #endif
 
-#if defined(_WIN32) && (defined(__i386) || defined(_M_IX86))
-#define EOS_CALL __stdcall
-#define EOS_MEMORY_CALL __stdcall
-#else
-#define EOS_CALL
-#define EOS_MEMORY_CALL
-#endif
-
 #ifdef __cplusplus
 #define EXTERN_C extern "C"
 #else
 #define EXTERN_C
 #endif
 
+#define EOS_DECLARE_FUNC(return_type) EXTERN_C EOS_API return_type EOS_CALL
 #define EOS_DECLARE_CALLBACK(CallbackName, ...) EXTERN_C typedef void (EOS_CALL * CallbackName)(__VA_ARGS__)
 #define EOS_DECLARE_CALLBACK_RETVALUE(ReturnType, CallbackName, ...) EXTERN_C typedef ReturnType (EOS_CALL * CallbackName)(__VA_ARGS__)
 #define EOS_PASTE(...) __VA_ARGS__
@@ -97,6 +118,7 @@ typedef int32_t EOS_Bool;
 	EXTERN_C typedef struct _tag ## struct_name {     \
 		EOS_PASTE struct_def                          \
 	} struct_name
+
 
 #ifdef EOS_HAS_ENUM_CLASS
 #define EOS_ENUM_START(name) enum class name : int32_t {
@@ -108,6 +130,19 @@ typedef int32_t EOS_Bool;
 #define EOS_ENUM(name, ...) EOS_ENUM_START(name) __VA_ARGS__ EOS_ENUM_END(name)
 
 
-#define EOS_DECLARE_FUNC(return_type) EXTERN_C EOS_API return_type EOS_CALL
+#ifdef EOS_HAS_ENUM_CLASS
+#define EOS_ENUM_BOOLEAN_OPERATORS(name) \
+/** A set of bitwise operators provided when the enum is provided as an `enum class`. */ \
+inline constexpr name operator|(name Left, name Right) { return static_cast<name>((__underlying_type(name))Left | (__underlying_type(name))Right); } \
+inline constexpr name operator&(name Left, name Right) { return static_cast<name>((__underlying_type(name))Left & (__underlying_type(name))Right); } \
+inline constexpr name operator^(name Left, name Right) { return static_cast<name>((__underlying_type(name))Left ^ (__underlying_type(name))Right); } \
+inline constexpr name& operator|=(name& Left, name Right) { return Left = Left | Right; } \
+inline constexpr name& operator&=(name& Left, name Right) { return Left = Left & Right; } \
+inline constexpr name& operator^=(name& Left, name Right) { return Left = Left ^ Right; } \
+/**/
+#else
+#define EOS_ENUM_BOOLEAN_OPERATORS(name)
+#endif
+
 
 #undef EOS_HAS_ENUM_CLASS

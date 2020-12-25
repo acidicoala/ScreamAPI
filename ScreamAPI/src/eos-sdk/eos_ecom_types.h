@@ -527,7 +527,7 @@ EOS_STRUCT(EOS_Ecom_CheckoutOptions, (
 	EOS_EpicAccountId LocalUserId;
 	/** The catalog namespace will be the current Sandbox ID (in EOS_Platform_Options) unless overridden by this field */
 	const char* OverrideCatalogNamespace;
-	/** The number of EOS_EcomCheckoutEntry elements contained in Entries */
+	/** The number of EOS_Ecom_CheckoutEntry elements contained in Entries */
 	uint32_t EntryCount;
 	/** An array of EOS_Ecom_CheckoutEntry elements, each containing the details of a single offer */
 	const EOS_Ecom_CheckoutEntry* Entries;
