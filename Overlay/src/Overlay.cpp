@@ -22,6 +22,7 @@ ID3D11Device* gD3D11Device = nullptr;
 ID3D11DeviceContext* gContext = nullptr;
 ID3D11RenderTargetView* gRenderTargetView = nullptr;
 
+bool bKieroInit = false;
 bool bInit = false;
 bool bShowInitPopup = true;
 bool bShowAchievementManager = false;
@@ -137,38 +138,47 @@ HRESULT WINAPI hookedResizeBuffer(IDXGISwapChain* pThis, UINT BufferCount, UINT 
 #define D3D11_Present		8
 #define D3D11_ResizeBuffers	13
 
+static std::mutex initMutex;
 void Init(HMODULE hMod, Achievements* pAchievements, UnlockAchievementFunction* fnUnlockAchievement) {
 	achievements = pAchievements;
 	unlockAchievement = fnUnlockAchievement;
 
 	// Init asynchronously to keep the main thread going
 	static auto initJob = std::async(std::launch::async, []() {
+		{ // Code block for lock_guard destructor to release lock
+			std::lock_guard<std::mutex> guard(initMutex);
+
+			if(bKieroInit)
+				return;
+
 #pragma warning(suppress: 26812)
-		auto result = kiero::init(kiero::RenderType::D3D11);
-		if(result != kiero::Status::Success){
-			Logger::debug("Kiero: result code = %d", result);
-			if(result == kiero::Status::ModuleNotFoundError)
-				Logger::error("Failed to initialize kiero. Are you sure you are running a DirectX 11 game?");
-			else
-				Logger::error("Failed to initialize kiero. Error code: %d", result);
+			auto result = kiero::init(kiero::RenderType::D3D11);
+			if(result != kiero::Status::Success){
+				Logger::debug("Kiero: result code = %d", result);
+				if(result == kiero::Status::ModuleNotFoundError)
+					Logger::error("Failed to initialize kiero. Are you sure you are running a DirectX 11 game?");
+				else
+					Logger::error("Failed to initialize kiero. Error code: %d", result);
 
-			return;
+				return;
+			}
+			bKieroInit = true;
+			Logger::ovrly("Kiero: Successfully initialized");
+
+			// Hook Present
+			kiero::bind(D3D11_Present, (void**)&originalPresent, hookedPresent);
+			Logger::ovrly("Kiero: Successfully hooked Present");
+
+			// Hook ResizeBuffers
+			kiero::bind(D3D11_ResizeBuffers, (void**)&originalResizeBuffers, hookedResizeBuffer);
+			Logger::ovrly("Kiero: Successfully hooked ResizeBuffers");
+
+			// Hide the popup after POPUP_DURATION_MS time
+			static auto hidePopupJob = std::async(std::launch::async, [&]() {
+				Sleep(POPUP_DURATION_MS);
+				bShowInitPopup = false;
+			});
 		}
-		Logger::ovrly("Kiero: Successfully initialized");
-
-		// Hook Present
-		kiero::bind(D3D11_Present, (void**)&originalPresent, hookedPresent);
-		Logger::ovrly("Kiero: Successfully hooked Present");
-
-		// Hook ResizeBuffers
-		kiero::bind(D3D11_ResizeBuffers, (void**)&originalResizeBuffers, hookedResizeBuffer);
-		Logger::ovrly("Kiero: Successfully hooked ResizeBuffers");
-
-		// Hide the popup after POPUP_DURATION_MS time
-		static auto hidePopupJob = std::async(std::launch::async, [&]() {
-			Sleep(POPUP_DURATION_MS);
-			bShowInitPopup = false;
-		});
 	});
 }
 

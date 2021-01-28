@@ -63,7 +63,7 @@ void proxyCallback(const T* Data, void* const* clientData, std::function<void(T*
 	auto mClientData = const_cast<void**>(clientData);
 	*mClientData = container->originalClientData;
 
-	// Call custom our callback
+	// Call our custom callback
 	T* mData = const_cast<T*>(Data);
 	customCallback(mData);
 

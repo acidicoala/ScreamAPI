@@ -38,7 +38,7 @@ EOS_DECLARE_FUNC(void) EOS_LobbySearch_Release(EOS_HLobbySearch LobbySearchHandl
 /** All lobbies are referenced by a unique lobby ID */
 EXTERN_C typedef const char* EOS_LobbyId;
 
-#define EOS_LOBBY_MAX_LOBBIES 4
+#define EOS_LOBBY_MAX_LOBBIES 16
 #define EOS_LOBBY_MAX_LOBBY_MEMBERS 64
 #define EOS_LOBBY_MAX_SEARCH_RESULTS 200
 

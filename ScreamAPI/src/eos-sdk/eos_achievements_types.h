@@ -9,7 +9,7 @@
 EXTERN_C typedef struct EOS_AchievementsHandle* EOS_HAchievements;
 
 /** The most recent version of the EOS_Achievements_QueryDefinitions struct. */
-#define EOS_ACHIEVEMENTS_QUERYDEFINITIONS_API_LATEST 2
+#define EOS_ACHIEVEMENTS_QUERYDEFINITIONS_API_LATEST 3
 
 /**
  * Input parameters for the EOS_Achievements_QueryDefinitions function.

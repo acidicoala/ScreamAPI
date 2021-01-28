@@ -23,7 +23,7 @@ bool ValidateIcons();
 bool ForceEpicOverlay();
 // DLC
 bool UnlockAllDLC();
-bool OfflineSupport();
+bool ForceSuccess();
 // DLC_List
 std::vector<std::string> DLC_List();
 

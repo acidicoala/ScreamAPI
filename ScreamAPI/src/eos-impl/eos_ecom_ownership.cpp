@@ -32,8 +32,8 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryOwnership(EOS_HEcom Handle, const EOS_Ecom_
 			ScreamAPI::proxyCallback<EOS_Ecom_QueryOwnershipCallbackInfo>(Data, &Data->ClientData,
 				[](EOS_Ecom_QueryOwnershipCallbackInfo* mData){
 				// Force DLC unlocking even if something went wrong
-				if(mData->ResultCode != EOS_EResult::EOS_Success && Config::OfflineSupport()){
-					Logger::warn("EOS_Ecom_QueryOwnershipCallback Result: %s", EOS_EResult_ToString(mData->ResultCode));
+				if(mData->ResultCode != EOS_EResult::EOS_Success && Config::ForceSuccess()){
+					Logger::warn("EOS_Ecom_QueryOwnershipCallback Result: %s. Forcing EOS_Success.", EOS_EResult_ToString(mData->ResultCode));
 					mData->ItemOwnershipCount = (uint32_t)ownerships.size();
 					mData->ItemOwnership = ownerships.data();
 					mData->ResultCode = EOS_EResult::EOS_Success;

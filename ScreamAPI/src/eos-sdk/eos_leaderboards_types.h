@@ -12,7 +12,7 @@ EXTERN_C typedef struct EOS_LeaderboardsHandle* EOS_HLeaderboards;
 #define EOS_LEADERBOARDS_TIME_UNDEFINED -1
 
 /** The most recent version of the EOS_Leaderboards_QueryLeaderboardDefinitions struct. */
-#define EOS_LEADERBOARDS_QUERYLEADERBOARDDEFINITIONS_API_LATEST 1
+#define EOS_LEADERBOARDS_QUERYLEADERBOARDDEFINITIONS_API_LATEST 2
 
 /**
  * Input parameters for the EOS_Leaderboards_QueryLeaderboardDefinitions function.
@@ -26,6 +26,12 @@ EOS_STRUCT(EOS_Leaderboards_QueryLeaderboardDefinitionsOptions, (
 	int64_t StartTime;
 	/** An optional POSIX timestamp for the leaderboard's end time, or EOS_LEADERBOARDS_TIME_UNDEFINED */
 	int64_t EndTime;
+	/**
+	 * Product User ID for user who is querying definitions.
+	 * Must be set when using a client policy that requires a valid logged in user.
+	 * Not used for Dedicated Server where no user is available.
+	 */
+	EOS_ProductUserId LocalUserId;
 ));
 
 /**
@@ -145,7 +151,7 @@ EOS_STRUCT(EOS_Leaderboards_UserScoresQueryStatInfo, (
 ));
 
 /** The most recent version of the EOS_Leaderboards_QueryLeaderboardUserScores struct. */
-#define EOS_LEADERBOARDS_QUERYLEADERBOARDUSERSCORES_API_LATEST 1
+#define EOS_LEADERBOARDS_QUERYLEADERBOARDUSERSCORES_API_LATEST 2
 
 /**
  * Input parameters for the EOS_Leaderboards_QueryLeaderboardUserScores function.
@@ -165,6 +171,12 @@ EOS_STRUCT(EOS_Leaderboards_QueryLeaderboardUserScoresOptions, (
 	int64_t StartTime;
 	/** An optional POSIX timestamp, or EOS_LEADERBOARDS_TIME_UNDEFINED; results will only include scores made before this time */
 	int64_t EndTime;
+	/**
+	 * Product User ID for user who is querying user scores.
+	 * Must be set when using a client policy that requires a valid logged in user.
+	 * Not used for Dedicated Server where no user is available.
+	 */
+	EOS_ProductUserId LocalUserId;
 ));
 
 /** The most recent version of the EOS_Leaderboards_LeaderboardUserScore struct. */
@@ -255,7 +267,7 @@ EOS_DECLARE_CALLBACK(EOS_Leaderboards_OnQueryLeaderboardUserScoresCompleteCallba
 
 
 /** The most recent version of the EOS_Leaderboards_QueryLeaderboardRanks struct. */
-#define EOS_LEADERBOARDS_QUERYLEADERBOARDRANKS_API_LATEST 1
+#define EOS_LEADERBOARDS_QUERYLEADERBOARDRANKS_API_LATEST 2
 
 /**
  * Input parameters for the EOS_Leaderboards_QueryLeaderboardRanks function.
@@ -267,6 +279,12 @@ EOS_STRUCT(EOS_Leaderboards_QueryLeaderboardRanksOptions, (
 	int32_t ApiVersion;
 	/** The ID of the leaderboard whose information you want to retrieve. */
 	const char* LeaderboardId;
+	/**
+	 * Product User ID for user who is querying ranks.
+	 * Must be set when using a client policy that requires a valid logged in user.
+	 * Not used for Dedicated Server where no user is available.
+	 */
+	EOS_ProductUserId LocalUserId;
 ));
 
 /** The most recent version of the EOS_Leaderboards_LeaderboardRecord struct. */

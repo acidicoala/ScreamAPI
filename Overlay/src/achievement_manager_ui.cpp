@@ -62,15 +62,17 @@ void DrawAchievementList(){
 	ImGui::SetWindowSize(ImVec2(400, io.DisplaySize.y));
 
 	FitTextToWindow(ImVec4(0, 1, 0, 1), "  ScreamAPI Achievement Manager  ");
-
+	
 	ImGui::BeginChild("AchievementList", ImVec2(0, 0), false);
+	
 	for(unsigned int i = 0; i < Overlay::achievements->size(); i++){
 		auto&& achievement = Overlay::achievements->at(i);
-
+		
 		ImGui::PushID(i);
 
 		ImGui::Columns(3, "Achievement", false);
 		ImGui::Separator();
+		
 		{// Icon
 			ImGui::SetColumnWidth(0, 70);
 			ImGui::Spacing();
@@ -78,15 +80,18 @@ void DrawAchievementList(){
 			ImGui::Spacing();
 			ImGui::NextColumn();
 		}
+		
 		{// Title & description
 			ImGui::SetColumnWidth(1, 210);
 			ImGui::TextColored(ImVec4(1, 1, 1, 1), achievement.UnlockedDisplayName);
 			ImGui::Spacing();
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(.75, .75, .75, 1));
-			ImGui::TextWrapped(achievement.UnlockedDescription);
+			Logger::warn(achievement.UnlockedDescription);
+			ImGui::TextWrapped(/*achievement.UnlockedDescription*/"Description");
 			ImGui::PopStyleColor();
 			ImGui::NextColumn();
 		}
+		
 		{// Button or status text
 			std::string hidden = achievement.IsHidden ? "[Hidden]" : "";
 			ImGui::TextColored(ImVec4(.75, .75, .75, 1), hidden.c_str());
@@ -105,12 +110,13 @@ void DrawAchievementList(){
 					break;
 			}
 		}
+		
 		ImGui::Columns(1);
 
 		ImGui::PopID();
 	}
 	ImGui::EndChild();
-
+	
 	ImGui::End();
 }
 

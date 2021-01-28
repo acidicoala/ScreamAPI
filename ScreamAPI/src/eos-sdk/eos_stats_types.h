@@ -27,7 +27,7 @@ EOS_STRUCT(EOS_Stats_IngestData, (
 #define EOS_STATS_MAX_INGEST_STATS 3000
 
 /** The most recent version of the EOS_Stats_IngestStat struct. */
-#define EOS_STATS_INGESTSTAT_API_LATEST 2
+#define EOS_STATS_INGESTSTAT_API_LATEST 3
 
 /**
  * Input parameters for the EOS_Stats_IngestStat function.
@@ -70,7 +70,7 @@ EOS_DECLARE_CALLBACK(EOS_Stats_OnIngestStatCompleteCallback, const EOS_Stats_Ing
 #define EOS_STATS_MAX_QUERY_STATS 1000
 
 /** The most recent version of the EOS_Stats_QueryStats struct. */
-#define EOS_STATS_QUERYSTATS_API_LATEST 2
+#define EOS_STATS_QUERYSTATS_API_LATEST 3
 
 /**
  * Input parameters for the EOS_Stats_QueryStats function.

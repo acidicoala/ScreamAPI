@@ -1,3 +1,4 @@
+#include <wchar.h>
 #include "pch.h"
 #include "util.h"
 #include "ScreamAPI.h"

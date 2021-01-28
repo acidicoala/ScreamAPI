@@ -23,7 +23,7 @@ bool bValidateIcons = true;
 bool bForceEpicOverlay = false;
 // DLC
 bool bUnlockAllDLC = true;
-bool bOfflineSupport = true;
+bool bForceSuccess = true;
 // DLC_List
 std::vector<std::string> vDLC_List;
 
@@ -49,7 +49,7 @@ std::map<std::string, std::map<std::string, void*>> configMap = {
 	}},
 	{"DLC", {
 		{"UnlockAllDLC", &bUnlockAllDLC},
-		{"OfflineSupport", &bOfflineSupport},
+		{"OfflineSupport", &bForceSuccess},
 	}},
 };
 
@@ -122,7 +122,7 @@ bool ValidateIcons(){ return bValidateIcons; }
 bool ForceEpicOverlay(){ return bForceEpicOverlay; }
 // DLC
 bool UnlockAllDLC(){ return bUnlockAllDLC; }
-bool OfflineSupport(){ return bOfflineSupport; }
+bool ForceSuccess(){ return bForceSuccess; }
 // DLC_List
 std::vector<std::string> DLC_List(){ return vDLC_List; }
 
