@@ -49,7 +49,7 @@ std::map<std::string, std::map<std::string, void*>> configMap = {
 	}},
 	{"DLC", {
 		{"UnlockAllDLC", &bUnlockAllDLC},
-		{"OfflineSupport", &bForceSuccess},
+		{"ForceSuccess", &bForceSuccess},
 	}},
 };
 
@@ -99,7 +99,7 @@ void init(const std::wstring iniPath){
 	int parseResult = ini_wparse(iniPath.c_str(), iniHandler, 0);
 
 	if(parseResult != 0 && parseResult != -1){
-		showError("Unexpected config parse result: " + std::to_string(parseResult));
+		showError("Unexpected config parse result at line: " + std::to_string(parseResult));
 		exit(1);
 	}
 }
