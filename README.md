@@ -1,5 +1,5 @@
 # ScreamAPI
-#### Legit DLC & Achievement Unlocker for Epic Games
+#### Legit DLC Unlocker for Epic Games
 Welcome to the ScreamAPI repository.
 
 ## Download
@@ -24,4 +24,4 @@ This project makes use of several open-source libraries listed below:
 * [minhook](https://github.com/TsudaKageyu/minhook)
 
 ## License
-This software is licensed under [Zero Clause BSD](https://en.wikipedia.org/wiki/BSD_licenses#0-clause_license_(%22Zero_Clause_BSD%22)) license, terms of which are available in [LICENSE.txt](LICENSE.txt)
+This software is licensed under [Zero Clause BSD](https://en.wikipedia.org/wiki/BSD_licenses#0-clause_license_(%22BSD_Zero_Clause_License%22,[14]_%22Zero-Clause_BSD%22,[15]_or_%22Free_Public_License_1.0.0%22[15])) license, terms of which are available in [LICENSE.txt](LICENSE.txt)
