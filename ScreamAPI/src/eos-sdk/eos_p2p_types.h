@@ -392,4 +392,91 @@ EOS_STRUCT(EOS_P2P_GetPortRangeOptions, (
 	int32_t ApiVersion;
 ));
 
+
+/** Helper constant to signify that the packet queue is allowed to grow indefinitely */
+#define EOS_P2P_MAX_QUEUE_SIZE_UNLIMITED 0
+
+/** The most recent version of the EOS_P2P_SetPacketQueueSize API. */
+#define EOS_P2P_SETPACKETQUEUESIZE_API_LATEST 1
+
+/**
+ * Structure containing information about new packet queue size settings.
+ */
+EOS_STRUCT(EOS_P2P_SetPacketQueueSizeOptions, (
+	/** API Version: Set this to EOS_P2P_SETPACKETQUEUESIZE_API_LATEST. */
+	int32_t ApiVersion;
+	/** The ideal maximum amount of bytes the Incoming packet queue can consume */
+	uint64_t IncomingPacketQueueMaxSizeBytes;
+	/** The ideal maximum amount of bytes the Outgoing packet queue can consume */
+	uint64_t OutgoingPacketQueueMaxSizeBytes;
+));
+
+
+/** The most recent version of the EOS_P2P_GetPacketQueueInfo API. */
+#define EOS_P2P_GETPACKETQUEUEINFO_API_LATEST 1
+
+/**
+ * Structure containing information needed to get the current packet queue information.
+ */
+EOS_STRUCT(EOS_P2P_GetPacketQueueInfoOptions, (
+	/** API Version: Set this to EOS_P2P_GETPACKETQUEUEINFO_API_LATEST. */
+	int32_t ApiVersion;
+));
+
+/**
+ * Information related to the current state of the packet queues. It is possible for the current size
+ * to be larger than the maximum size if the maximum size changes or if the maximum queue size is
+ * set to EOS_P2P_MAX_QUEUE_SIZE_UNLIMITED.
+ */
+EOS_STRUCT(EOS_P2P_PacketQueueInfo, (
+	/** The maximum size in bytes of the incoming packet queue */
+	uint64_t IncomingPacketQueueMaxSizeBytes;
+	/** The current size in bytes of the incoming packet queue */
+	uint64_t IncomingPacketQueueCurrentSizeBytes;
+	/** The current number of queued packets in the incoming packet queue */
+	uint64_t IncomingPacketQueueCurrentPacketCount;
+	/** The maximum size in bytes of the outgoing packet queue */
+	uint64_t OutgoingPacketQueueMaxSizeBytes;
+	/** The current size in bytes of the outgoing packet queue */
+	uint64_t OutgoingPacketQueueCurrentSizeBytes;
+	/** The current amount of queued packets in the outgoing packet queue */
+	uint64_t OutgoingPacketQueueCurrentPacketCount;
+));
+
+
+/** The most recent version of the EOS_P2P_AddNotifyIncomingPacketQueueFull API. */
+#define EOS_P2P_ADDNOTIFYINCOMINGPACKETQUEUEFULL_API_LATEST 1
+
+/**
+ * Structure containing information about what version of the EOS_P2P_AddNotifyIncomingPacketQueueFull function is supported.
+ */
+EOS_STRUCT(EOS_P2P_AddNotifyIncomingPacketQueueFullOptions, (
+	/** API Version: Set this to EOS_P2P_ADDNOTIFYINCOMINGPACKETQUEUEFULL_API_LATEST. */
+	int32_t ApiVersion;
+));
+
+/**
+ * Structure containing information about the packet queue's state and the incoming packet that would overflow the queue
+ */
+EOS_STRUCT(EOS_P2P_OnIncomingPacketQueueFullInfo, (
+	/** Client-specified data passed into AddNotifyIncomingPacketQueueFull */
+	void* ClientData;
+	/** The maximum size in bytes the incoming packet queue is allowed to use */
+	uint64_t PacketQueueMaxSizeBytes;
+	/** The current size in bytes the incoming packet queue is currently using */
+	uint64_t PacketQueueCurrentSizeBytes;
+	/** The Product User ID of the local user who is receiving the packet that would overflow the queue */
+	EOS_ProductUserId OverflowPacketLocalUserId;
+	/** The channel the incoming packet is for */
+	uint8_t OverflowPacketChannel;
+	/** The size in bytes of the incoming packet (and related metadata) that would overflow the queue */
+	uint32_t OverflowPacketSizeBytes;
+));
+
+/**
+ * Callback for information related to incoming connection requests.
+ */
+EOS_DECLARE_CALLBACK(EOS_P2P_OnIncomingPacketQueueFullCallback, const EOS_P2P_OnIncomingPacketQueueFullInfo* Data);
+
+
 #pragma pack(pop)

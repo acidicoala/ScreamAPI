@@ -46,6 +46,7 @@ EOS_DECLARE_FUNC(uint32_t) EOS_Achievements_GetAchievementDefinitionCount(EOS_HA
  * @return EOS_Success if the information is available and passed out in OutDefinition
  *         EOS_InvalidParameters if you pass a null pointer for the out parameter
  *         EOS_NotFound if the achievement definition is not found
+ *         EOS_Invalid_ProductUserID if any of the userid options are incorrect
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_Achievements_CopyAchievementDefinitionV2ByIndex(EOS_HAchievements Handle, const EOS_Achievements_CopyAchievementDefinitionV2ByIndexOptions* Options, EOS_Achievements_DefinitionV2 ** OutDefinition);
 
@@ -60,6 +61,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Achievements_CopyAchievementDefinitionV2ByInde
  * @return EOS_Success if the information is available and passed out in OutDefinition
  *         EOS_InvalidParameters if you pass a null pointer for the out parameter
  *         EOS_NotFound if the achievement definition is not found
+ *         EOS_Invalid_ProductUserID if any of the userid options are incorrect
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_Achievements_CopyAchievementDefinitionV2ByAchievementId(EOS_HAchievements Handle, const EOS_Achievements_CopyAchievementDefinitionV2ByAchievementIdOptions* Options, EOS_Achievements_DefinitionV2 ** OutDefinition);
 
@@ -73,7 +75,8 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Achievements_CopyAchievementDefinitionV2ByAchi
  * @param CompletionDelegate This function is called when the query player achievements operation completes.
  *
  * @return EOS_Success if the operation completes successfully
- *         EOS_InvalidParameters if any of the options are incorrect
+ *         EOS_Invalid_ProductUserID if any of the userid options are incorrect
+ *         EOS_InvalidParameters if any of the other options are incorrect
  */
 EOS_DECLARE_FUNC(void) EOS_Achievements_QueryPlayerAchievements(EOS_HAchievements Handle, const EOS_Achievements_QueryPlayerAchievementsOptions* Options, void* ClientData, const EOS_Achievements_OnQueryPlayerAchievementsCompleteCallback CompletionDelegate);
 
@@ -99,6 +102,7 @@ EOS_DECLARE_FUNC(uint32_t) EOS_Achievements_GetPlayerAchievementCount(EOS_HAchie
  * @return EOS_Success if the information is available and passed out in OutAchievement
  *         EOS_InvalidParameters if you pass a null pointer for the out parameter
  *         EOS_NotFound if the player achievement is not found
+ *         EOS_Invalid_ProductUserID if you pass an invalid user ID
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_Achievements_CopyPlayerAchievementByIndex(EOS_HAchievements Handle, const EOS_Achievements_CopyPlayerAchievementByIndexOptions* Options, EOS_Achievements_PlayerAchievement ** OutAchievement);
 
@@ -113,6 +117,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Achievements_CopyPlayerAchievementByIndex(EOS_
  * @return EOS_Success if the information is available and passed out in OutAchievement
  *         EOS_InvalidParameters if you pass a null pointer for the out parameter
  *         EOS_NotFound if the player achievement is not found
+ *         EOS_Invalid_ProductUserID if you pass an invalid user ID
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_Achievements_CopyPlayerAchievementByAchievementId(EOS_HAchievements Handle, const EOS_Achievements_CopyPlayerAchievementByAchievementIdOptions* Options, EOS_Achievements_PlayerAchievement ** OutAchievement);
 

@@ -14,7 +14,7 @@
 
 EXTERN_C typedef struct EOS_PlayerDataStorageHandle* EOS_HPlayerDataStorage;
 
-#define EOS_PLAYERDATASTORAGE_FILEMETADATA_API_LATEST 1
+#define EOS_PLAYERDATASTORAGE_FILEMETADATA_API_LATEST 3
 
 /**
  * Metadata information for a specific file
@@ -28,6 +28,10 @@ EOS_STRUCT(EOS_PlayerDataStorage_FileMetadata, (
 	const char* MD5Hash;
 	/** The file's name */
 	const char* Filename;
+	/** The POSIX timestamp when the file was saved last time. */
+	int64_t LastModifiedTime;
+	/** The size of data (payload) in file in unencrypted (original) form.  */
+	uint32_t UnencryptedDataSizeBytes;
 ));
 
 /**

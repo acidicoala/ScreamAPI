@@ -380,5 +380,11 @@ EOS_RESULT_VALUE(EOS_Mods_CannotGetManifestLocation, 11015)
 /** Attempting to perform an action with a mod that does not support the current operating system. */
 EOS_RESULT_VALUE(EOS_Mods_UnsupportedOS, 11016)
 
+/** The number of available Snapshot IDs have all been exhausted. */
+EOS_RESULT_VALUE(EOS_ProgressionSnapshot_SnapshotIdUnavailable, 14000)
+
+/** The KWS user does not have a parental email associated with the account.  The parent account was unlinked or deleted */
+EOS_RESULT_VALUE(EOS_KWS_ParentEmailMissing, 15000)
+
 /** An unexpected error that we cannot identify has occurred. */
 EOS_RESULT_VALUE_LAST(EOS_UnexpectedError, 0x7FFFFFFF)

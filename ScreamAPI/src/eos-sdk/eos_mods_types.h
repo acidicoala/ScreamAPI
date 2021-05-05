@@ -60,7 +60,7 @@ EOS_STRUCT(EOS_Mods_InstallModCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** The Epic Online Services Account ID of the user for which mod installation was requested */
 	EOS_EpicAccountId LocalUserId;
-	/** Context that was passed into to EOS_Mods_InstallMod */
+	/** Context that is passed into EOS_Mods_InstallMod */
 	void* ClientData;
 	/** Mod for which installation was requested */
 	const EOS_Mod_Identifier* Mod;
@@ -102,7 +102,7 @@ EOS_STRUCT(EOS_Mods_UninstallModCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** The Epic Online Services Account ID of the user for which mod uninstallation was requested */
 	EOS_EpicAccountId LocalUserId;
-	/** Context that was passed into to EOS_Mods_UninstallMod */
+	/** Context that is passed into EOS_Mods_UninstallMod */
 	void* ClientData;
 	/** Mod for which uninstallation was requested */
 	const EOS_Mod_Identifier* Mod;
@@ -152,7 +152,7 @@ EOS_STRUCT(EOS_Mods_EnumerateModsCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** The Epic Online Services Account ID of the user for which mod enumeration was requested */
 	EOS_EpicAccountId LocalUserId;
-	/** Context that was passed into to EOS_Mods_EnumerateMods */
+	/** Context that is passed into EOS_Mods_EnumerateMods */
 	void* ClientData;
 	/** Type of the enumerated mods */
 	EOS_EModEnumerationType Type;
@@ -232,7 +232,7 @@ EOS_STRUCT(EOS_Mods_UpdateModCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** The Epic Online Services Account ID of the user for which mod update was requested */
 	EOS_EpicAccountId LocalUserId;
-	/** Context that was passed into to EOS_Mods_UpdateMod */
+	/** Context that is passed into EOS_Mods_UpdateMod */
 	void* ClientData;
 	/** Mod for which update was requested */
 	const EOS_Mod_Identifier* Mod;

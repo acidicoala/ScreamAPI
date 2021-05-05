@@ -17,7 +17,7 @@
  * @param Options Information about the data being sent, by who, to who
  * @return EOS_EResult::EOS_Success           - If packet was queued to be sent successfully
  *         EOS_EResult::EOS_InvalidParameters - If input was invalid
- *         EOS_EResult::EOS_LimitExceeded     - If amount of data being sent is too large
+ *         EOS_EResult::EOS_LimitExceeded     - If amount of data being sent is too large, or the outgoing packet queue was full
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_P2P_SendPacket(EOS_HP2P Handle, const EOS_P2P_SendPacketOptions* Options);
 
@@ -60,14 +60,14 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_P2P_ReceivePacket(EOS_HP2P Handle, const EOS_P
 EOS_DECLARE_FUNC(EOS_NotificationId) EOS_P2P_AddNotifyPeerConnectionRequest(EOS_HP2P Handle, const EOS_P2P_AddNotifyPeerConnectionRequestOptions* Options, void* ClientData, EOS_P2P_OnIncomingConnectionRequestCallback ConnectionRequestHandler);
 
 /**
- * Stop listening for connection requests on a previously bound handler
+ * Stop listening for connection requests on a previously bound handler.
  *
  * @param NotificationId The previously bound notification ID
  */
 EOS_DECLARE_FUNC(void) EOS_P2P_RemoveNotifyPeerConnectionRequest(EOS_HP2P Handle, EOS_NotificationId NotificationId);
 
 /**
- * Listen for when a previously opened connection is closed
+ * Listen for when a previously opened connection is closed.
  *
  * @param Options Information about who would like notifications about closed connections, and for which socket
  * @param ClientData This value is returned to the caller when ConnectionClosedHandler is invoked
@@ -77,7 +77,7 @@ EOS_DECLARE_FUNC(void) EOS_P2P_RemoveNotifyPeerConnectionRequest(EOS_HP2P Handle
 EOS_DECLARE_FUNC(EOS_NotificationId) EOS_P2P_AddNotifyPeerConnectionClosed(EOS_HP2P Handle, const EOS_P2P_AddNotifyPeerConnectionClosedOptions* Options, void* ClientData, EOS_P2P_OnRemoteConnectionClosedCallback ConnectionClosedHandler);
 
 /**
- * Stop notifications for connections being closed on a previously bound handler
+ * Stop notifications for connections being closed on a previously bound handler.
  *
  * @param NotificationId The previously bound notification ID
  */
@@ -114,9 +114,10 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_P2P_CloseConnections(EOS_HP2P Handle, const EO
  * Query the current NAT-type of our connection.
  *
  * @param Options Information about what version of the EOS_P2P_QueryNATType API is supported
- * @param NATTypeQueriedHandler The callback to be fired when we finish querying our NAT type
+ * @param ClientData arbitrary data that is passed back to you in the CompletionDelegate
+ * @param CompletionDelegate The callback to be fired when we finish querying our NAT type
  */
-EOS_DECLARE_FUNC(void) EOS_P2P_QueryNATType(EOS_HP2P Handle, const EOS_P2P_QueryNATTypeOptions* Options, void* ClientData, const EOS_P2P_OnQueryNATTypeCompleteCallback NATTypeQueriedHandler);
+EOS_DECLARE_FUNC(void) EOS_P2P_QueryNATType(EOS_HP2P Handle, const EOS_P2P_QueryNATTypeOptions* Options, void* ClientData, const EOS_P2P_OnQueryNATTypeCompleteCallback CompletionDelegate);
 
 /**
  * Get our last-queried NAT-type, if it has been successfully queried.
@@ -167,3 +168,45 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_P2P_SetPortRange(EOS_HP2P Handle, const EOS_P2
  *         EOS_EResult::EOS_InvalidParameters - if the input was invalid in some way
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_P2P_GetPortRange(EOS_HP2P Handle, const EOS_P2P_GetPortRangeOptions* Options, uint16_t* OutPort, uint16_t* OutNumAdditionalPortsToTry);
+
+/**
+ * Sets the maximum packet queue sizes that packets waiting to be sent or received can use. If the packet queue
+ * size is made smaller than the current queue size while there are packets in the queue that would push this
+ * packet size over, existing packets are kept but new packets may not be added to the full queue until enough
+ * packets are sent or received.
+ *
+ * @param Options Information about packet queue size
+ * @return EOS_EResult::EOS_Success - if the input options were valid
+ *         EOS_EResult::EOS_InvalidParameters - if the input was invalid in some way
+ */
+EOS_DECLARE_FUNC(EOS_EResult) EOS_P2P_SetPacketQueueSize(EOS_HP2P Handle, const EOS_P2P_SetPacketQueueSizeOptions* Options);
+
+/**
+ * Gets the current cached information related to the incoming and outgoing packet queues.
+ *
+ * @param Options Information about what version of the EOS_P2P_GetPacketQueueInfo API is supported
+ * @param OutPacketQueueInfo The current information of the incoming and outgoing packet queues
+ * @return EOS_EResult::EOS_Success - if the input options were valid
+ *         EOS_EResult::EOS_InvalidParameters - if the input was invalid in some way
+ */
+EOS_DECLARE_FUNC(EOS_EResult) EOS_P2P_GetPacketQueueInfo(EOS_HP2P Handle, const EOS_P2P_GetPacketQueueInfoOptions* Options, EOS_P2P_PacketQueueInfo* OutPacketQueueInfo);
+
+/**
+ * Listen for when our packet queue has become full. This event gives an opportunity to read packets to make
+ * room for new incoming packets. If this event fires and no packets are read by calling EOS_P2P_ReceivePacket
+ * or the packet queue size is not increased by EOS_P2P_SetPacketQueueSize, any packets that are received after
+ * this event are discarded until there is room again in the queue.
+ *
+ * @param Options Information about what version of the EOS_P2P_AddNotifyIncomingPacketQueueFull API is supported
+ * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate
+ * @param IncomingPacketQueueFullHandler The callback to be fired when the incoming packet queue is full
+ * @return A valid notification ID if successfully bound, or EOS_INVALID_NOTIFICATIONID otherwise
+ */
+EOS_DECLARE_FUNC(EOS_NotificationId) EOS_P2P_AddNotifyIncomingPacketQueueFull(EOS_HP2P Handle, const EOS_P2P_AddNotifyIncomingPacketQueueFullOptions* Options, void* ClientData, EOS_P2P_OnIncomingPacketQueueFullCallback IncomingPacketQueueFullHandler);
+
+/**
+ * Stop listening for full incoming packet queue events on a previously bound handler.
+ *
+ * @param NotificationId The previously bound notification ID
+ */
+EOS_DECLARE_FUNC(void) EOS_P2P_RemoveNotifyIncomingPacketQueueFull(EOS_HP2P Handle, EOS_NotificationId NotificationId);

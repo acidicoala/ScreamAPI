@@ -98,12 +98,14 @@ EOS_STRUCT(EOS_LobbyDetails_Info, (
 	uint32_t MaxMembers;
 	/** If true, users can invite others to this lobby */
 	EOS_Bool bAllowInvites;
+	/** The main indexed parameter for this lobby, can be any string (ie "Region:GameMode") */
+	const char* BucketId;
 ));
 
 EOS_DECLARE_FUNC(void) EOS_LobbyDetails_Info_Release(EOS_LobbyDetails_Info* LobbyDetailsInfo);
 
 /** The most recent version of the EOS_Lobby_CreateLobby API. */
-#define EOS_LOBBY_CREATELOBBY_API_LATEST 2
+#define EOS_LOBBY_CREATELOBBY_API_LATEST 4
 
 /**
  * Input parameters for the EOS_Lobby_CreateLobby function.
@@ -131,6 +133,10 @@ EOS_STRUCT(EOS_Lobby_CreateLobbyOptions, (
 	 * @see EOS_Sessions_JoinSessionOptions
 	 */
 	EOS_Bool bPresenceEnabled;
+	/** Are members of the lobby allowed to invite others */
+	EOS_Bool bAllowInvites;
+	/** Bucket ID associated with the lobby */
+	const char* BucketId;
 ));
 
 /**
@@ -518,6 +524,8 @@ EOS_STRUCT(EOS_Lobby_LobbyInviteAcceptedCallbackInfo, (
 	EOS_ProductUserId LocalUserId;
 	/** The Product User ID of the user who sent the invitation */
 	EOS_ProductUserId TargetUserId;
+	/** Lobby ID that the user has been invited to */
+	const char* LobbyId;
 ));
 
 /**
@@ -586,7 +594,7 @@ EOS_STRUCT(EOS_Lobby_CopyLobbyDetailsHandleByInviteIdOptions, (
 EOS_STRUCT(EOS_Lobby_CopyLobbyDetailsHandleByUiEventIdOptions, (
 	/** API Version: Set this to EOS_LOBBY_COPYLOBBYDETAILSHANDLEBYUIEVENTID_API_LATEST. */
 	int32_t ApiVersion;
-	/** UI Event associated with the session */
+	/** UI Event associated with the lobby */
 	EOS_UI_EventId UiEventId;
 ));
 
@@ -746,6 +754,8 @@ EOS_STRUCT(EOS_Lobby_CopyLobbyDetailsHandleOptions, (
 	EOS_ProductUserId LocalUserId;
 ));
 
+/** Search for a matching bucket ID (value is string) */
+#define EOS_LOBBY_SEARCH_BUCKET_ID "bucket"
 /** Search for lobbies that contain at least this number of members (value is int)  */
 #define EOS_LOBBY_SEARCH_MINCURRENTMEMBERS "mincurrentmembers"
 /** Search for a match with min free space (value is int) */
@@ -796,6 +806,19 @@ EOS_STRUCT(EOS_Lobby_Attribute, (
 
 EOS_DECLARE_FUNC(void) EOS_Lobby_Attribute_Release(EOS_Lobby_Attribute* LobbyAttribute);
 
+/** The most recent version of the EOS_LobbyModification_SetBucketIdOptions API. */
+#define EOS_LOBBYMODIFICATION_SETBUCKETID_API_LATEST 1
+
+/**
+ * Input parameters for the EOS_LobbyModification_SetBucketIdOptions function.
+ */
+EOS_STRUCT(EOS_LobbyModification_SetBucketIdOptions, (
+	/** API Version: Set this to EOS_LOBBYMODIFICATION_SETBUCKETID_API_LATEST. */
+	int32_t ApiVersion;
+	/** The new bucket id associated with the lobby */
+	const char* BucketId;
+));
+
 /** The most recent version of the EOS_LobbyModification_SetPermissionLevel API. */
 #define EOS_LOBBYMODIFICATION_SETPERMISSIONLEVEL_API_LATEST 1
 
@@ -822,6 +845,18 @@ EOS_STRUCT(EOS_LobbyModification_SetMaxMembersOptions, (
 	uint32_t MaxMembers;
 ));
 
+/** The most recent version of the EOS_LobbyModification_SetInvitesAllowed API. */
+#define EOS_LOBBYMODIFICATION_SETINVITESALLOWED_API_LATEST 1
+
+/**
+ * Input parameters for the EOS_LobbyModification_SetInvitesAllowed Function.
+ */
+EOS_STRUCT(EOS_LobbyModification_SetInvitesAllowedOptions, (
+	/** API Version: Set this to EOS_LOBBYMODIFICATION_SETINVITESALLOWED_API_LATEST. */
+	int32_t ApiVersion;
+	/** If true then invites can currently be sent for the associated lobby */
+	EOS_Bool bInvitesAllowed;
+));
 
 /** The most recent version of the EOS_LobbyModification_AddAttribute API. */
 #define EOS_LOBBYMODIFICATION_ADDATTRIBUTE_API_LATEST 1

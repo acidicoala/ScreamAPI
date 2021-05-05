@@ -206,6 +206,18 @@
     <ClInclude Include="src\eos-sdk\Windows\eos_Windows_base.h">
       <Filter>Header Files\eos-sdk\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="src\eos-sdk\eos_sanctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\eos-sdk\eos_sanctions_types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\eos-sdk\eos_reports.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\eos-sdk\eos_reports_types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\pch.cpp">

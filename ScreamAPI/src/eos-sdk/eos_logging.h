@@ -80,6 +80,14 @@ EOS_ENUM(EOS_ELogCategory,
 	EOS_LC_TitleStorage = 22,
 	/** Logs related to the Mods service */
 	EOS_LC_Mods = 23,
+	/** Logs related to reports client. */
+	EOS_LC_Reports = 25,
+	/** Logs related to the Sanctions service */
+	EOS_LC_Sanctions = 26,
+	/** Logs related to the Progression Snapshot service */
+	EOS_LC_ProgressionSnapshots = 27,
+	/** Logs related to the Kids Web Services integration */
+	EOS_LC_KWS = 28,
 
 	/** Not a real log category. Used by EOS_Logging_SetLogLevel to set the log level for all categories at the same time */
 	EOS_LC_ALL_CATEGORIES = 0x7fffffff

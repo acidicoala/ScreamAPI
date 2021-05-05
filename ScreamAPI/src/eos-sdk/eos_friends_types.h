@@ -114,7 +114,7 @@ EOS_STRUCT(EOS_Friends_AcceptInviteOptions, (
 EOS_STRUCT(EOS_Friends_AcceptInviteCallbackInfo, (
 	/** Result code for the operation. EOS_Success is returned if an invite was accepted, otherwise one of the error codes is returned. See eos_common.h */
 	EOS_EResult ResultCode;
-	/** Context that was passed into to EOS_Friends_AcceptInvite */
+	/** Context that is passed into EOS_Friends_AcceptInvite */
 	void* ClientData;
 	/** The Epic Online Services Account ID of the user who is accepting the friends list invitation */
 	EOS_EpicAccountId LocalUserId;
@@ -156,7 +156,7 @@ EOS_STRUCT(EOS_Friends_RejectInviteOptions, (
 EOS_STRUCT(EOS_Friends_RejectInviteCallbackInfo, (
 	/** Result code for the operation. EOS_Success is returned if an invite was accepted, otherwise one of the error codes is returned. See eos_common.h */
 	EOS_EResult ResultCode;
-	/** Context that was passed into to EOS_Friends_RejectInvite */
+	/** Context that is passed into EOS_Friends_RejectInvite */
 	void* ClientData;
 	/** The Epic Online Services Account ID of the user who is rejecting the friends list invitation */
 	EOS_EpicAccountId LocalUserId;
@@ -198,7 +198,7 @@ EOS_STRUCT(EOS_Friends_DeleteFriendOptions, (
 EOS_STRUCT(EOS_Friends_DeleteFriendCallbackInfo, (
 	/** Result code for the operation. EOS_Success is returned if an invite was accepted, otherwise one of the error codes is returned. See eos_common.h */
 	EOS_EResult ResultCode;
-	/** Context that was passed into to EOS_Friends_DeleteFriend */
+	/** Context that is passed into EOS_Friends_DeleteFriend */
 	void* ClientData;
 	/** The Epic Online Services Account ID of the user who is removing a user from their friends list. */
 	EOS_EpicAccountId LocalUserId;

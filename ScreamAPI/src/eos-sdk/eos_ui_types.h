@@ -214,4 +214,30 @@ EOS_STRUCT(EOS_UI_AcknowledgeEventIdOptions, (
 	EOS_EResult Result;
 ));
 
+/** The most recent version of the EOS_UI_ReportKeyEvent API. */
+#define EOS_UI_REPORTKEYEVENT_API_LATEST 1
+
+/**
+ * Input parameters for the EOS_UI_ReportKeyEvent function.
+ */
+EOS_STRUCT(EOS_UI_ReportKeyEventOptions, (
+	/** API Version: Set this to EOS_UI_REPORTKEYEVENT_API_LATEST. */
+	int32_t ApiVersion;
+	/** The input data pushed to the SDK. */
+	const void* PlatformSpecificInputData;
+));
+
+/** The most recent version of the EOS_UI_PrePresent API. */
+#define EOS_UI_PREPRESENT_API_LATEST 1
+
+/**
+ * Parameters for the EOS_UI_PrePresent function.
+ */
+EOS_STRUCT(EOS_UI_PrePresentOptions, (
+	/** API Version: Set this to EOS_UI_PREPRESENT_API_LATEST. */
+	int32_t ApiVersion;
+	/** Platform specific data. */
+	const void* PlatformSpecificData;
+));
+
 #pragma pack(pop)

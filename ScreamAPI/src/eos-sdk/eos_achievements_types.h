@@ -182,7 +182,7 @@ EOS_DECLARE_CALLBACK(EOS_Achievements_OnQueryDefinitionsCompleteCallback, const 
 
 
 /** The most recent version of the EOS_Achievements_QueryPlayerAchievements struct. */
-#define EOS_ACHIEVEMENTS_QUERYPLAYERACHIEVEMENTS_API_LATEST 1
+#define EOS_ACHIEVEMENTS_QUERYPLAYERACHIEVEMENTS_API_LATEST 2
 
 /**
  * Input parameters for the EOS_Achievements_QueryPlayerAchievements function.
@@ -191,7 +191,9 @@ EOS_STRUCT(EOS_Achievements_QueryPlayerAchievementsOptions, (
 	/** API Version: Set this to EOS_ACHIEVEMENTS_QUERYPLAYERACHIEVEMENTS_API_LATEST. */
 	int32_t ApiVersion;
 	/** The Product User ID for the user whose achievements are to be retrieved. */
-	EOS_ProductUserId UserId;
+	EOS_ProductUserId TargetUserId;
+	/** The Product User ID for the user who is querying for player achievements. For a Dedicated Server this should be null. */
+	EOS_ProductUserId LocalUserId;
 ));
 
 /** Timestamp value representing an undefined UnlockTime for EOS_Achievements_PlayerAchievement and EOS_Achievements_UnlockedAchievement */
@@ -249,7 +251,7 @@ EOS_STRUCT(EOS_Achievements_GetPlayerAchievementCountOptions, (
 ));
 
 /** The most recent version of the EOS_Achievements_CopyPlayerAchievementByIndexOptions struct. */
-#define EOS_ACHIEVEMENTS_COPYPLAYERACHIEVEMENTBYINDEX_API_LATEST 1
+#define EOS_ACHIEVEMENTS_COPYPLAYERACHIEVEMENTBYINDEX_API_LATEST 2
 
 /**
  * Input parameters for the EOS_Achievements_CopyPlayerAchievementByIndex function.
@@ -257,14 +259,16 @@ EOS_STRUCT(EOS_Achievements_GetPlayerAchievementCountOptions, (
 EOS_STRUCT(EOS_Achievements_CopyPlayerAchievementByIndexOptions, (
 	/** API Version: Set this to EOS_ACHIEVEMENTS_COPYPLAYERACHIEVEMENTBYINDEX_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Product User ID for the user who is copying the achievement. */
-	EOS_ProductUserId UserId;
+	/** The Product User ID for the user whose achievement is to be retrieved. */
+	EOS_ProductUserId TargetUserId;
 	/** The index of the player achievement data to retrieve from the cache. */
 	uint32_t AchievementIndex;
+	/** The Product User ID for the user who is querying for a player achievement. For a Dedicated Server this should be null. */
+	EOS_ProductUserId LocalUserId;
 ));
 
 /** The most recent version of the EOS_Achievements_CopyPlayerAchievementByAchievementIdOptions struct. */
-#define EOS_ACHIEVEMENTS_COPYPLAYERACHIEVEMENTBYACHIEVEMENTID_API_LATEST 1
+#define EOS_ACHIEVEMENTS_COPYPLAYERACHIEVEMENTBYACHIEVEMENTID_API_LATEST 2
 
 /**
  * Input parameters for the EOS_Achievements_CopyPlayerAchievementByAchievementId function.
@@ -272,10 +276,12 @@ EOS_STRUCT(EOS_Achievements_CopyPlayerAchievementByIndexOptions, (
 EOS_STRUCT(EOS_Achievements_CopyPlayerAchievementByAchievementIdOptions, (
 	/** API Version: Set this to EOS_ACHIEVEMENTS_COPYPLAYERACHIEVEMENTBYACHIEVEMENTID_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Product User ID for the user who is copying the achievement. */
-	EOS_ProductUserId UserId;
+	/** The Product User ID for the user whose achievement is to be retrieved. */
+	EOS_ProductUserId TargetUserId;
 	/** Achievement ID to search for when retrieving player achievement data from the cache. */
 	const char* AchievementId;
+	/** The Product User ID for the user who is querying for a player achievement. For a Dedicated Server this should be null. */
+	EOS_ProductUserId LocalUserId;
 ));
 
 /**

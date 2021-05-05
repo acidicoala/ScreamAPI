@@ -12,7 +12,7 @@
 EXTERN_C typedef struct EOS_TitleStorageHandle* EOS_HTitleStorage;
 
 /** The most recent version of the EOS_TitleStorage_FileMetadata API. */
-#define EOS_TITLESTORAGE_FILEMETADATA_API_LATEST 1
+#define EOS_TITLESTORAGE_FILEMETADATA_API_LATEST 2
 
 /**
  * Metadata information for a specific file
@@ -26,6 +26,8 @@ EOS_STRUCT(EOS_TitleStorage_FileMetadata, (
 	const char* MD5Hash;
 	/** The file's name */
 	const char* Filename;
+	/** The size of data (payload) in file in unencrypted (original) form.  */
+	uint32_t UnencryptedDataSizeBytes;
 ));
 
 /**

@@ -293,11 +293,11 @@ EOS_DECLARE_FUNC(void) EOS_Lobby_RemoveNotifyLobbyInviteAccepted(EOS_HLobby Hand
 
 /**
  * Register to receive notifications about lobby join game accepted by local user via the overlay.
- * @note must call RemoveNotifyJoinLobbyAccepted to remove the notification
+ * @note must call EOS_Lobby_RemoveNotifyJoinLobbyAccepted to remove the notification
  *
  * @param Options Structure containing information about the request.
  * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate.
- * @param NotificationFn A callback that is fired when a a notification is received.
+ * @param NotificationFn A callback that is fired when a notification is received.
  *
  * @return handle representing the registered callback
  */
@@ -365,6 +365,19 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Lobby_CopyLobbyDetailsHandle(EOS_HLobby Handle
  */
 
 /**
+ * Set the bucket ID associated with this lobby.
+ * Values such as region, game mode, etc can be combined here depending on game need.
+ * Setting this is strongly recommended to improve search performance.
+ *
+ * @param Options Options associated with the bucket ID of the lobby
+ *
+ * @return EOS_Success if setting this parameter was successful
+ *         EOS_InvalidParameters if the bucket ID is invalid or null
+ *         EOS_IncompatibleVersion if the API version passed in is incorrect
+ */
+EOS_DECLARE_FUNC(EOS_EResult) EOS_LobbyModification_SetBucketId(EOS_HLobbyModification Handle, const EOS_LobbyModification_SetBucketIdOptions* Options);
+
+/**
  * Set the permissions associated with this lobby.
  * The permissions range from "public" to "invite only" and are described by EOS_ELobbyPermissionLevel
  *
@@ -385,6 +398,17 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_LobbyModification_SetPermissionLevel(EOS_HLobb
  *         EOS_IncompatibleVersion if the API version passed in is incorrect
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_LobbyModification_SetMaxMembers(EOS_HLobbyModification Handle, const EOS_LobbyModification_SetMaxMembersOptions* Options);
+
+/**
+ * Allows enabling or disabling invites for this lobby.
+ * The lobby will also need to have `bPresenceEnabled` true.
+ *
+ * @param Options Options associated with invites allowed flag for this lobby.
+ *
+ * @return EOS_Success if setting this parameter was successful
+ *         EOS_IncompatibleVersion if the API version passed in is incorrect
+ */
+EOS_DECLARE_FUNC(EOS_EResult) EOS_LobbyModification_SetInvitesAllowed(EOS_HLobbyModification Handle, const EOS_LobbyModification_SetInvitesAllowedOptions* Options);
 
 /**
  * Associate an attribute with this lobby

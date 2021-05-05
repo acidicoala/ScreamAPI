@@ -85,7 +85,6 @@ std::vector<std::string> getExportFunctions(std::wstring dllPath){
 // TODO: This list is getting out of hand. I have to come up with a more convenient solution
 std::vector<std::string> overrideFunctions{
 	// Common
-	/*
 	"EOS_EResult_ToString",
 	"EOS_EpicAccountId_IsValid",
 
@@ -138,7 +137,6 @@ std::vector<std::string> overrideFunctions{
 	"EOS_Achievements_CopyAchievementDefinitionByIndex",
 	"EOS_Achievements_Definition_Release",
 	"EOS_Achievements_AddNotifyAchievementsUnlocked",
-	*/
 };
 
 enum class Architecture{ Win32, Win64 };

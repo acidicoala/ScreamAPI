@@ -51,7 +51,11 @@
     <ClInclude Include="src\eos-sdk\eos_playerdatastorage_types.h" />
     <ClInclude Include="src\eos-sdk\eos_presence.h" />
     <ClInclude Include="src\eos-sdk\eos_presence_types.h" />
+    <ClInclude Include="src\eos-sdk\eos_reports.h" />
+    <ClInclude Include="src\eos-sdk\eos_reports_types.h" />
     <ClInclude Include="src\eos-sdk\eos_result.h" />
+    <ClInclude Include="src\eos-sdk\eos_sanctions.h" />
+    <ClInclude Include="src\eos-sdk\eos_sanctions_types.h" />
     <ClInclude Include="src\eos-sdk\eos_sdk.h" />
     <ClInclude Include="src\eos-sdk\eos_sessions.h" />
     <ClInclude Include="src\eos-sdk\eos_sessions_types.h" />
