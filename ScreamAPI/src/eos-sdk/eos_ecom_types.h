@@ -188,7 +188,7 @@ EOS_STRUCT(EOS_Ecom_CatalogItem, (
 EOS_DECLARE_FUNC(void) EOS_Ecom_CatalogItem_Release(EOS_Ecom_CatalogItem* CatalogItem);
 
 /** The most recent version of the EOS_Ecom_CatalogOffer struct. */
-#define EOS_ECOM_CATALOGOFFER_API_LATEST 2
+#define EOS_ECOM_CATALOGOFFER_API_LATEST 3
 
 /** Timestamp value representing an undefined ExpirationTimestamp for EOS_Ecom_CatalogOffer */
 #define EOS_ECOM_CATALOGOFFER_EXPIRATIONTIMESTAMP_UNDEFINED -1
@@ -230,10 +230,10 @@ EOS_STRUCT(EOS_Ecom_CatalogOffer, (
 	 * Otherwise this value represents the error that occurred on the price query.
 	 */
 	EOS_EResult PriceResult;
-	/** The original price of this offer. */
-	uint32_t OriginalPrice;
-	/** The current price including discounts of this offer. */
-	uint32_t CurrentPrice;
+	/** The original price of this offer as a 32-bit number is deprecated. */
+	uint32_t OriginalPrice_DEPRECATED;
+	/** The current price including discounts of this offer as a 32-bit number is deprecated.. */
+	uint32_t CurrentPrice_DEPRECATED;
 	/** A value from 0 to 100 define the percentage of the OrignalPrice that the CurrentPrice represents */
 	uint8_t DiscountPercentage;
 	/** Contains the POSIX timestamp that the offer expires or -1 if it does not expire */
@@ -247,6 +247,10 @@ EOS_STRUCT(EOS_Ecom_CatalogOffer, (
 	int32_t PurchaseLimit;
 	/** True if the user can purchase this offer. */
 	EOS_Bool bAvailableForPurchase;
+	/** The original price of this offer as a 64-bit number. */
+	uint64_t OriginalPrice64;
+	/** The current price including discounts of this offer as a 64-bit number. */
+	uint64_t CurrentPrice64;
 ));
 
 /**
@@ -684,7 +688,7 @@ EOS_STRUCT(EOS_Ecom_GetOfferCountOptions, (
 ));
 
 /** The most recent version of the EOS_Ecom_CopyOfferByIndex API. */
-#define EOS_ECOM_COPYOFFERBYINDEX_API_LATEST 1
+#define EOS_ECOM_COPYOFFERBYINDEX_API_LATEST 2
 
 /**
  * Input parameters for the EOS_Ecom_CopyOfferByIndex function.
@@ -699,7 +703,7 @@ EOS_STRUCT(EOS_Ecom_CopyOfferByIndexOptions, (
 ));
 
 /** The most recent version of the EOS_Ecom_CopyOfferById API. */
-#define EOS_ECOM_COPYOFFERBYID_API_LATEST 1
+#define EOS_ECOM_COPYOFFERBYID_API_LATEST 2
 
 /**
  * Input parameters for the EOS_Ecom_CopyOfferById function.

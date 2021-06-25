@@ -4,6 +4,7 @@
 #include "util.h"
 
 std::vector<std::string> entitlementIDs;
+bool useLegitEntitlements = true;
 
 EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlements(EOS_HEcom Handle, const EOS_Ecom_QueryEntitlementsOptions* Options, void* ClientData, const EOS_Ecom_OnQueryEntitlementsCallback CompletionDelegate){
 	Logger::debug(__func__);
@@ -16,6 +17,7 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlements(EOS_HEcom Handle, const EOS_Ec
 		if(!Util::vectorContains(entitlementIDs, std::string(Options->EntitlementNames[i])))
 			entitlementIDs.emplace_back(Options->EntitlementNames[i]);
 	}
+	useLegitEntitlements = false;
 
 	static auto proxy = ScreamAPI::proxyFunction(&EOS_Ecom_QueryEntitlements, __func__);
 	proxy(Handle, Options, ClientData, CompletionDelegate);
@@ -25,11 +27,11 @@ EOS_DECLARE_FUNC(uint32_t) EOS_Ecom_GetEntitlementsCount(EOS_HEcom Handle, const
 	Logger::debug(__func__);
 
 	uint32_t entitlementCount;
-	if(Config::EnableEntitlementUnlocker()){
-		entitlementCount = (uint32_t) entitlementIDs.size();
-	} else{
+	if(useLegitEntitlements || !Config::EnableEntitlementUnlocker()){
 		static auto proxy = ScreamAPI::proxyFunction(&EOS_Ecom_GetEntitlementsCount, __func__);
 		entitlementCount = proxy(Handle, Options);
+	} else{
+		entitlementCount = (uint32_t) entitlementIDs.size();
 	}
 
 	Logger::dlc("Responding with %d entitlements:", entitlementCount);

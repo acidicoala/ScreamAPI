@@ -42,6 +42,11 @@ EXTERN_C typedef const char* EOS_LobbyId;
 #define EOS_LOBBY_MAX_LOBBY_MEMBERS 64
 #define EOS_LOBBY_MAX_SEARCH_RESULTS 200
 
+/** Minimum number of characters allowed in the lobby id override */
+#define EOS_LOBBY_MIN_LOBBYIDOVERRIDE_LENGTH 4
+/** Maximum number of characters allowed in the lobby id override */
+#define EOS_LOBBY_MAX_LOBBYIDOVERRIDE_LENGTH 60
+
 /** Maximum number of attributes allowed on the lobby */
 #define EOS_LOBBYMODIFICATION_MAX_ATTRIBUTES 64
 /** Maximum length of the name of the attribute associated with the lobby */
@@ -100,12 +105,45 @@ EOS_STRUCT(EOS_LobbyDetails_Info, (
 	EOS_Bool bAllowInvites;
 	/** The main indexed parameter for this lobby, can be any string (ie "Region:GameMode") */
 	const char* BucketId;
+	/** Is host migration allowed */
+	EOS_Bool bAllowHostMigration;
+	/** Was a Real-Time Communication (RTC) room enabled at lobby creation? */
+	EOS_Bool bRTCRoomEnabled;
 ));
 
 EOS_DECLARE_FUNC(void) EOS_LobbyDetails_Info_Release(EOS_LobbyDetails_Info* LobbyDetailsInfo);
 
+#define EOS_LOBBY_LOCALRTCOPTIONS_API_LATEST 1
+
+/**
+ * Input parameters to use with Lobby RTC Rooms.
+ */
+EOS_STRUCT(EOS_Lobby_LocalRTCOptions, (
+	/** API Version: Set this to EOS_LOBBY_LOCALRTCOPTIONS_API_LATEST. */
+	int32_t ApiVersion;
+	/** Flags for the local user in this room. The default is 0 if this struct is not specified. @see EOS_RTC_JoinRoomOptions::Flags */
+	uint32_t Flags;
+	/**
+	 * Set to EOS_TRUE to enable Manual Audio Input. If manual audio input is enabled, audio recording is not started and the audio buffers
+	 * must be passed manually using EOS_RTCAudio_SendAudio. The default is EOS_FALSE if this struct is not specified.
+	 */
+	EOS_Bool bUseManualAudioInput;
+	/**
+	 * Set to EOS_TRUE to enable Manual Audio Output. If manual audio output is enabled, audio rendering is not started and the audio buffers
+	 * must be received with EOS_RTCAudio_AddNotifyAudioBeforeRender and rendered manually. The default is EOS_FALSE if this struct is not
+	 * specified.
+	 */
+	EOS_Bool bUseManualAudioOutput;
+	/**
+	 * Set to EOS_TRUE to start the outgoing audio stream muted by when first connecting to the RTC room. It must be manually unmuted with a
+	 * call to EOS_RTCAudio_UpdateSending. If manual audio output is enabled, this value is ignored. The default is EOS_FALSE if this struct
+	 * is not specified.
+	 */
+	EOS_Bool bAudioOutputStartsMuted;
+));
+
 /** The most recent version of the EOS_Lobby_CreateLobby API. */
-#define EOS_LOBBY_CREATELOBBY_API_LATEST 4
+#define EOS_LOBBY_CREATELOBBY_API_LATEST 7
 
 /**
  * Input parameters for the EOS_Lobby_CreateLobby function.
@@ -137,6 +175,32 @@ EOS_STRUCT(EOS_Lobby_CreateLobbyOptions, (
 	EOS_Bool bAllowInvites;
 	/** Bucket ID associated with the lobby */
 	const char* BucketId;
+	/** 
+	 * Is host migration allowed (will the lobby stay open if the original host leaves?) 
+	 * NOTE: EOS_Lobby_PromoteMember is still allowed regardless of this setting 
+	 */
+	EOS_Bool bDisableHostMigration;
+	/**
+	 * Creates a real-time communication (RTC) room for all members of this lobby. All members of the lobby will automatically join the RTC
+	 * room when they connect to the lobby and they will automatically leave the RTC room when they leave or are removed from the lobby.
+	 * While the joining and leaving of the RTC room is automatic, applications will still need to use the EOS RTC interfaces to handle all
+	 * other functionality for the room.
+	 *
+	 * @see EOS_Lobby_GetRTCRoomName
+	 * @see EOS_Lobby_AddNotifyRTCRoomConnectionChanged
+	 */
+	EOS_Bool bEnableRTCRoom;
+	/**
+	 * (Optional) Allows the local application to set local audio options for the RTC Room if it is enabled. Set this to NULL if the RTC
+	 * RTC room is disabled or you would like to use the defaults.
+	 */
+	const EOS_Lobby_LocalRTCOptions* LocalRTCOptions;
+	/**
+	 * (Optional) Set to a globally unique value to override the backend assignment
+	 * If not specified the backend service will assign one to the lobby.  Do not mix and match override and non override settings.
+	 * This value can be of size [EOS_LOBBY_MIN_LOBBYIDOVERRIDE_LENGTH, EOS_LOBBY_MAX_LOBBYIDOVERRIDE_LENGTH]
+	 */
+	const char* LobbyId;
 ));
 
 /**
@@ -192,7 +256,7 @@ EOS_DECLARE_CALLBACK(EOS_Lobby_OnDestroyLobbyCallback, const EOS_Lobby_DestroyLo
 
 
 /** The most recent version of the EOS_Lobby_JoinLobby API. */
-#define EOS_LOBBY_JOINLOBBY_API_LATEST 2
+#define EOS_LOBBY_JOINLOBBY_API_LATEST 3
 
 /**
  * Input parameters for the EOS_Lobby_JoinLobby function.
@@ -219,6 +283,12 @@ EOS_STRUCT(EOS_Lobby_JoinLobbyOptions, (
 	 * @see EOS_Sessions_JoinSessionOptions
 	 */
 	EOS_Bool bPresenceEnabled;
+	/**
+	 * (Optional) Set this value to override the default local options for the RTC Room, if it is enabled for this lobby. Set this to NULL if
+	 * your application does not use the Lobby RTC Rooms feature, or if you would like to use the default settings. This option is ignored if
+	 * the specified lobby does not have an RTC Room enabled and will not cause errors.
+	 */
+	const EOS_Lobby_LocalRTCOptions* LocalRTCOptions;
 ));
 
 /**
@@ -754,6 +824,82 @@ EOS_STRUCT(EOS_Lobby_CopyLobbyDetailsHandleOptions, (
 	EOS_ProductUserId LocalUserId;
 ));
 
+
+/** The most recent version of the EOS_Lobby_GetRTCRoomName API. */
+#define EOS_LOBBY_GETRTCROOMNAME_API_LATEST 1
+
+/**
+ * Input parameters for the EOS_Lobby_GetRTCRoomName function.
+ */
+EOS_STRUCT(EOS_Lobby_GetRTCRoomNameOptions, (
+	/** API Version: Set this to EOS_LOBBY_GETRTCROOMNAME_API_LATEST */
+	int32_t ApiVersion;
+	/** The ID of the lobby to get the RTC Room name for */
+	EOS_LobbyId LobbyId;
+	/** The Product User ID of the local user in the lobby */
+	EOS_ProductUserId LocalUserId;
+));
+
+
+/** The most recent version of the EOS_Lobby_IsRTCRoomConnected API. */
+#define EOS_LOBBY_ISRTCROOMCONNECTED_API_LATEST 1
+
+EOS_STRUCT(EOS_Lobby_IsRTCRoomConnectedOptions, (
+	/** API Version: Set this to EOS_LOBBY_ISRTCROOMCONNECTED_API_LATEST */
+	int32_t ApiVersion;
+	/** The ID of the lobby to get the RTC Room name for */
+	EOS_LobbyId LobbyId;
+	/** The Product User ID of the local user in the lobby */
+	EOS_ProductUserId LocalUserId;
+));
+
+
+/** The most recent version of the EOS_Lobby_AddNotifyRTCRoomConnectionChanged API. */
+#define EOS_LOBBY_ADDNOTIFYRTCROOMCONNECTIONCHANGED_API_LATEST 1
+
+/**
+ * Input parameters for the EOS_Lobby_AddNotifyRTCRoomConnectionChanged function.
+ */
+EOS_STRUCT(EOS_Lobby_AddNotifyRTCRoomConnectionChangedOptions, (
+	/** API Version: Set this to EOS_LOBBY_ADDNOTIFYRTCROOMCONNECTIONCHANGED_API_LATEST */
+	int32_t ApiVersion;
+	/** The ID of the lobby to receive RTC Room connection change notifications for */
+	EOS_LobbyId LobbyId;
+	/** The Product User ID of the local user in the lobby */
+	EOS_ProductUserId LocalUserId;
+));
+
+EOS_STRUCT(EOS_Lobby_RTCRoomConnectionChangedCallbackInfo, (
+	/** Context that was passed into EOS_Lobby_AddNotifyRTCRoomConnectionChanged */
+	void* ClientData;
+	/** The ID of the lobby which had a RTC Room connection state change */
+	EOS_LobbyId LobbyId;
+	/** The Product User ID of the local user who is in the lobby and registered for notifications */
+	EOS_ProductUserId LocalUserId;
+	/** The new connection state of the room */
+	EOS_Bool bIsConnected;
+	/**
+	 If bIsConnected is EOS_FALSE, this result will be the reason we were disconnected.
+	 * EOS_Success: The room was left locally. This may be because: the associated lobby was Left or Destroyed, the connection to the lobby was interrupted, or because the SDK is being shutdown. If the lobby connection returns (lobby did not permanently go away), we will reconnect.
+	 * EOS_NoConnection: There was a network issue connecting to the server. We will attempt to reconnect soon.
+	 * EOS_RTC_UserKicked: The user has been kicked by the server. We will not reconnect.
+	 * EOS_RTC_UserBanned: The user has been banned by the server. We will not reconnect.
+	 * EOS_ServiceFailure: A known error occurred during interaction with the server. We will attempt to reconnect soon.
+	 * EOS_UnexpectedError: Unexpected error. We will attempt to reconnect soon.
+	 */
+	EOS_EResult DisconnectReason;
+));
+
+/**
+ * Function prototype definition for notifications that comes from EOS_Lobby_AddNotifyRTCRoomConnectionChanged
+ *
+ * @param Data containing the connection state of the RTC Room for a lobby
+ *
+ * @see EOS_Lobby_IsRTCRoomConnected
+ */
+EOS_DECLARE_CALLBACK(EOS_Lobby_OnRTCRoomConnectionChangedCallback, const EOS_Lobby_RTCRoomConnectionChangedCallbackInfo* Data);
+
+
 /** Search for a matching bucket ID (value is string) */
 #define EOS_LOBBY_SEARCH_BUCKET_ID "bucket"
 /** Search for lobbies that contain at least this number of members (value is int)  */
@@ -806,11 +952,11 @@ EOS_STRUCT(EOS_Lobby_Attribute, (
 
 EOS_DECLARE_FUNC(void) EOS_Lobby_Attribute_Release(EOS_Lobby_Attribute* LobbyAttribute);
 
-/** The most recent version of the EOS_LobbyModification_SetBucketIdOptions API. */
+/** The most recent version of the EOS_LobbyModification_SetBucketId API. */
 #define EOS_LOBBYMODIFICATION_SETBUCKETID_API_LATEST 1
 
 /**
- * Input parameters for the EOS_LobbyModification_SetBucketIdOptions function.
+ * Input parameters for the EOS_LobbyModification_SetBucketId function.
  */
 EOS_STRUCT(EOS_LobbyModification_SetBucketIdOptions, (
 	/** API Version: Set this to EOS_LOBBYMODIFICATION_SETBUCKETID_API_LATEST. */

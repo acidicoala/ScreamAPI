@@ -19,8 +19,13 @@
 #include "eos_stats_types.h"
 #include "eos_leaderboards_types.h"
 #include "eos_mods_types.h"
+#include "eos_anticheatclient_types.h"
+#include "eos_anticheatserver_types.h"
 #include "eos_reports_types.h"
 #include "eos_sanctions_types.h"
+#include "eos_kws_types.h"
+#include "eos_rtc_types.h"
+#include "eos_rtc_admin_types.h"
 
 /**
  * The Platform Instance is used to gain access to all other Epic Online Service interfaces and to drive internal operations through the Tick.
@@ -140,6 +145,26 @@ EOS_DECLARE_FUNC(EOS_HUserInfo) EOS_Platform_GetUserInfoInterface(EOS_HPlatform 
 EOS_DECLARE_FUNC(EOS_HP2P) EOS_Platform_GetP2PInterface(EOS_HPlatform Handle);
 
 /**
+ * Get a handle to the Real Time Communications Interface (RTC).
+ * From the RTC interface you can retrieve the handle to the audio interface (RTCAudio), which is a component of RTC.
+ * @return EOS_HRTC handle
+ *
+ * @see EOS_RTC_GetAudioInterface
+ * @see eos_rtc.h
+ * @see eos_rtc_types.h
+ */
+EOS_DECLARE_FUNC(EOS_HRTC) EOS_Platform_GetRTCInterface(EOS_HPlatform Handle);
+
+/**
+ * Get a handle to the RTC Admin interface
+ * @return EOS_HRTCAdmin handle
+ *
+ * @see eos_rtc_admin.h
+ * @see eos_admin_types.h
+ */
+EOS_DECLARE_FUNC(EOS_HRTCAdmin) EOS_Platform_GetRTCAdminInterface(EOS_HPlatform Handle);
+
+/**
  * Get a handle to the PlayerDataStorage Interface.
  * @return EOS_HPlayerDataStorage handle
  *
@@ -194,6 +219,24 @@ EOS_DECLARE_FUNC(EOS_HLeaderboards) EOS_Platform_GetLeaderboardsInterface(EOS_HP
 EOS_DECLARE_FUNC(EOS_HMods) EOS_Platform_GetModsInterface(EOS_HPlatform Handle);
 
 /**
+ * Get a handle to the Anti-Cheat Client Interface.
+ * @return EOS_HAntiCheatClient handle
+ *
+ * @see eos_anticheatclient.h
+ * @see eos_anticheatclient_types.h
+ */
+EOS_DECLARE_FUNC(EOS_HAntiCheatClient) EOS_Platform_GetAntiCheatClientInterface(EOS_HPlatform Handle);
+
+/**
+ * Get a handle to the Anti-Cheat Server Interface.
+ * @return EOS_HAntiCheatServer handle
+ *
+ * @see eos_anticheatserver.h
+ * @see eos_anticheatserver_types.h
+ */
+EOS_DECLARE_FUNC(EOS_HAntiCheatServer) EOS_Platform_GetAntiCheatServerInterface(EOS_HPlatform Handle);
+
+/**
  * Get a handle to the Reports Interface.
  * @return EOS_HReports handle
  *
@@ -210,6 +253,15 @@ EOS_DECLARE_FUNC(EOS_HReports) EOS_Platform_GetReportsInterface(EOS_HPlatform Ha
  * @see eos_sanctions_types.h
  */
 EOS_DECLARE_FUNC(EOS_HSanctions) EOS_Platform_GetSanctionsInterface(EOS_HPlatform Handle);
+
+/**
+ * Get a handle to the Kids Web Service Interface.
+ * @return EOS_HKWS handle
+ *
+ * @see eos_kws.h
+ * @see eos_kws_types.h
+ */
+EOS_DECLARE_FUNC(EOS_HKWS) EOS_Platform_GetKWSInterface(EOS_HPlatform Handle);
 
 /**
  * This only will return the value set as the override otherwise EOS_NotFound is returned.

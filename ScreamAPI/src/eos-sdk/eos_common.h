@@ -56,6 +56,7 @@ typedef struct EOS_EpicAccountIdDetails* EOS_EpicAccountId;
 
 /** 
  * Check whether or not the given Epic Online Services Account ID is considered valid
+ * NOTE: This will return true for any EOS_EpicAccountId created with EOS_EpicAccountId_FromString as there is no validation
  * 
  * @param AccountId The Epic Online Services Account ID to check for validity
  * @return EOS_TRUE if the EOS_EpicAccountId is valid, otherwise EOS_FALSE
@@ -82,6 +83,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_EpicAccountId_ToString(EOS_EpicAccountId Accou
 
 /**
  * Retrieve an EOS_EpicAccountId from a raw string representing an Epic Online Services Account ID. The input string must be null-terminated.
+ * NOTE: There is no validation on the string format, this should only be used with values serialized from legitimate sources such as EOS_EpicAccountId_ToString
  *
  * @param AccountIdString The stringified account ID for which to retrieve the Epic Online Services Account ID
  * @return The EOS_EpicAccountId that corresponds to the AccountIdString
@@ -105,6 +107,7 @@ typedef struct EOS_ProductUserIdDetails* EOS_ProductUserId;
 
 /**
  * Check whether or not the given account unique ID is considered valid
+ * NOTE: This will return true for any EOS_ProductUserId created with EOS_ProductUserId_FromString as there is no validation
  *
  * @param AccountId The Product User ID to check for validity
  * @return EOS_TRUE if the EOS_ProductUserId is valid, otherwise EOS_FALSE
@@ -131,6 +134,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_ProductUserId_ToString(EOS_ProductUserId Accou
 
 /**
  * Retrieve an EOS_ProductUserId from a raw string representing an Epic Online Services Product User ID. The input string must be null-terminated.
+ * NOTE: There is no validation on the string format, this should only be used with values serialized from legitimate sources such as EOS_ProductUserId_ToString
  *
  * @param ProductUserIdString The stringified product user ID for which to retrieve the Epic Online Services Product User ID
  * @return The EOS_ProductUserId that corresponds to the ProductUserIdString
@@ -318,7 +322,9 @@ EOS_ENUM(EOS_EExternalAccountType,
 	/** External account is associated with Google */
 	EOS_EAT_GOOGLE = 10,
 	/** External account is associated with Oculus */
-	EOS_EAT_OCULUS = 11
+	EOS_EAT_OCULUS = 11,
+	/** External account is associated with itch.io */
+	EOS_EAT_ITCHIO = 12
 );
 
 /**
@@ -327,8 +333,7 @@ EOS_ENUM(EOS_EExternalAccountType,
  * The type of authentication token is specific to each provider.
  * Tokens in string format should be passed as-is to the function.
  * Tokens retrieved as raw byte arrays should be converted into a hex-encoded UTF-8 string (e.g. "FA87097A..") before being passed to the function.
- * For C/C++ API integration, use the EOS_ByteArray_ToString API for the conversion.
- * For C# integration, you can use <see cref="Helper.ToHexString" /> for the conversion.
+ * EOS_ByteArray_ToString can be used for this conversion.
  *
  * @see EOS_Auth_Login
  * @see EOS_Connect_Login
@@ -349,8 +354,7 @@ EOS_ENUM(EOS_EExternalCredentialType,
 	 * For ticket generation parameters, use pDataToInclude(NULL) and cbDataToInclude(0).
 	 *
 	 * The retrieved App Ticket byte buffer needs to be converted into a hex-encoded UTF-8 string (e.g. "FA87097A..") before passing it to the EOS_Auth_Login or EOS_Connect_Login APIs.
-	 * For C/C++ API integration, use the EOS_ByteArray_ToString API for the conversion.
-	 * For C# integration, you can use <see cref="Helper.ToHexString" /> for the conversion.
+	 * EOS_ByteArray_ToString can be used for this conversion.
 	 *
 	 * Supported with EOS_Auth_Login, EOS_Connect_Login.
 	 */
@@ -469,8 +473,28 @@ EOS_ENUM(EOS_EExternalCredentialType,
 	 *
 	 * Note that in order to successfully retrieve a valid non-zero id for the local user using ovr_User_GetUser(),
 	 * your Oculus App needs to be configured in the Oculus Developer Dashboard to have the User ID feature enabled.
+	 *
+	 * Supported with EOS_Connect_Login.
 	 */
-	EOS_ECT_OCULUS_USERID_NONCE = 13
+	EOS_ECT_OCULUS_USERID_NONCE = 13,
+	/**
+	 * itch.io JWT Access Token
+	 *
+	 * Use the itch.io app manifest to receive a JWT access token for the local user via the ITCHIO_API_KEY process environment variable.
+	 * The itch.io access token is valid for 7 days after which the game needs to be restarted by the user as otherwise EOS Connect
+	 * authentication session can no longer be refreshed.
+	 *
+	 * Supported with EOS_Connect_Login.
+	 */
+	EOS_ECT_ITCHIO_JWT = 14,
+	/**
+	 * itch.io Key Access Token
+	 *
+	 * This access token type is retrieved through the OAuth 2.0 authentication flow for the itch.io application.
+	 *
+	 * Supported with EOS_Connect_Login.
+	 */
+	EOS_ECT_ITCHIO_KEY = 15
 );
 
 #pragma pack(pop)

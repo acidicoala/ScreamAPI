@@ -109,9 +109,9 @@ EOS_ENUM(EOS_ESessionAttributeAdvertisementType,
 /** Maximum length of the name of the attribute associated with the session */
 #define EOS_SESSIONMODIFICATION_MAX_SESSION_ATTRIBUTE_LENGTH 64
 
-/** Minimum number of characters the session id override */
+/** Minimum number of characters allowed in the session id override */
 #define EOS_SESSIONMODIFICATION_MIN_SESSIONIDOVERRIDE_LENGTH 16
-/** Maximum number of characters a session id override */
+/** Maximum number of characters allowed in the session id override */
 #define EOS_SESSIONMODIFICATION_MAX_SESSIONIDOVERRIDE_LENGTH 64
 
 /** The most recent version of the EOS_Sessions_CreateSessionModification API. */

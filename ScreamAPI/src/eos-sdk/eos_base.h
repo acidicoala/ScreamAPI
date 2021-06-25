@@ -136,9 +136,9 @@ typedef int32_t EOS_Bool;
 inline constexpr name operator|(name Left, name Right) { return static_cast<name>((__underlying_type(name))Left | (__underlying_type(name))Right); } \
 inline constexpr name operator&(name Left, name Right) { return static_cast<name>((__underlying_type(name))Left & (__underlying_type(name))Right); } \
 inline constexpr name operator^(name Left, name Right) { return static_cast<name>((__underlying_type(name))Left ^ (__underlying_type(name))Right); } \
-inline constexpr name& operator|=(name& Left, name Right) { return Left = Left | Right; } \
-inline constexpr name& operator&=(name& Left, name Right) { return Left = Left & Right; } \
-inline constexpr name& operator^=(name& Left, name Right) { return Left = Left ^ Right; } \
+inline name& operator|=(name& Left, name Right) { return Left = Left | Right; } \
+inline name& operator&=(name& Left, name Right) { return Left = Left & Right; } \
+inline name& operator^=(name& Left, name Right) { return Left = Left ^ Right; } \
 /**/
 #else
 #define EOS_ENUM_BOOLEAN_OPERATORS(name)

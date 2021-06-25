@@ -1,7 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 #pragma once
 
-#include "eos_base.h"
+#include "eos_common.h"
 
 /**
  * The Logging Interface grants access to log output coming from the SDK at various levels of detail.
@@ -80,6 +80,8 @@ EOS_ENUM(EOS_ELogCategory,
 	EOS_LC_TitleStorage = 22,
 	/** Logs related to the Mods service */
 	EOS_LC_Mods = 23,
+	/** Logs related to the Anti-Cheat service */
+	EOS_LC_AntiCheat = 24,
 	/** Logs related to reports client. */
 	EOS_LC_Reports = 25,
 	/** Logs related to the Sanctions service */
@@ -88,6 +90,10 @@ EOS_ENUM(EOS_ELogCategory,
 	EOS_LC_ProgressionSnapshots = 27,
 	/** Logs related to the Kids Web Services integration */
 	EOS_LC_KWS = 28,
+	/** Logs related to the RTC API */
+	EOS_LC_RTC = 29,
+	/** Logs related to the RTC Admin API */
+	EOS_LC_RTCAdmin = 30,
 
 	/** Not a real log category. Used by EOS_Logging_SetLogLevel to set the log level for all categories at the same time */
 	EOS_LC_ALL_CATEGORIES = 0x7fffffff

@@ -380,11 +380,50 @@ EOS_RESULT_VALUE(EOS_Mods_CannotGetManifestLocation, 11015)
 /** Attempting to perform an action with a mod that does not support the current operating system. */
 EOS_RESULT_VALUE(EOS_Mods_UnsupportedOS, 11016)
 
+/** The anti-cheat client protection is not available. Check that the game was started using the correct launcher. */
+EOS_RESULT_VALUE(EOS_AntiCheat_ClientProtectionNotAvailable, 12000)
+/** The current anti-cheat mode is incorrect for using this API */
+EOS_RESULT_VALUE(EOS_AntiCheat_InvalidMode, 12001)
+/** The ProductId provided to the anti-cheat client helper executable does not match what was used to initialize the EOS SDK */
+EOS_RESULT_VALUE(EOS_AntiCheat_ClientProductIdMismatch, 12002)
+/** The SandboxId provided to the anti-cheat client helper executable does not match what was used to initialize the EOS SDK */
+EOS_RESULT_VALUE(EOS_AntiCheat_ClientSandboxIdMismatch, 12003)
+/** (ProtectMessage/UnprotectMessage) No session key is available, but it is required to complete this operation */
+EOS_RESULT_VALUE(EOS_AntiCheat_ProtectMessageSessionKeyRequired, 12004)
+/** (ProtectMessage/UnprotectMessage) Message integrity is invalid */
+EOS_RESULT_VALUE(EOS_AntiCheat_ProtectMessageValidationFailed, 12005)
+/** (ProtectMessage/UnprotectMessage) Initialization failed */
+EOS_RESULT_VALUE(EOS_AntiCheat_ProtectMessageInitializationFailed, 12006)
+/** (RegisterPeer) Peer is already registered */
+EOS_RESULT_VALUE(EOS_AntiCheat_PeerAlreadyRegistered, 12007)
+/** (UnregisterPeer) Peer does not exist */
+EOS_RESULT_VALUE(EOS_AntiCheat_PeerNotFound, 12008)
+/** (ReceiveMessageFromPeer) Invalid call: Peer is not protected */
+EOS_RESULT_VALUE(EOS_AntiCheat_PeerNotProtected, 12009)
+
+/** EOS RTC room cannot accept more participants */
+EOS_RESULT_VALUE(EOS_RTC_TooManyParticipants, 13000)
+/** EOS RTC room already exists*/
+EOS_RESULT_VALUE(EOS_RTC_RoomAlreadyExists, 13001)
+/** The user kicked out from the room */
+EOS_RESULT_VALUE(EOS_RTC_UserKicked, 13002)
+/** The user is banned */
+EOS_RESULT_VALUE(EOS_RTC_UserBanned, 13003)
+/** EOS RTC room was left successfully */
+EOS_RESULT_VALUE(EOS_RTC_RoomWasLeft, 13004)
+/** Connection dropped due to long timeout */
+EOS_RESULT_VALUE(EOS_RTC_ReconnectionTimegateExpired, 13005)
+
 /** The number of available Snapshot IDs have all been exhausted. */
 EOS_RESULT_VALUE(EOS_ProgressionSnapshot_SnapshotIdUnavailable, 14000)
 
 /** The KWS user does not have a parental email associated with the account.  The parent account was unlinked or deleted */
 EOS_RESULT_VALUE(EOS_KWS_ParentEmailMissing, 15000)
+/** The KWS user is no longer a minor and trying to update the parent email */
+EOS_RESULT_VALUE(EOS_KWS_UserGraduated, 15001)
+
+/** EOS Android VM not stored */
+EOS_RESULT_VALUE(EOS_Android_JavaVMNotStored, 17000)
 
 /** An unexpected error that we cannot identify has occurred. */
 EOS_RESULT_VALUE_LAST(EOS_UnexpectedError, 0x7FFFFFFF)

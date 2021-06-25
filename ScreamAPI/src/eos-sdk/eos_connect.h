@@ -5,7 +5,7 @@
 
 /**
  * The Connect Interface is used to manage local user permissions and access to backend services through the verification of various forms of credentials.
- * It creates an association between third party providers and an internal mapping that allows Epic Online Services to represent a user agnostically
+ * It creates an association between third party providers and an internal mapping that allows Epic Online Services to represent a user agnostically.
  * All Connect Interface calls take a handle of type EOS_HConnect as the first parameter.
  * This handle can be retrieved from a EOS_HPlatform handle by using the EOS_Platform_GetConnectInterface function.
  *
@@ -92,9 +92,9 @@ EOS_DECLARE_FUNC(void) EOS_Connect_UnlinkAccount(EOS_HConnect Handle, const EOS_
  * credentials type. If a Device ID already exists for the local user on the device then EOS_DuplicateNotAllowed
  * error result is returned and the caller should proceed to calling EOS_Connect_Login directly.
  *
- * @param Options structure containing operation input parameters
- * @param ClientData arbitrary data that is passed back to you in the CompletionDelegate
- * @param CompletionDelegate a callback that is fired when the create operation completes, either successfully or in error
+ * @param Options structure containing operation input parameters.
+ * @param ClientData arbitrary data that is passed back to you in the CompletionDelegate.
+ * @param CompletionDelegate a callback that is fired when the create operation completes, either successfully or in error.
  */
 EOS_DECLARE_FUNC(void) EOS_Connect_CreateDeviceId(EOS_HConnect Handle, const EOS_Connect_CreateDeviceIdOptions* Options, void* ClientData, const EOS_Connect_OnCreateDeviceIdCallback CompletionDelegate);
 
@@ -104,9 +104,9 @@ EOS_DECLARE_FUNC(void) EOS_Connect_CreateDeviceId(EOS_HConnect Handle, const EOS
  * The deletion is permanent and it is not possible to recover lost game data and progression
  * if the Device ID had not been linked with at least one real external user account.
  *
- * @param Options structure containing operation input parameters.
- * @param ClientData arbitrary data that is passed back to you in the CompletionDelegate.
- * @param CompletionDelegate a callback that is fired when the delete operation completes, either successfully or in error.
+ * @param Options structure containing operation input parameters
+ * @param ClientData arbitrary data that is passed back to you in the CompletionDelegate
+ * @param CompletionDelegate a callback that is fired when the delete operation completes, either successfully or in error
  */
 EOS_DECLARE_FUNC(void) EOS_Connect_DeleteDeviceId(EOS_HConnect Handle, const EOS_Connect_DeleteDeviceIdOptions* Options, void* ClientData, const EOS_Connect_OnDeleteDeviceIdCallback CompletionDelegate);
 
@@ -220,8 +220,8 @@ EOS_DECLARE_FUNC(EOS_ProductUserId) EOS_Connect_GetExternalAccountMapping(EOS_HC
 /**
  * Fetch an external account ID, in string form, that maps to a given Product User ID.
  *
- * @param Options structure containing the local user and target Product User ID
- * @param OutBuffer The buffer into which the external account ID data should be written.  The buffer must be long enough to hold a string of EOS_CONNECT_EXTERNAL_ACCOUNT_ID_MAX_LENGTH.
+ * @param Options structure containing the local user and target Product User ID.
+ * @param OutBuffer The buffer into which the external account ID data should be written. The buffer must be long enough to hold a string of EOS_CONNECT_EXTERNAL_ACCOUNT_ID_MAX_LENGTH.
  * @param InOutBufferLength The size of the OutBuffer in characters.
  *                          The input buffer should include enough space to be null-terminated.
  *                          When the function returns, this parameter will be filled with the length of the string copied into OutBuffer.
@@ -326,7 +326,7 @@ EOS_DECLARE_FUNC(int32_t) EOS_Connect_GetLoggedInUsersCount(EOS_HConnect Handle)
 EOS_DECLARE_FUNC(EOS_ProductUserId) EOS_Connect_GetLoggedInUserByIndex(EOS_HConnect Handle, int32_t Index);
 
 /**
- * Fetches the login status for an Product User ID. This Product User ID is considered logged in as long as the underlying access token has not expired.
+ * Fetches the login status for an Product User ID.  This Product User ID is considered logged in as long as the underlying access token has not expired.
  *
  * @param LocalUserId the Product User ID of the user being queried.
  *
@@ -337,7 +337,7 @@ EOS_DECLARE_FUNC(EOS_ELoginStatus) EOS_Connect_GetLoginStatus(EOS_HConnect Handl
 /**
  * Register to receive upcoming authentication expiration notifications.
  * Notification is approximately 10 minutes prior to expiration.
- * Call EOS_Connect_Login again with valid third party credentials to refresh access
+ * Call EOS_Connect_Login again with valid third party credentials to refresh access.
  *
  * @note must call RemoveNotifyAuthExpiration to remove the notification.
  *
@@ -358,7 +358,6 @@ EOS_DECLARE_FUNC(void) EOS_Connect_RemoveNotifyAuthExpiration(EOS_HConnect Handl
 
 /**
  * Register to receive user login status updates.
- *
  * @note must call RemoveNotifyLoginStatusChanged to remove the notification.
  *
  * @param Options structure containing the API version of the callback to use.

@@ -15,6 +15,11 @@
 /**
  * Creates a lobby and adds the user to the lobby membership.  There is no data associated with the lobby at the start and can be added vis EOS_Lobby_UpdateLobbyModification
  *
+ * If the lobby is successfully created with an RTC Room enabled, the lobby system will automatically join and maintain the connection to the RTC room as long as the
+ * local user remains in the lobby. Applications can use the EOS_Lobby_GetRTCRoomName to get the name of the RTC Room associated with a lobby, which may be used with
+ * many of the EOS_RTC_* suite of functions. This can be useful to: register for notifications for talking status; to mute or unmute the local user's audio output;
+ * to block or unblock room participants; to set local audio device settings; and more.
+ *
  * @param Options Required fields for the creation of a lobby such as a user count and its starting advertised state
  * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate
  * @param CompletionDelegate A callback that is fired when the create operation completes, either successfully or in error
@@ -42,6 +47,11 @@ EOS_DECLARE_FUNC(void) EOS_Lobby_DestroyLobby(EOS_HLobby Handle, const EOS_Lobby
 /**
  * Join a lobby, creating a local instance under a given lobby ID.  Backend will validate various conditions to make sure it is possible to join the lobby.
  *
+ * If the lobby is successfully join has an RTC Room enabled, the lobby system will automatically join and maintain the connection to the RTC room as long as the
+ * local user remains in the lobby. Applications can use the EOS_Lobby_GetRTCRoomName to get the name of the RTC Room associated with a lobby, which may be used with
+ * many of the EOS_RTC_* suite of functions. This can be useful to: register for notifications for talking status; to mute or unmute the local user's audio output;
+ * to block or unblock room participants; to set local audio device settings; and more.
+ *
  * @param Options Structure containing information about the lobby to be joined
  * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate
  * @param CompletionDelegate A callback that is fired when the join operation completes, either successfully or in error
@@ -53,6 +63,8 @@ EOS_DECLARE_FUNC(void) EOS_Lobby_JoinLobby(EOS_HLobby Handle, const EOS_Lobby_Jo
 
 /**
  * Leave a lobby given a lobby ID
+ *
+ * If the lobby you are leaving had an RTC Room enabled, leaving the lobby will also automatically leave the RTC room.
  *
  * @param Options Structure containing information about the lobby to be left
  * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate
@@ -357,6 +369,84 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Lobby_CopyLobbyDetailsHandleByUiEventId(EOS_HL
  *         EOS_NotFound if the lobby doesn't exist
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_Lobby_CopyLobbyDetailsHandle(EOS_HLobby Handle, const EOS_Lobby_CopyLobbyDetailsHandleOptions* Options, EOS_HLobbyDetails* OutLobbyDetailsHandle);
+
+/**
+ * Get the name of the RTC room associated with a specific lobby a local user belongs to.
+ *
+ * This value can be used whenever you need a RoomName value in the RTC_* suite of functions. RTC Room Names must not be used with
+ * EOS_RTC_JoinRoom, EOS_RTC_LeaveRoom, or EOS_RTC_AddNotifyDisconnected. Doing so will return EOS_AccessDenied or
+ * EOS_INVALID_NOTIFICATIONID if used with those functions.
+ *
+ * This function will only succeed when called on a lobby the local user is currently a member of.
+ *
+ * @param Options Structure containing information about the RTC room name to retrieve
+ * @param OutBuffer The buffer to store the null-terminated room name string within
+ * @param InOutBufferLength In: The maximum amount of writable chars in OutBuffer, Out: The minimum amount of chars needed in OutBuffer to store the RTC room name (including the null-terminator)
+ *
+ * @return EOS_Success if a room exists for the specified lobby, there was enough space in OutBuffer, and the name was written successfully
+ *         EOS_NotFound if the lobby does not exist
+ *         EOS_Disabled if the lobby exists, but did not have the RTC Room feature enabled when created
+ *         EOS_InvalidParameters if you pass a null pointer on invalid length for any of the parameters
+ *         EOS_LimitExceeded The OutBuffer is not large enough to receive the room name. InOutBufferLength contains the required minimum length to perform the operation successfully.
+ */
+EOS_DECLARE_FUNC(EOS_EResult) EOS_Lobby_GetRTCRoomName(EOS_HLobby Handle, const EOS_Lobby_GetRTCRoomNameOptions* Options, char* OutBuffer, uint32_t* InOutBufferLength);
+
+/**
+ * Get the current connection status of the RTC Room for a lobby.
+ *
+ * The RTC Room connection status is independent of the lobby connection status, however the lobby system will attempt to keep
+ * them consistent, automatically connecting to the RTC room after joining a lobby which has an associated RTC room and disconnecting
+ * from the RTC room when a lobby is left or disconnected.
+ *
+ * This function will only succeed when called on a lobby the local user is currently a member of.
+ *
+ * @param Options Structure containing information about the lobby to query the RTC Room connection status for
+ * @param bOutIsConnected If the result is EOS_Success, this will be set to EOS_TRUE if we are connected, or EOS_FALSE if we are not yet connected.
+ *
+ * @return EOS_Success if we are connected to the specified lobby, the input options and parameters were valid and we were able to write to bOutIsConnected successfully.
+ *         EOS_NotFound if the lobby doesn't exist
+ *         EOS_Disabled if the lobby exists, but did not have the RTC Room feature enabled when created
+ *         EOS_InvalidParameters if bOutIsConnected is NULL, or any other parameters are NULL or invalid
+ *
+ * @see EOS_Lobby_AddNotifyRTCRoomConnectionChanged
+ */
+EOS_DECLARE_FUNC(EOS_EResult) EOS_Lobby_IsRTCRoomConnected(EOS_HLobby Handle, const EOS_Lobby_IsRTCRoomConnectedOptions* Options, EOS_Bool* bOutIsConnected);
+
+/**
+ * Register to receive notifications of when the RTC Room for a particular lobby has a connection status change.
+ *
+ * The RTC Room connection status is independent of the lobby connection status, however the lobby system will attempt to keep
+ * them consistent, automatically connecting to the RTC room after joining a lobby which has an associated RTC room and disconnecting
+ * from the RTC room when a lobby is left or disconnected.
+ *
+ * This notification is entirely informational and requires no action in response by the application. If the connected status is offline
+ * (bIsConnected is EOS_FALSE), the connection will automatically attempt to reconnect. The purpose of this notification is to allow
+ * applications to show the current connection status of the RTC room when the connection is not established.
+ *
+ * Unlike EOS_RTC_AddNotifyDisconnected, EOS_RTC_LeaveRoom should not be called when the RTC room is disconnected.
+ *
+ * This function will only succeed when called on a lobby the local user is currently a member of.
+ *
+ * @param Options Structure containing information about the lobby to receive updates about
+ * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate.
+ * @param NotificationFn The function to call if the RTC Room's connection status changes
+ *
+ * @return A valid notification ID if the NotificationFn was successfully registered, or EOS_INVALID_NOTIFICATIONID if the input was invalid, the lobby did not exist, or the lobby did not have an RTC room.
+ *
+ * @see EOS_Lobby_RemoveNotifyRTCRoomConnectionChanged
+ */
+EOS_DECLARE_FUNC(EOS_NotificationId) EOS_Lobby_AddNotifyRTCRoomConnectionChanged(EOS_HLobby Handle, const EOS_Lobby_AddNotifyRTCRoomConnectionChangedOptions* Options, void* ClientData, const EOS_Lobby_OnRTCRoomConnectionChangedCallback NotificationFn);
+
+/**
+ * Unregister from receiving notifications when an RTC Room's connection status changes.
+ *
+ * This should be called when the local user is leaving a lobby.
+ *
+ * @param InId Handle representing the registered callback
+ *
+ * @see EOS_Lobby_AddNotifyRTCRoomConnectionChanged
+ */
+EOS_DECLARE_FUNC(void) EOS_Lobby_RemoveNotifyRTCRoomConnectionChanged(EOS_HLobby Handle, EOS_NotificationId InId);
 
 /**
  * To modify lobbies or the lobby member data, you must call EOS_Lobby_UpdateLobbyModification to create a Lobby Modification handle. To modify that handle, call

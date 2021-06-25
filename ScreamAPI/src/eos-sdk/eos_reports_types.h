@@ -29,11 +29,14 @@ EOS_ENUM(EOS_EPlayerReportsCategory,
 	EOS_PRC_Other = 7
 );
 
-/** Max length of a report description text, not including the terminating null. */
-#define EOS_REPORTS_REPORTDESCRIPTION_MAX_LENGTH 512
+/** Max length of a report message text, not including the null terminator. */
+#define EOS_REPORTS_REPORTMESSAGE_MAX_LENGTH 512
+
+/** Max length of a report context JSON payload, not including the null terminator. */
+#define EOS_REPORTS_REPORTCONTEXT_MAX_LENGTH 4096
 
 /** The most recent version of the EOS_Reports_SendPlayerBehaviorReport API. */
-#define EOS_REPORTS_SENDPLAYERBEHAVIORREPORT_API_LATEST 1
+#define EOS_REPORTS_SENDPLAYERBEHAVIORREPORT_API_LATEST 2
 
 /**
  * Input parameters for the EOS_Reports_SendPlayerBehaviorReport function.
@@ -46,14 +49,22 @@ EOS_STRUCT(EOS_Reports_SendPlayerBehaviorReportOptions, (
 	/** Product User ID of the reported player. */
 	EOS_ProductUserId ReportedUserId;
 	/** Category for the player report. */
-	EOS_EPlayerReportsCategory ReportCategory;
+	EOS_EPlayerReportsCategory Category;
 	/**
-	 * Arbitrary text string associated with the report as UTF-8 encoded null-terminated string.
+	 * Optional plain text string associated with the report as UTF-8 encoded null-terminated string.
 	 *
-	 * The length of the description can be at maximum up to EOS_REPORTS_REPORTDESCRIPTION_MAX_LENGTH bytes
+	 * The length of the message can be at maximum up to EOS_REPORTS_REPORTMESSAGE_MAX_LENGTH bytes
 	 * and any excess characters will be truncated upon sending the report.
 	 */
-	const char* ReportDescription;
+	const char* Message;
+	/**
+	 * Optional JSON string associated with the report as UTF-8 encoded null-terminated string.
+	 * This is intended as a way to associate arbitrary structured context information with a report.
+	 *
+	 * This string needs to be valid JSON, report will fail otherwise.
+	 * The length of the context can be at maximum up to EOS_REPORTS_REPORTCONTEXT_MAX_LENGTH bytes, not including the null terminator, report will fail otherwise.
+	 */
+	const char* Context;
 ));
 
 /**

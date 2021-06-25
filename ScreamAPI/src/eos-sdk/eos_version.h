@@ -5,7 +5,7 @@
 // These numbers define the banner SDK version, and are the most significant numbers when ordering two engine versions (that is, a 4.12.* version is always 
 // newer than a 4.11.* version, regardless of the changelist that it was built with)
 #define EOS_MAJOR_VERSION	1
-#define EOS_MINOR_VERSION	11
+#define EOS_MINOR_VERSION	13
 #define EOS_PATCH_VERSION	0
 
 // Macros for encoding strings
