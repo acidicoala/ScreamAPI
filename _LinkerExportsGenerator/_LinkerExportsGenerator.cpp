@@ -1,6 +1,6 @@
 // Windows headers
-#include <windows.h>
-#include <shobjidl.h> 
+#include <Windows.h>
+#include <Shobjidl.h> 
 
 // C++ std lib headers
 #include <cassert>
