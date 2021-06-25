@@ -27,16 +27,20 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryOwnership(EOS_HEcom Handle, const EOS_Ecom_
 	static auto proxy = ScreamAPI::proxyFunction(&EOS_Ecom_QueryOwnership, __func__);
 
 	if(Config::EnableItemUnlocker()){
-		auto container = new ScreamAPI::OriginalDataContainer(ClientData, CompletionDelegate);
+		const auto container = new ScreamAPI::OriginalDataContainer(ClientData, CompletionDelegate);
 		proxy(Handle, Options, container, [](const EOS_Ecom_QueryOwnershipCallbackInfo* Data){
 			ScreamAPI::proxyCallback<EOS_Ecom_QueryOwnershipCallbackInfo>(Data, &Data->ClientData,
 				[](EOS_Ecom_QueryOwnershipCallbackInfo* mData){
-				// Force DLC unlocking even if something went wrong
-				if(mData->ResultCode != EOS_EResult::EOS_Success && Config::ForceSuccess()){
-					Logger::warn("EOS_Ecom_QueryOwnershipCallback Result: %s. Forcing EOS_Success.", EOS_EResult_ToString(mData->ResultCode));
-					mData->ItemOwnershipCount = (uint32_t)ownerships.size();
-					mData->ItemOwnership = ownerships.data();
-					mData->ResultCode = EOS_EResult::EOS_Success;
+				if(mData->ResultCode != EOS_EResult::EOS_Success) {
+					Logger::warn("EOS_Ecom_QueryOwnershipCallback Result: %s.", EOS_EResult_ToString(mData->ResultCode));
+
+					// Force DLC unlocking even if something went wrong
+					if(Config::ForceSuccess()){
+						Logger::warn("Forcing EOS_Success.");
+						mData->ItemOwnershipCount = ownerships.size();
+						mData->ItemOwnership = ownerships.data();
+						mData->ResultCode = EOS_EResult::EOS_Success;
+					}
 				}
 
 				Logger::dlc("Responding with %d item ownerships:", mData->ItemOwnershipCount);

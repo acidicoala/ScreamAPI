@@ -2,7 +2,7 @@
 #include "pch.h"
 #include "Config.h"
 #include <Overlay_types.h>
-#include <eos-sdk\eos_sdk.h>
+#include <eos-sdk/eos_sdk.h>
 
 namespace ScreamAPI{
 
@@ -48,7 +48,7 @@ auto proxyFunction(RetType(EOS_CALL*)(ArgTypes...), LPCSTR rawFunctionName){
 
 struct OriginalDataContainer{
 	void* originalClientData;
-	void (*originalCompletionDelegate)(const void*);
+	void (EOS_CALL *originalCompletionDelegate)(const void*);
 	OriginalDataContainer(void* clientData, void* completionDelegate) {
 		originalClientData = clientData;
 		reinterpret_cast<void*&>(originalCompletionDelegate) = completionDelegate;
