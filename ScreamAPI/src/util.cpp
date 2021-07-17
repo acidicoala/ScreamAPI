@@ -1,8 +1,7 @@
-#include <wchar.h>
 #include "pch.h"
 #include "util.h"
 #include "ScreamAPI.h"
-#include "eos-sdk\eos_auth.h"
+#include "eos-sdk/eos_auth.h"
 
 namespace Util{
 
