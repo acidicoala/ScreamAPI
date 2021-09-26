@@ -48,6 +48,15 @@
     "entitlements"
   ],
   "properties": {
+    "$schema": {
+      "$id": "#/properties/%24schema",
+      "type": {
+        "type": "string",
+        "const": "https://raw.githubusercontent.com/acidicoala/ScreamAPI/master/extra/ScreamAPI.schema.json"
+      },
+      "title": "Schema definition",
+      "description": "This field allows IDEs to fetch corresponding JSON schema, which helps to edit the config by showing description and example for each of config options."
+    },
     "version": {
       "$id": "#/properties/version",
       "type": "integer",
@@ -123,35 +132,34 @@
         "unlock_all": {
           "$id": "#/properties/entitlements/properties/unlock_all",
           "type": "boolean",
-          "title": "The unlock_all schema",
-          "description": "An explanation about the purpose of this instance.",
-          "default": false,
-          "examples": [
-            true
-          ]
+          "title": "Unlock all entitlements.",
+          "description": "Controls if all entitlements that were requested by their IDs should be automatically unlocked.",
+          "default": true,
+          "examples": [true, false]
         },
         "auto_inject": {
           "$id": "#/properties/entitlements/properties/auto_inject",
           "type": "boolean",
-          "title": "The auto_inject schema",
-          "description": "An explanation about the purpose of this instance.",
-          "default": false,
-          "examples": [
-            true
-          ]
+          "title": "Automatically inject all entitlements",
+          "description": "Controls if ScreamAPI should fetch from online database a list of all available entitlement IDs, when a game doesn't provide them itself.",
+          "default": true,
+          "examples": [true, false]
         },
         "inject": {
           "$id": "#/properties/entitlements/properties/inject",
           "type": "array",
-          "title": "The inject schema",
-          "description": "An explanation about the purpose of this instance.",
+          "title": "Inject entitlements",
+          "description": "Specifies which entitlement ids¹ to inject when a game asks for a list of entitlements that a user owns.",
           "default": [],
           "examples": [
-            []
+            [
+              "0123456789abcdef0123456789abcdef",
+              "fedbca9876543210fedbca9876543210"
+            ]
           ],
-          "additionalItems": true,
           "items": {
-            "$id": "#/properties/entitlements/properties/inject/items"
+            "$id": "#/properties/entitlements/properties/inject/items",
+            "type": "string"
           }
         }
       },

@@ -1,0 +1,134 @@
+name: Build Project
+on:
+  push:
+    paths-ignore:
+      - '.idea/**'
+      - 'README.md'
+      - 'build.ps1'
+      - 'extra/**'
+env:
+  SCREAM_API_VERSION: 2.0.0
+
+# Based on: https://github.com/lukka/CppBuildTasks-Validation
+jobs:
+  build-project:
+    name: Build ${{ matrix.config }} for ${{ matrix.arch }}-bit architecture
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        arch: [ 32, 64 ]
+        config: [ Release, RelWithDebInfo ]
+        is_master:
+          - ${{ github.ref == 'refs/heads/master' }}
+        exclude: # Don't build Release unless pushed on master branch
+          - is_master: false
+            config: Release
+        include:
+          - arch: 32
+            platform: Win32
+            term: amd64_x86
+
+          - arch: 64
+            platform: x64
+            term: amd64
+    env:
+      BUILD_DIR: ${{ github.workspace }}\build\${{ matrix.arch }}
+      VCPKG_ROOT: ${{ github.workspace }}\vcpkg
+      DLL_FILE: EOSSDK-Win${{ matrix.arch }}-Shipping
+    steps:
+      # A workaround for missing conditional expressions
+      - name: Set version suffix to '-develop'
+        if: github.ref == 'refs/heads/develop'
+        run: echo "VERSION_SUFFIX=-develop" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
+
+      - name: Check out repository code
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Install and cache the latest CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Restore vcpkg and its artifacts.
+        uses: actions/cache@v2
+        with:
+          path: |
+            ${{ env.BUILD_DIR }}\vcpkg_installed
+            ${{ env.VCPKG_ROOT }}
+            !${{ env.VCPKG_ROOT }}\buildtrees
+            !${{ env.VCPKG_ROOT }}\packages
+            !${{ env.VCPKG_ROOT }}\downloads
+          key: vcpkg-${{ hashFiles( 'vcpkg.json' ) }}-${{ hashFiles( '.git/modules/vcpkg/HEAD' )}}-${{ matrix.arch }}-invalidate
+
+      - name: Setup Developer Command Prompt for Microsoft Visual C++.
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.term }}
+
+      - name: Restore build files from cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.BUILD_DIR }}
+          key: build-${{ matrix.arch }}-${{ matrix.config }}-${{ hashFiles( 'CMakeLists.txt' ) }}
+
+      - name: Regenerate build files
+        run: cmake -G "Visual Studio 16 2019" -A ${{ matrix.platform }} -B ${{ env.BUILD_DIR }}
+
+      - name: Build the project
+        run: cmake --build ${{ env.BUILD_DIR }} --config ${{ matrix.config }}
+
+      - name: Upload the binary file and debug info
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.DLL_FILE }}-${{ matrix.config }}
+          path: ${{ env.BUILD_DIR }}\${{ matrix.config }}\${{ env.DLL_FILE }}.*
+
+  package-project:
+    name: Package the artifacts into a release zip
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    needs: build-project
+    permissions:
+      contents: write
+    steps:
+      - name: Install required tools
+        run: |
+          sudo apt update
+          sudo apt install zip tree
+
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Download all workflow run artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: Print artifact tree
+        run: tree artifacts
+
+      - name: Make release zip
+        run: >
+          zip -j ScreamAPI-v${{ env.SCREAM_API_VERSION }}.zip
+          artifacts/*-Release/*.dll
+          extra/README.txt res/ScreamAPI.json
+
+      - name: Make release zip with debug info
+        run: >
+          zip -j ScreamAPI-v${{ env.SCREAM_API_VERSION }}-debug-info.zip
+          artifacts/*-RelWithDebInfo/*.dll artifacts/*-RelWithDebInfo/*.pdb
+          extra/README.txt res/ScreamAPI.json
+
+      - name: Create a Release draft
+        uses: softprops/action-gh-release@v1
+        with:
+          body: '# 📑 Changelog'
+          draft: true
+          prerelease: false
+          files: |
+            ScreamAPI-v${{ env.SCREAM_API_VERSION }}.zip
+            ScreamAPI-v${{ env.SCREAM_API_VERSION }}-debug-info.zip
+          name: Release v${{ env.SCREAM_API_VERSION }}
+          tag_name: v${{ env.SCREAM_API_VERSION }}
+          fail_on_unmatched_files: true
+

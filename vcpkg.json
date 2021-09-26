@@ -1,0 +1,13 @@
+{
+  "name": "scream-api",
+  "version": "0.0.0",
+  "license": "0BSD",
+  "dependencies": [
+    "cpr",
+    "nlohmann-json",
+    {
+      "name": "spdlog",
+      "default-features": false
+    }
+  ]
+}

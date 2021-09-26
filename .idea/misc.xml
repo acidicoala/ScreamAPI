@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeWorkspace" PROJECT_DIR="$PROJECT_DIR$" />
+  <component name="CidrRootsConfiguration">
+    <sourceRoots>
+      <file path="$PROJECT_DIR$/build/debug/x86/generated" />
+      <file path="$PROJECT_DIR$/build/debug/x86/vcpkg_installed/x86-windows-static/include" />
+      <file path="$PROJECT_DIR$/src" />
+    </sourceRoots>
+    <excludeRoots>
+      <file path="$PROJECT_DIR$/build" />
+      <file path="$PROJECT_DIR$/vcpkg" />
+    </excludeRoots>
+  </component>
+</project>

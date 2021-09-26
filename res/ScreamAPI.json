@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/acidicoala/ScreamAPI/master/extra/ScreamAPI.schema.json",
+  "version": 1,
+  "logging": true,
+  "block_metrics": true,
+  "catalog_items": {
+    "unlock_all": true,
+    "override": []
+  },
+  "entitlements": {
+    "unlock_all": true,
+    "auto_inject": true,
+    "inject": []
+  }
+}
