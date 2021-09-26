@@ -14,7 +14,7 @@
 
 ## Introduction
 
-> Hint: Click on spoilers (▶) to expand their content
+> Hint: Click on spoilers (`▶`) to expand their content
 
 <details>
 <summary>What is ScreamAPI?</summary>
