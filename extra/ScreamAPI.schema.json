@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/acidicoala/ScreamAPI/master/extra/ScreamAPI.schema.json",
+  "type": "object",
+  "title": "The root schema",
+  "description": "The root schema comprises the entire JSON document.",
+  "default": {},
+  "examples": [
+    {
+      "version": 1,
+      "logging": true,
+      "block_metrics": true,
+      "catalog_items": {
+        "unlock_all": true,
+        "override": []
+      },
+      "entitlements": {
+        "unlock_all": true,
+        "auto_inject": true,
+        "inject": []
+      }
+    },
+    {
+      "version": 1,
+      "logging": true,
+      "block_metrics": false,
+      "catalog_items": {
+        "unlock_all": true,
+        "override": [
+          "item_with_this_id_will_be_locked",
+          "the_rest_will_be_unlocked"
+        ]
+      },
+      "entitlements": {
+        "unlock_all": true,
+        "auto_inject": true,
+        "inject": [
+          "this_entitlement_will_be_additionally_injected"
+        ]
+      }
+    }
+  ],
+  "required": [
+    "version",
+    "logging",
+    "block_metrics",
+    "catalog_items",
+    "entitlements"
+  ],
+  "properties": {
+    "version": {
+      "$id": "#/properties/version",
+      "type": "integer",
+      "title": "Config version",
+      "description": "This field is used by ScreamAPI to identify how to parse the config file. This allows ScreamAPI to parse older config files in a backward compatible manner. Therefore, **this field must not be edited manually**!",
+      "default": 1
+    },
+    "logging": {
+      "$id": "#/properties/logging",
+      "type": "boolean",
+      "title": "Logging",
+      "description": "Enables or disables logging into a _ScreamAPI.log_ file.",
+      "default": false,
+      "examples": [true, false]
+    },
+    "block_metrics": {
+      "$id": "#/properties/block_metrics",
+      "type": "boolean",
+      "title": "Block Metrics",
+      "description": "Blocks reporting of analytics and usage metrics by the game to Epic Online Services. Metrics sent by EOS SDK itself remain unaffected.",
+      "default": false,
+      "examples": [true, false]
+    },
+    "catalog_items": {
+      "$id": "#/properties/catalog_items",
+      "type": "object",
+      "title": "Catalog Items",
+      "description": "Options in this object specify behaviour when games use `EOS_Ecom_QueryOwnership` function.",
+      "required": [
+        "unlock_all",
+        "override"
+      ],
+      "properties": {
+        "unlock_all": {
+          "$id": "#/properties/catalog_items/properties/unlock_all",
+          "type": "boolean",
+          "title": "Unlock all catalog items",
+          "description": "Controls if all items should be automatically unlocked.",
+          "default": true,
+          "examples": [true, false]
+        },
+        "override": {
+          "$id": "#/properties/catalog_items/properties/override",
+          "type": "array",
+          "title": "Override ownership",
+          "description": "Specifies items ids¹ that override the behaviour of `unlock_all`. If `unlock_all` is _true_, then items ids in this array will be locked. If `unlock_all` is _false_, then items ids in this array will be unlocked.",
+          "default": [],
+          "examples": [
+            [
+              "0123456789abcdef0123456789abcdef",
+              "fedbca9876543210fedbca9876543210"
+            ]
+          ],
+          "items": {
+            "$id": "#/properties/catalog_items/properties/override/items",
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "entitlements": {
+      "$id": "#/properties/entitlements",
+      "type": "object",
+      "title": "Entitlements",
+      "description": "Options in this object specify behaviour when games use `EOS_Ecom_QueryEntitlements` function.",
+      "required": [
+        "unlock_all",
+        "auto_inject",
+        "inject"
+      ],
+      "properties": {
+        "unlock_all": {
+          "$id": "#/properties/entitlements/properties/unlock_all",
+          "type": "boolean",
+          "title": "The unlock_all schema",
+          "description": "An explanation about the purpose of this instance.",
+          "default": false,
+          "examples": [
+            true
+          ]
+        },
+        "auto_inject": {
+          "$id": "#/properties/entitlements/properties/auto_inject",
+          "type": "boolean",
+          "title": "The auto_inject schema",
+          "description": "An explanation about the purpose of this instance.",
+          "default": false,
+          "examples": [
+            true
+          ]
+        },
+        "inject": {
+          "$id": "#/properties/entitlements/properties/inject",
+          "type": "array",
+          "title": "The inject schema",
+          "description": "An explanation about the purpose of this instance.",
+          "default": [],
+          "examples": [
+            []
+          ],
+          "additionalItems": true,
+          "items": {
+            "$id": "#/properties/entitlements/properties/inject/items"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
