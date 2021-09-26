@@ -50,12 +50,10 @@
   "properties": {
     "$schema": {
       "$id": "#/properties/%24schema",
-      "type": {
-        "type": "string",
-        "const": "https://raw.githubusercontent.com/acidicoala/ScreamAPI/master/extra/ScreamAPI.schema.json"
-      },
+      "type": "string",
       "title": "Schema definition",
-      "description": "This field allows IDEs to fetch corresponding JSON schema, which helps to edit the config by showing description and example for each of config options."
+      "description": "This field allows IDEs to fetch corresponding JSON schema, which helps to edit the config by showing description and example for each of config options.",
+      "default": "https://raw.githubusercontent.com/acidicoala/ScreamAPI/master/extra/ScreamAPI.schema.v1.json"
     },
     "version": {
       "$id": "#/properties/version",
