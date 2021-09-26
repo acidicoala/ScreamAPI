@@ -12,7 +12,7 @@
 
 🗃 [DLC Database](https://scream-db.web.app/)
 
-## Introduction
+## ℹ Introduction
 
 > Hint: Click on spoilers (`▶`) to expand their content
 
