@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/acidicoala/ScreamAPI/master/extra/ScreamAPI.schema.json",
+  "$schema": "https://raw.githubusercontent.com/acidicoala/ScreamAPI/master/extra/ScreamAPI.schema.v1.json",
   "version": 1,
   "logging": true,
   "block_metrics": true,
