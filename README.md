@@ -1,3 +1,9 @@
+
+| Branch   | Workflow |
+|-------------|----------|
+| `master` | [![Build Project](https://github.com/acidicoala/ScreamAPI/actions/workflows/build-project.yml/badge.svg?branch=master)](https://github.com/acidicoala/ScreamAPI/actions/workflows/build-project.yml) |
+| `develop` | [![Build Project](https://github.com/acidicoala/ScreamAPI/actions/workflows/build-project.yml/badge.svg?branch=develop)](https://github.com/acidicoala/ScreamAPI/actions/workflows/build-project.yml) |
+
 # 🐨 ScreamAPI
 
 **Legit DLC Unlocker for Epic Online Services**
