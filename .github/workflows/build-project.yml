@@ -7,7 +7,7 @@ on:
       - 'build.ps1'
       - 'extra/**'
 env:
-  SCREAM_API_VERSION: 2.0.0
+  SCREAM_API_VERSION: 2.0.1
 
 # Based on: https://github.com/lukka/CppBuildTasks-Validation
 jobs:
