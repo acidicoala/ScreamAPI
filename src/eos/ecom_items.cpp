@@ -28,7 +28,7 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryOwnership(
     };
 
     // log item IDs
-    logger::info("Game requested ownership of {} items:", Options->CatalogItemIdCount);
+    logger::info("❓ Game requested ownership of {} items:", Options->CatalogItemIdCount);
     for (uint32_t i = 0; i < Options->CatalogItemIdCount; i++) {
         auto id = Options->CatalogItemIds[i];
         logger::info("  ❔ {}", id);
