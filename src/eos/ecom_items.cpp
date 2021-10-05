@@ -1,4 +1,5 @@
 #include <sdk/eos_ecom.h>
+#include <sdk/eos_common.h>
 #include "config/config.hpp"
 #include "logger/logger.hpp"
 #include "std_ext.hpp"
@@ -44,6 +45,10 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryOwnership(
         add_without_duplicates(id, status);
     }
 
+    char local_user_id[EOS_EPICACCOUNTID_MAX_LENGTH + 1];
+    int32_t buffer_size = sizeof(local_user_id);
+
+    EOS_EpicAccountId_ToString(Options->LocalUserId, local_user_id, &buffer_size);
 
     // Execute blocking operation in a new thread to immediately return control to the game
     std::thread(
@@ -65,7 +70,7 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryOwnership(
             const EOS_Ecom_QueryOwnershipCallbackInfo data{
                 .ResultCode = EOS_EResult::EOS_Success,
                 .ClientData = ClientData,
-                .LocalUserId = Options->LocalUserId,
+                .LocalUserId = EOS_EpicAccountId_FromString(local_user_id),
                 .ItemOwnership = items.raw(),
                 .ItemOwnershipCount = items.count(),
             };

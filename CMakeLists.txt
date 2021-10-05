@@ -82,6 +82,7 @@ add_library(
         ${SRC_DIR}/logger/logger.cpp
         ${SRC_DIR}/scream_api/scream_api.cpp
         ${SRC_DIR}/eos/init.cpp
+        ${SRC_DIR}/eos/common.cpp
         ${SRC_DIR}/eos/logging.cpp
         ${SRC_DIR}/eos/metrics.cpp
         ${SRC_DIR}/eos/ecom_misc.cpp
