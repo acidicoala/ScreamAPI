@@ -12,7 +12,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Metrics_BeginPlayerSession(
     );
 
     if (config::get().block_metrics) {
-        logger::debug("Blocking EOS_Metrics_BeginPlayerSession");
+        logger::debug("⛔ Blocking EOS_Metrics_BeginPlayerSession");
 
         return EOS_EResult::EOS_Success;
     } else {
