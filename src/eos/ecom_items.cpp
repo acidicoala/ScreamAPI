@@ -5,8 +5,6 @@
 #include "scream_api/scream_api.hpp"
 #include "std_ext.hpp"
 
-#include <chrono>
-
 EOS_DECLARE_FUNC(void) EOS_Ecom_QueryOwnership(
     EOS_HEcom Handle,
     const EOS_Ecom_QueryOwnershipOptions* Options,
@@ -17,8 +15,7 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryOwnership(
 
     logger::info("❓ Game requested ownership of {} items:", Options->CatalogItemIdCount);
     for (uint32_t i = 0; i < Options->CatalogItemIdCount; i++) {
-        auto id = Options->CatalogItemIds[i];
-        logger::info("  ❔ {}", id);
+        logger::info("  ❔ {}", Options->CatalogItemIds[i]);
     }
 
     struct Container {

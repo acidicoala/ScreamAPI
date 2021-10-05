@@ -5,28 +5,7 @@
 #include "scream_api/scream_api.hpp"
 #include "std_ext.hpp"
 
-static std_ext::list<EOS_Ecom_Entitlement> entitlements;
-
-void add_without_duplicates(const char* entitlement_id, EOS_Bool redeemed = EOS_TRUE) {
-    auto entitlement_id_matches = [&](const EOS_Ecom_Entitlement& entitlement) {
-        return strcmp(entitlement_id, entitlement.EntitlementName) == 0;
-    };
-
-    if (not entitlements.contain(entitlement_id_matches)) {
-        auto id = _strdup(entitlement_id);
-        entitlements.add(
-            EOS_Ecom_Entitlement{
-                .ApiVersion = EOS_ECOM_ENTITLEMENT_API_LATEST,
-                .EntitlementName = id,
-                .EntitlementId = id,
-                .CatalogItemId = id,
-                .ServerIndex = -1,
-                .bRedeemed = redeemed,
-                .EndTimestamp = -1,
-            }
-        );
-    }
-};
+static std::vector<std::string> entitlements;
 
 EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlements(
     EOS_HEcom Handle,
@@ -36,6 +15,8 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlements(
 ) {
     static auto proxy = scream_api::get_original_function(&EOS_Ecom_QueryEntitlements, __func__);
 
+    static std::set<std::string> entitlement_set;
+
     logger::info("❓ Game requested {} entitlements:", Options->EntitlementNameCount);
 
     for (uint32_t i = 0; i < Options->EntitlementNameCount; i++) {
@@ -44,7 +25,7 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlements(
 
         if (config::get().entitlements.unlock_all) {
             logger::debug("Adding entitlement requested by game: {}", id);
-            add_without_duplicates(id);
+            entitlement_set.insert(id);
         }
     }
 
@@ -60,28 +41,28 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlements(
             // Manually inject entitlements
             for (auto& id: config::get().entitlements.inject.vector) {
                 logger::debug("Adding entitlement from config: {}", id);
-                add_without_duplicates(id.c_str());
+                entitlement_set.insert(id);
             }
 
             // Automatically inject entitlements
             if (config::get().entitlements.auto_inject) {
                 nlohmann::json payload = {
-                    { "query",     "query($namespace: String!) {\
-                        Catalog {\
-                            catalogOffers(\
-                                namespace: $namespace\
-                                params: {\
-                                    count: 1000,\
-                                }\
-                            ) {\
-                                elements {\
-                                    items {\
-                                        id\
-                                    }\
-                                }\
-                            }\
-                        }\
-                    }" },
+                    { "query",     R"(query($namespace: String!) {
+                        Catalog {
+                            catalogOffers(
+                                namespace: $namespace
+                                params: {
+                                    count: 1000,
+                                }
+                            ) {
+                                elements {
+                                    items {
+                                        id
+                                    }
+                                }
+                            }
+                        }
+                    })" },
                     { "variables", {{ "namespace", scream_api::namespace_id }}}
                 };
 
@@ -101,7 +82,7 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlements(
                             for (auto& item: items) {
                                 std::string id(item["id"]);
                                 logger::debug("Adding auto-fetched entitlement: {}", id);
-                                add_without_duplicates(id.c_str());
+                                entitlement_set.insert(id);
                             }
                         }
                     }
@@ -113,13 +94,11 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlements(
                 }
             }
 
-            logger::info("🍀 ScreamAPI prepared {} entitlements:", entitlements.count());
-            for (auto& entitlement: entitlements.vector) {
-                auto redeemed = entitlement.bRedeemed == EOS_TRUE
-                    ? "Redeemed"
-                    : "Not Redeemed";
+            entitlements = std::vector(entitlement_set.begin(), entitlement_set.end());
 
-                logger::info("  ✔ {} ({})", entitlement.EntitlementName, redeemed);
+            logger::info("🍀 ScreamAPI prepared {} entitlements:", entitlements.size());
+            for (auto& entitlement: entitlements) {
+                logger::info("  ✔ {}", entitlement);
             }
 
             const_cast<EOS_Ecom_QueryEntitlementsCallbackInfo*>(Data)->ResultCode = EOS_EResult::EOS_Success;
@@ -136,7 +115,7 @@ EOS_DECLARE_FUNC(uint32_t) EOS_Ecom_GetEntitlementsCount(
     EOS_HEcom,
     const EOS_Ecom_GetEntitlementsCountOptions*
 ) {
-    const auto count = entitlements.count();
+    const auto count = entitlements.size();
 
     logger::debug("Responding with the count of {} entitlements", count);
 
@@ -149,19 +128,28 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyEntitlementByIndex(
     EOS_Ecom_Entitlement** OutEntitlement
 ) {
     const auto index = Options->EntitlementIndex;
-    if (index < 0 or index >= entitlements.count()) {
-        util::panic(
-            "EOS_Ecom_CopyEntitlementByIndex",
-            "Invalid index access: {}. Max size: {}"_format(index, entitlements.count())
+    if (index < 0 or index >= entitlements.size()) {
+        logger::warn(
+            "Game requested invalid entitlement index: {}. Max size: {}",
+            index, entitlements.size()
         );
+
+        return EOS_EResult::EOS_NotFound;
     }
 
-    const auto& entitlement = entitlements[index];
+    const auto id = entitlements[index].c_str();
 
-    logger::debug("Copying the entitlement: {}", entitlement.EntitlementName);
+    logger::debug("Copying the entitlement: {} at index: {}", id, index);
 
-    // A shallow copy makes it easy to delete
-    *OutEntitlement = new EOS_Ecom_Entitlement(entitlement);
+    *OutEntitlement = new EOS_Ecom_Entitlement{
+        .ApiVersion = EOS_ECOM_ENTITLEMENT_API_LATEST,
+        .EntitlementName = id,
+        .EntitlementId = id,
+        .CatalogItemId = id,
+        .ServerIndex = -1,
+        .bRedeemed = true, // TODO: Make it configurable?
+        .EndTimestamp = -1,
+    };
 
     return EOS_EResult::EOS_Success;
 }
