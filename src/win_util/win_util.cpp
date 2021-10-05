@@ -37,7 +37,7 @@ HMODULE win_util::get_module_handle(LPCSTR module_name) {
 
 std::string win_util::get_module_file_name(HMODULE handle) {
     constexpr auto buffer_size = 1024;
-    auto buffer = new WCHAR[buffer_size];
+    WCHAR buffer[buffer_size];
     auto length = ::GetModuleFileNameW(handle, buffer, buffer_size);
 
     if (length == 0 or length == buffer_size) {
