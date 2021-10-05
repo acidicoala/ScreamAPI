@@ -7,34 +7,37 @@
 
 static std_ext::list<EOS_Ecom_Entitlement> entitlements;
 
+void add_without_duplicates(const char* entitlement_id, EOS_Bool redeemed = EOS_TRUE) {
+    auto entitlement_id_matches = [&](const EOS_Ecom_Entitlement& entitlement) {
+        return strcmp(entitlement_id, entitlement.EntitlementName) == 0;
+    };
+
+    if (not entitlements.contain(entitlement_id_matches)) {
+        auto id = _strdup(entitlement_id);
+        entitlements.add(
+            EOS_Ecom_Entitlement{
+                .ApiVersion = EOS_ECOM_ENTITLEMENT_API_LATEST,
+                .EntitlementName = id,
+                .EntitlementId = id,
+                .CatalogItemId = id,
+                .ServerIndex = -1,
+                .bRedeemed = redeemed,
+                .EndTimestamp = -1,
+            }
+        );
+    }
+};
+
 EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlements(
-    EOS_HEcom,
+    EOS_HEcom Handle,
     const EOS_Ecom_QueryEntitlementsOptions* Options,
     void* ClientData,
     const EOS_Ecom_OnQueryEntitlementsCallback CompletionDelegate
 ) {
-    auto add_without_duplicates = [](const char* entitlement_id, EOS_Bool redeemed = EOS_TRUE) {
-        auto entitlement_id_matches = [&](const EOS_Ecom_Entitlement& entitlement) {
-            return strcmp(entitlement_id, entitlement.EntitlementName) == 0;
-        };
-
-        if (not entitlements.contain(entitlement_id_matches)) {
-            auto id = _strdup(entitlement_id);
-            entitlements.add(
-                EOS_Ecom_Entitlement{
-                    .ApiVersion = EOS_ECOM_ENTITLEMENT_API_LATEST,
-                    .EntitlementName = id,
-                    .EntitlementId = id,
-                    .CatalogItemId = id,
-                    .ServerIndex = -1,
-                    .bRedeemed = redeemed,
-                    .EndTimestamp = -1,
-                }
-            );
-        }
-    };
+    static auto proxy = scream_api::get_original_function(&EOS_Ecom_QueryEntitlements, __func__);
 
     logger::info("❓ Game requested {} entitlements:", Options->EntitlementNameCount);
+
     for (uint32_t i = 0; i < Options->EntitlementNameCount; i++) {
         auto id = Options->EntitlementNames[i];
         logger::info("  ❔ {}", id);
@@ -45,9 +48,14 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlements(
         }
     }
 
-    // Execute blocking operation in a new thread to immediately return control to the game
-    std::thread(
-        [=]() { // Capture by value original parameters
+    struct Container {
+        void* ClientData;
+        EOS_Ecom_OnQueryEntitlementsCallback CompletionDelegate;
+    };
+
+    proxy(Handle, Options, new Container{ ClientData, CompletionDelegate },
+        [](const EOS_Ecom_QueryEntitlementsCallbackInfo* Data) {
+            const auto container = static_cast<Container*>(Data->ClientData);
 
             // Manually inject entitlements
             for (auto& id: config::get().entitlements.inject.vector) {
@@ -55,9 +63,10 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlements(
                 add_without_duplicates(id.c_str());
             }
 
+            // Automatically inject entitlements
             if (config::get().entitlements.auto_inject) {
                 nlohmann::json payload = {
-                    {"query",     "query($namespace: String!) {\
+                    { "query",     "query($namespace: String!) {\
                         Catalog {\
                             catalogOffers(\
                                 namespace: $namespace\
@@ -72,14 +81,14 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlements(
                                 }\
                             }\
                         }\
-                    }"},
-                    {"variables", {{"namespace", scream_api::namespace_id}}}
+                    }" },
+                    { "variables", {{ "namespace", scream_api::namespace_id }}}
                 };
 
                 auto res = cpr::Post(
-                    cpr::Url{"https://graphql.epicgames.com/graphql"},
-                    cpr::Header{{"content-type", "application/json"}},
-                    cpr::Body{payload.dump()}
+                    cpr::Url{ "https://graphql.epicgames.com/graphql" },
+                    cpr::Header{{ "content-type", "application/json" }},
+                    cpr::Body{ payload.dump() }
                 );
 
                 if (res.status_code == cpr::status::HTTP_OK) {
@@ -113,18 +122,15 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlements(
                 logger::info("  ✔ {} ({})", entitlement.EntitlementName, redeemed);
             }
 
-            // Prepare successful response and notify the game
-            const EOS_Ecom_QueryEntitlementsCallbackInfo callback_info{
-                .ResultCode=EOS_EResult::EOS_Success,
-                .ClientData=ClientData,
-                .LocalUserId=Options->LocalUserId,
-            };
+            const_cast<EOS_Ecom_QueryEntitlementsCallbackInfo*>(Data)->ResultCode = EOS_EResult::EOS_Success;
+            const_cast<EOS_Ecom_QueryEntitlementsCallbackInfo*>(Data)->ClientData = container->ClientData;
 
-            CompletionDelegate(&callback_info);
+            container->CompletionDelegate(Data);
+
+            delete container;
         }
-    ).detach();
+    );
 }
-
 
 EOS_DECLARE_FUNC(uint32_t) EOS_Ecom_GetEntitlementsCount(
     EOS_HEcom,
@@ -161,6 +167,10 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyEntitlementByIndex(
 }
 
 EOS_DECLARE_FUNC(void) EOS_Ecom_Entitlement_Release(EOS_Ecom_Entitlement* Entitlement) {
-    logger::debug("Releasing the memory of the entitlement: {}", Entitlement->EntitlementName);
-    delete Entitlement;
+    if (Entitlement) {
+        logger::debug("Releasing the memory of the entitlement: {}", Entitlement->EntitlementName);
+        delete Entitlement;
+    } else {
+        logger::warn("Game attempted to delete a null entitlement");
+    }
 }
