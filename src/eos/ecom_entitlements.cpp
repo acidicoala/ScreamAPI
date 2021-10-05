@@ -3,7 +3,6 @@
 #include "logger/logger.hpp"
 #include "util/util.hpp"
 #include "scream_api/scream_api.hpp"
-#include "std_ext.hpp"
 
 static std::vector<std::string> entitlements;
 
@@ -39,7 +38,7 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlements(
             const auto container = static_cast<Container*>(Data->ClientData);
 
             // Manually inject entitlements
-            for (auto& id: config::get().entitlements.inject.vector) {
+            for (auto& id: config::get().entitlements.inject) {
                 logger::debug("Adding entitlement from config: {}", id);
                 entitlement_set.insert(id);
             }

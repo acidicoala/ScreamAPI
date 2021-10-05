@@ -3,7 +3,6 @@
 #include "config/config.hpp"
 #include "logger/logger.hpp"
 #include "scream_api/scream_api.hpp"
-#include "std_ext.hpp"
 
 EOS_DECLARE_FUNC(void) EOS_Ecom_QueryOwnership(
     EOS_HEcom Handle,
@@ -33,7 +32,7 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryOwnership(
                 auto item = Data->ItemOwnership + i;
 
                 const auto unlock_all = config::get().catalog_items.unlock_all;
-                const auto override = config::get().catalog_items.override.contain(item->Id);
+                const auto override = config::get().catalog_items.override.contains(item->Id);
                 const auto owned = unlock_all != override;  // Logical XOR
 
                 const auto status = owned

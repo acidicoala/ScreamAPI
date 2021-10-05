@@ -18,12 +18,11 @@
 
 // C++ Standard Library
 #include <filesystem>// std::filesystem
-#include <functional>// std::function
 #include <memory>    // std::shared_ptr
 #include <string>    // std::string | std::wstring
 #include <utility>   // std::forward
 #include <vector>    // std::vector
-#include <algorithm> // std::find
+#include <set>       // std::vector
 
 // This definition turns import definitions into export definitions in EOS headers
 #define EOS_BUILDING_SDK TRUE
