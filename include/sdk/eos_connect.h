@@ -374,3 +374,27 @@ EOS_DECLARE_FUNC(EOS_NotificationId) EOS_Connect_AddNotifyLoginStatusChanged(EOS
  * @param InId handle representing the registered callback.
  */
 EOS_DECLARE_FUNC(void) EOS_Connect_RemoveNotifyLoginStatusChanged(EOS_HConnect Handle, EOS_NotificationId InId);
+
+/**
+ * Fetches an ID token for a Product User ID.
+ *
+ * @param Options Structure containing information about the ID token to copy.
+ * @param OutIdToken The ID token for the given user, if it exists and is valid; use EOS_Connect_IdToken_Release when finished.
+ *
+ * @see EOS_Connect_IdToken_Release
+ *
+ * @return EOS_Success if the information is available and passed out in OutIdToken.
+ *         EOS_InvalidParameters if you pass a null pointer for the out parameter.
+ *         EOS_NotFound if the ID token is not found or expired.
+ */
+EOS_DECLARE_FUNC(EOS_EResult) EOS_Connect_CopyIdToken(EOS_HConnect Handle, const EOS_Connect_CopyIdTokenOptions* Options, EOS_Connect_IdToken ** OutIdToken);
+
+/**
+ * Verify a given ID token for authenticity and validity.
+ * @note Can only be called by dedicated servers.
+ *
+ * @param Options structure containing information about the ID token to verify.
+ * @param ClientData arbitrary data that is passed back to you in the callback.
+ * @param CompletionDelegate a callback that is fired when the operation completes, either successfully or in error.
+ */
+EOS_DECLARE_FUNC(void) EOS_Connect_VerifyIdToken(EOS_HConnect Handle, const EOS_Connect_VerifyIdTokenOptions* Options, void* ClientData, const EOS_Connect_OnVerifyIdTokenCallback CompletionDelegate);

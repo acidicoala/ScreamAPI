@@ -252,9 +252,9 @@ EOS_STRUCT(EOS_AntiCheatCommon_OnClientActionRequiredCallbackInfo, (
 	EOS_AntiCheatCommon_ClientHandle ClientHandle;
 	/** The action that must be applied to the specified client/peer */
 	EOS_EAntiCheatCommonClientAction ClientAction;
-	/** Code indicating the reason for the action */
+	/** Code indicating the reason for the action. This can be displayed to the affected player. */
 	EOS_EAntiCheatCommonClientActionReason ActionReasonCode;
-	/** String containing details about the action reason */
+	/** String containing details about the action reason. This can be displayed to the affected player. */
 	const char* ActionReasonDetailsString;
 ));
 
@@ -292,7 +292,7 @@ EOS_STRUCT(EOS_AntiCheatCommon_SetGameSessionIdOptions, (
 #define EOS_ANTICHEATCOMMON_REGISTEREVENT_CUSTOMEVENTBASE 0x10000000
 #define EOS_ANTICHEATCOMMON_REGISTEREVENT_MAX_PARAMDEFSCOUNT 12
 EOS_STRUCT(EOS_AntiCheatCommon_RegisterEventParamDef, (
-	/** Parameter name. Allowed characters are 0-9, A-Z, a-z, '_', '-', '.' */
+	/** Parameter name. Allowed characters are 0-9, A-Z, a-z, '_', '-' */
 	const char* ParamName;
 	/** Parameter type */
 	EOS_EAntiCheatCommonEventParamType ParamType;
@@ -302,7 +302,7 @@ EOS_STRUCT(EOS_AntiCheatCommon_RegisterEventOptions, (
 	int32_t ApiVersion;
 	/** Unique event identifier. Must be >= EOS_ANTICHEATCOMMON_REGISTEREVENT_CUSTOMEVENTBASE. */
 	uint32_t EventId;
-	/** Name of the custom event. Allowed characters are 0-9, A-Z, a-z, '_', '-', '.' */
+	/** Name of the custom event. Allowed characters are 0-9, A-Z, a-z, '_', '-' */
 	const char* EventName;
 	/** Type of the custom event */
 	EOS_EAntiCheatCommonEventType EventType;
@@ -418,9 +418,9 @@ EOS_STRUCT(EOS_AntiCheatCommon_LogPlayerTickOptions, (
 EOS_STRUCT(EOS_AntiCheatCommon_LogPlayerUseWeaponData, (
 	/** Locally unique value used in RegisterClient/RegisterPeer */
 	EOS_AntiCheatCommon_ClientHandle PlayerHandle;
-	/** Player's current world position as a 3D vector */
+	/** Attack origin world position as a 3D vector */
 	EOS_AntiCheatCommon_Vec3f* PlayerPosition;
-	/** Player's view rotation as a quaternion */
+	/** Attack direction as a quaternion */
 	EOS_AntiCheatCommon_Quat* PlayerViewRotation;
 	/** True if the player's view is zoomed (e.g. using a sniper rifle), otherwise false */
 	EOS_Bool bIsPlayerViewZoomed;
@@ -450,7 +450,7 @@ EOS_STRUCT(EOS_AntiCheatCommon_LogPlayerUseAbilityOptions, (
 	uint32_t AbilityCooldownMs;
 ));
 
-#define EOS_ANTICHEATCOMMON_LOGPLAYERTAKEDAMAGE_API_LATEST 2
+#define EOS_ANTICHEATCOMMON_LOGPLAYERTAKEDAMAGE_API_LATEST 3
 EOS_STRUCT(EOS_AntiCheatCommon_LogPlayerTakeDamageOptions, (
 	/** API Version: Set this to EOS_ANTICHEATCOMMON_LOGPLAYERTAKEDAMAGE_API_LATEST. */
 	int32_t ApiVersion;
@@ -481,8 +481,8 @@ EOS_STRUCT(EOS_AntiCheatCommon_LogPlayerTakeDamageOptions, (
 	EOS_Bool bHasLineOfSight;
 	/** True if this was a critical hit that causes extra damage (e.g. headshot) */
 	EOS_Bool bIsCriticalHit;
-	/** Identifier of the victim bone hit in this damage event */
-	uint32_t HitBoneId;
+	/** Deprecated - use DamagePosition instead */
+	uint32_t HitBoneId_DEPRECATED;
 	/** Number of health points that the victim lost due to this damage event */
 	float DamageTaken;
 	/** Number of health points that the victim has remaining after this damage event */
@@ -497,6 +497,8 @@ EOS_STRUCT(EOS_AntiCheatCommon_LogPlayerTakeDamageOptions, (
 	EOS_AntiCheatCommon_LogPlayerUseWeaponData* PlayerUseWeaponData;
 	/** Time in milliseconds since the PlayerUseWeaponData event occurred if available, otherwise 0 */
 	uint32_t TimeSincePlayerUseWeaponMs;
+	/** World position where damage hit the victim as a 3D vector if available, otherwise NULL */
+	EOS_AntiCheatCommon_Vec3f* DamagePosition;
 ));
 
 #pragma pack(pop)

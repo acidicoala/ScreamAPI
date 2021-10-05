@@ -164,13 +164,13 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_AntiCheatClient_ReceiveMessageFromServer(EOS_H
  * Mode: EOS_ACCM_ClientServer.
  *
  * @param Options Structure containing input data.
- * @param OutBufferLengthBytes The length in bytes that is required to call ProtectMessage on the given input size.
+ * @param OutBufferLengthBytes On success, the OutBuffer length in bytes that is required to call ProtectMessage on the given input size.
  *
  * @return EOS_Success - If the output length was calculated successfully
  *         EOS_InvalidParameters - If input data was invalid
  *         EOS_AntiCheat_InvalidMode - If the current mode does not support this function
  */
-EOS_DECLARE_FUNC(EOS_EResult) EOS_AntiCheatClient_GetProtectMessageOutputLength(EOS_HAntiCheatClient Handle, const EOS_AntiCheatClient_GetProtectMessageOutputLengthOptions* Options, uint32_t* OutBufferLengthBytes);
+EOS_DECLARE_FUNC(EOS_EResult) EOS_AntiCheatClient_GetProtectMessageOutputLength(EOS_HAntiCheatClient Handle, const EOS_AntiCheatClient_GetProtectMessageOutputLengthOptions* Options, uint32_t* OutBufferSizeBytes);
 
 /**
  * Optional NetProtect feature for game message encryption.
@@ -181,13 +181,13 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_AntiCheatClient_GetProtectMessageOutputLength(
  *
  * @param Options Structure containing input data.
  * @param OutBuffer On success, buffer where encrypted message data will be written.
- * @param OutBufferLengthBytes Number of bytes that were written to OutBuffer.
+ * @param OutBytesWritten On success, the number of bytes that were written to OutBuffer.
  *
  * @return EOS_Success - If the message was protected successfully
  *         EOS_InvalidParameters - If input data was invalid
  *         EOS_AntiCheat_InvalidMode - If the current mode does not support this function
  */
-EOS_DECLARE_FUNC(EOS_EResult) EOS_AntiCheatClient_ProtectMessage(EOS_HAntiCheatClient Handle, const EOS_AntiCheatClient_ProtectMessageOptions* Options, void* OutBuffer, uint32_t* OutBufferLengthBytes);
+EOS_DECLARE_FUNC(EOS_EResult) EOS_AntiCheatClient_ProtectMessage(EOS_HAntiCheatClient Handle, const EOS_AntiCheatClient_ProtectMessageOptions* Options, void* OutBuffer, uint32_t* OutBytesWritten);
 
 /**
  * Optional NetProtect feature for game message encryption.
@@ -198,13 +198,13 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_AntiCheatClient_ProtectMessage(EOS_HAntiCheatC
  *
  * @param Options Structure containing input data.
  * @param OutBuffer On success, buffer where encrypted message data will be written.
- * @param OutBufferLengthBytes Number of bytes that were written to OutBuffer.
+ * @param OutBytesWritten On success, the number of bytes that were written to OutBuffer.
  *
  * @return EOS_Success - If the message was unprotected successfully
  *         EOS_InvalidParameters - If input data was invalid
  *         EOS_AntiCheat_InvalidMode - If the current mode does not support this function
  */
-EOS_DECLARE_FUNC(EOS_EResult) EOS_AntiCheatClient_UnprotectMessage(EOS_HAntiCheatClient Handle, const EOS_AntiCheatClient_UnprotectMessageOptions* Options, void* OutBuffer, uint32_t* OutBufferLengthBytes);
+EOS_DECLARE_FUNC(EOS_EResult) EOS_AntiCheatClient_UnprotectMessage(EOS_HAntiCheatClient Handle, const EOS_AntiCheatClient_UnprotectMessageOptions* Options, void* OutBuffer, uint32_t* OutBytesWritten);
 
 /**
  * Registers a connected peer-to-peer client.

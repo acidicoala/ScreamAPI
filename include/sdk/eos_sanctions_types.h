@@ -8,18 +8,22 @@
 EXTERN_C typedef struct EOS_SanctionsHandle* EOS_HSanctions;
 
 /** The most recent version of the EOS_Sanctions_PlayerSanction struct. */
-#define EOS_SANCTIONS_PLAYERSANCTION_API_LATEST 1
+#define EOS_SANCTIONS_PLAYERSANCTION_API_LATEST 2
 
 /**
  * Contains information about a single player sanction.
  */
 EOS_STRUCT(EOS_Sanctions_PlayerSanction, (
-	/** API Version: Set this to EOS_SANCTIONS_PLAYERSANCTION_API_LATEST. */
+	/** API Version: This will be set to EOS_SANCTIONS_PLAYERSANCTION_API_LATEST. */
 	int32_t ApiVersion;
 	/** The POSIX timestamp when the sanction was placed */
 	int64_t TimePlaced;
 	/** The action associated with this sanction */
 	const char* Action;
+	/** The POSIX timestamp when the sanction will expire. If the sanction is permanent, this will be 0. */
+	int64_t TimeExpires;
+	/** A unique identifier for this specific sanction */
+	const char* ReferenceId;
 ));
 
 /** The most recent version of the EOS_Sanctions_QueryActivePlayerSanctions API. */

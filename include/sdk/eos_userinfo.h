@@ -4,7 +4,7 @@
 #include "eos_userinfo_types.h"
 
 /**
- * The UserInfo Interface is used to receive user information for Epic Online Services Account IDs from the backend services and to retrieve that information once it is cached.
+ * The UserInfo Interface is used to receive user information for Epic Account IDs from the backend services and to retrieve that information once it is cached.
  * All UserInfo Interface calls take a handle of type EOS_HUserInfo as the first parameter.
  * This handle can be retrieved from a EOS_HPlatform handle by using the EOS_Platform_GetUserInfoInterface function.
  *
@@ -57,7 +57,7 @@ EOS_DECLARE_FUNC(void) EOS_UserInfo_QueryUserInfoByDisplayName(EOS_HUserInfo Han
 EOS_DECLARE_FUNC(void) EOS_UserInfo_QueryUserInfoByExternalAccount(EOS_HUserInfo Handle, const EOS_UserInfo_QueryUserInfoByExternalAccountOptions* Options, void* ClientData, const EOS_UserInfo_OnQueryUserInfoByExternalAccountCallback CompletionDelegate);
 
 /**
- * EOS_UserInfo_CopyUserInfo is used to immediately retrieve a copy of user information based on an Epic Online Services Account ID, cached by a previous call to EOS_UserInfo_QueryUserInfo.
+ * EOS_UserInfo_CopyUserInfo is used to immediately retrieve a copy of user information based on an Epic Account ID, cached by a previous call to EOS_UserInfo_QueryUserInfo.
  * If the call returns an EOS_Success result, the out parameter, OutUserInfo, must be passed to EOS_UserInfo_Release to release the memory associated with it.
  *
  * @param Options structure containing the input parameters

@@ -188,7 +188,7 @@ EOS_STRUCT(EOS_Ecom_CatalogItem, (
 EOS_DECLARE_FUNC(void) EOS_Ecom_CatalogItem_Release(EOS_Ecom_CatalogItem* CatalogItem);
 
 /** The most recent version of the EOS_Ecom_CatalogOffer struct. */
-#define EOS_ECOM_CATALOGOFFER_API_LATEST 3
+#define EOS_ECOM_CATALOGOFFER_API_LATEST 4
 
 /** Timestamp value representing an undefined ExpirationTimestamp for EOS_Ecom_CatalogOffer */
 #define EOS_ECOM_CATALOGOFFER_EXPIRATIONTIMESTAMP_UNDEFINED -1
@@ -251,6 +251,8 @@ EOS_STRUCT(EOS_Ecom_CatalogOffer, (
 	uint64_t OriginalPrice64;
 	/** The current price including discounts of this offer as a 64-bit number. */
 	uint64_t CurrentPrice64;
+	/** The decimal point for the provided price.  For example, DecimalPoint '2' and CurrentPrice64 '12345' would be '123.45'. */
+	uint32_t DecimalPoint;
 ));
 
 /**
@@ -361,7 +363,7 @@ EOS_STRUCT(EOS_Ecom_CheckoutEntry, (
 EOS_STRUCT(EOS_Ecom_QueryOwnershipOptions, (
 	/** API Version: Set this to EOS_ECOM_QUERYOWNERSHIP_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user whose ownership to query */
+	/** The Epic Account ID of the local user whose ownership to query */
 	EOS_EpicAccountId LocalUserId;
 	/** The array of Catalog Item IDs to check for ownership */
 	EOS_Ecom_CatalogItemId* CatalogItemIds;
@@ -379,7 +381,7 @@ EOS_STRUCT(EOS_Ecom_QueryOwnershipCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Ecom_QueryOwnership */
 	void* ClientData;
-	/** The Epic Online Services Account ID of the local user whose ownership was queried */
+	/** The Epic Account ID of the local user whose ownership was queried */
 	EOS_EpicAccountId LocalUserId;
 	/** List of catalog items and their ownership status */
 	const EOS_Ecom_ItemOwnership* ItemOwnership;
@@ -407,7 +409,7 @@ EOS_DECLARE_CALLBACK(EOS_Ecom_OnQueryOwnershipCallback, const EOS_Ecom_QueryOwne
 EOS_STRUCT(EOS_Ecom_QueryOwnershipTokenOptions, (
 	/** API Version: Set this to EOS_ECOM_QUERYOWNERSHIPTOKEN_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user whose ownership token you want to query */
+	/** The Epic Account ID of the local user whose ownership token you want to query */
 	EOS_EpicAccountId LocalUserId;
 	/** The array of Catalog Item IDs to check for ownership, matching in number to the CatalogItemIdCount */
 	EOS_Ecom_CatalogItemId* CatalogItemIds;
@@ -425,7 +427,7 @@ EOS_STRUCT(EOS_Ecom_QueryOwnershipTokenCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Ecom_QueryOwnershipToken */
 	void* ClientData;
-	/** The Epic Online Services Account ID of the local user whose ownership token was queried */
+	/** The Epic Account ID of the local user whose ownership token was queried */
 	EOS_EpicAccountId LocalUserId;
 	/** Ownership token containing details about the catalog items queried */
 	const char* OwnershipToken;
@@ -451,7 +453,7 @@ EOS_DECLARE_CALLBACK(EOS_Ecom_OnQueryOwnershipTokenCallback, const EOS_Ecom_Quer
 EOS_STRUCT(EOS_Ecom_QueryEntitlementsOptions, (
 	/** API Version: Set this to EOS_ECOM_QUERYENTITLEMENTS_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user whose Entitlements you want to retrieve */
+	/** The Epic Account ID of the local user whose Entitlements you want to retrieve */
 	EOS_EpicAccountId LocalUserId;
 	/** An array of Entitlement Names that you want to check */
 	EOS_Ecom_EntitlementName* EntitlementNames;
@@ -468,7 +470,7 @@ EOS_STRUCT(EOS_Ecom_QueryEntitlementsCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Ecom_QueryEntitlements */
 	void* ClientData;
-	/** The Epic Online Services Account ID of the local user whose entitlement was queried */
+	/** The Epic Account ID of the local user whose entitlement was queried */
 	EOS_EpicAccountId LocalUserId;
 ));
 
@@ -488,7 +490,7 @@ EOS_DECLARE_CALLBACK(EOS_Ecom_OnQueryEntitlementsCallback, const EOS_Ecom_QueryE
 EOS_STRUCT(EOS_Ecom_QueryOffersOptions, (
 	/** API Version: Set this to EOS_ECOM_QUERYOFFERS_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user whose offer to query */
+	/** The Epic Account ID of the local user whose offer to query */
 	EOS_EpicAccountId LocalUserId;
 	/** If not provided then the SandboxId is used as the catalog namespace */
 	const char* OverrideCatalogNamespace;
@@ -502,7 +504,7 @@ EOS_STRUCT(EOS_Ecom_QueryOffersCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Ecom_QueryOffers */
 	void* ClientData;
-	/** The Epic Online Services Account ID of the local user whose offer was queried; needed for localization of Catalog Item (Item) description text and pricing information */
+	/** The Epic Account ID of the local user whose offer was queried; needed for localization of Catalog Item (Item) description text and pricing information */
 	EOS_EpicAccountId LocalUserId;
 ));
 
@@ -527,7 +529,7 @@ EOS_DECLARE_CALLBACK(EOS_Ecom_OnQueryOffersCallback, const EOS_Ecom_QueryOffersC
 EOS_STRUCT(EOS_Ecom_CheckoutOptions, (
 	/** API Version: Set this to EOS_ECOM_CHECKOUT_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user who is making the purchase */
+	/** The Epic Account ID of the local user who is making the purchase */
 	EOS_EpicAccountId LocalUserId;
 	/** The catalog namespace will be the current Sandbox ID (in EOS_Platform_Options) unless overridden by this field */
 	const char* OverrideCatalogNamespace;
@@ -545,7 +547,7 @@ EOS_STRUCT(EOS_Ecom_CheckoutCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Ecom_Checkout */
 	void* ClientData;
-	/** The Epic Online Services Account ID of the user who initiated the purchase */
+	/** The Epic Account ID of the user who initiated the purchase */
 	EOS_EpicAccountId LocalUserId;
 	/** The transaction ID which can be used to obtain an EOS_Ecom_HTransaction using EOS_Ecom_CopyTransactionById. */
 	const char* TransactionId;
@@ -572,7 +574,7 @@ EOS_DECLARE_CALLBACK(EOS_Ecom_OnCheckoutCallback, const EOS_Ecom_CheckoutCallbac
 EOS_STRUCT(EOS_Ecom_RedeemEntitlementsOptions, (
 	/** API Version: Set this to EOS_ECOM_REDEEMENTITLEMENTS_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the user who is redeeming Entitlements */
+	/** The Epic Account ID of the user who is redeeming Entitlements */
 	EOS_EpicAccountId LocalUserId;
 	/** The number of Entitlements to redeem */
 	uint32_t EntitlementIdCount;
@@ -588,7 +590,7 @@ EOS_STRUCT(EOS_Ecom_RedeemEntitlementsCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Ecom_RedeemEntitlements */
 	void* ClientData;
-	/** The Epic Online Services Account ID of the user who has redeemed entitlements */
+	/** The Epic Account ID of the user who has redeemed entitlements */
 	EOS_EpicAccountId LocalUserId;
 ));
 
@@ -608,7 +610,7 @@ EOS_DECLARE_CALLBACK(EOS_Ecom_OnRedeemEntitlementsCallback, const EOS_Ecom_Redee
 EOS_STRUCT(EOS_Ecom_GetEntitlementsCountOptions, (
 	/** API Version: Set this to EOS_ECOM_GETENTITLEMENTSCOUNT_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user for which to retrieve the entitlement count */
+	/** The Epic Account ID of the local user for which to retrieve the entitlement count */
 	EOS_EpicAccountId LocalUserId;
 ));
 
@@ -621,7 +623,7 @@ EOS_STRUCT(EOS_Ecom_GetEntitlementsCountOptions, (
 EOS_STRUCT(EOS_Ecom_GetEntitlementsByNameCountOptions, (
 	/** API Version: Set this to EOS_ECOM_GETENTITLEMENTSBYNAMECOUNT_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user for which to retrieve the entitlement count */
+	/** The Epic Account ID of the local user for which to retrieve the entitlement count */
 	EOS_EpicAccountId LocalUserId;
 	/** Name of the entitlement to count in the cache */
 	EOS_Ecom_EntitlementName EntitlementName;
@@ -636,7 +638,7 @@ EOS_STRUCT(EOS_Ecom_GetEntitlementsByNameCountOptions, (
 EOS_STRUCT(EOS_Ecom_CopyEntitlementByIndexOptions, (
 	/** API Version: Set this to EOS_ECOM_COPYENTITLEMENTBYINDEX_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user whose entitlement is being copied */
+	/** The Epic Account ID of the local user whose entitlement is being copied */
 	EOS_EpicAccountId LocalUserId;
 	/** Index of the entitlement to retrieve from the cache */
 	uint32_t EntitlementIndex;
@@ -651,7 +653,7 @@ EOS_STRUCT(EOS_Ecom_CopyEntitlementByIndexOptions, (
 EOS_STRUCT(EOS_Ecom_CopyEntitlementByNameAndIndexOptions, (
 	/** API Version: Set this to EOS_ECOM_COPYENTITLEMENTBYNAMEANDINDEX_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user whose entitlement is being copied */
+	/** The Epic Account ID of the local user whose entitlement is being copied */
 	EOS_EpicAccountId LocalUserId;
 	/** Name of the entitlement to retrieve from the cache */
 	EOS_Ecom_EntitlementName EntitlementName;
@@ -668,7 +670,7 @@ EOS_STRUCT(EOS_Ecom_CopyEntitlementByNameAndIndexOptions, (
 EOS_STRUCT(EOS_Ecom_CopyEntitlementByIdOptions, (
 	/** API Version: Set this to EOS_ECOM_COPYENTITLEMENTBYID_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user whose entitlement is being copied */
+	/** The Epic Account ID of the local user whose entitlement is being copied */
 	EOS_EpicAccountId LocalUserId;
 	/** ID of the entitlement to retrieve from the cache */
 	EOS_Ecom_EntitlementId EntitlementId;
@@ -683,7 +685,7 @@ EOS_STRUCT(EOS_Ecom_CopyEntitlementByIdOptions, (
 EOS_STRUCT(EOS_Ecom_GetOfferCountOptions, (
 	/** API Version: Set this to EOS_ECOM_GETOFFERCOUNT_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user whose offers are being accessed */
+	/** The Epic Account ID of the local user whose offers are being accessed */
 	EOS_EpicAccountId LocalUserId;
 ));
 
@@ -696,7 +698,7 @@ EOS_STRUCT(EOS_Ecom_GetOfferCountOptions, (
 EOS_STRUCT(EOS_Ecom_CopyOfferByIndexOptions, (
 	/** API Version: Set this to EOS_ECOM_COPYOFFERBYINDEX_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user whose offer is being copied */
+	/** The Epic Account ID of the local user whose offer is being copied */
 	EOS_EpicAccountId LocalUserId;
 	/** The index of the offer to get. */
 	uint32_t OfferIndex;
@@ -711,7 +713,7 @@ EOS_STRUCT(EOS_Ecom_CopyOfferByIndexOptions, (
 EOS_STRUCT(EOS_Ecom_CopyOfferByIdOptions, (
 	/** API Version: Set this to EOS_ECOM_COPYOFFERBYID_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user whose offer is being copied */
+	/** The Epic Account ID of the local user whose offer is being copied */
 	EOS_EpicAccountId LocalUserId;
 	/** The ID of the offer to get. */
 	EOS_Ecom_CatalogOfferId OfferId;
@@ -726,7 +728,7 @@ EOS_STRUCT(EOS_Ecom_CopyOfferByIdOptions, (
 EOS_STRUCT(EOS_Ecom_GetOfferItemCountOptions, (
 	/** API Version: Set this to EOS_ECOM_GETOFFERITEMCOUNT_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user who made the initial request for the Catalog Offer through EOS_Ecom_QueryOffers */
+	/** The Epic Account ID of the local user who made the initial request for the Catalog Offer through EOS_Ecom_QueryOffers */
 	EOS_EpicAccountId LocalUserId;
 	/** An ID that corresponds to a cached Catalog Offer (retrieved by EOS_Ecom_CopyOfferByIndex) */
 	EOS_Ecom_CatalogOfferId OfferId;
@@ -741,7 +743,7 @@ EOS_STRUCT(EOS_Ecom_GetOfferItemCountOptions, (
 EOS_STRUCT(EOS_Ecom_CopyOfferItemByIndexOptions, (
 	/** API Version: Set this to EOS_ECOM_COPYOFFERITEMBYINDEX_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user whose item is being copied */
+	/** The Epic Account ID of the local user whose item is being copied */
 	EOS_EpicAccountId LocalUserId;
 	/** The ID of the offer to get the items for. */
 	EOS_Ecom_CatalogOfferId OfferId;
@@ -758,7 +760,7 @@ EOS_STRUCT(EOS_Ecom_CopyOfferItemByIndexOptions, (
 EOS_STRUCT(EOS_Ecom_CopyItemByIdOptions, (
 	/** API Version: Set this to EOS_ECOM_COPYITEMBYID_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user whose item is being copied */
+	/** The Epic Account ID of the local user whose item is being copied */
 	EOS_EpicAccountId LocalUserId;
 	/** The ID of the item to get. */
 	EOS_Ecom_CatalogItemId ItemId;
@@ -773,7 +775,7 @@ EOS_STRUCT(EOS_Ecom_CopyItemByIdOptions, (
 EOS_STRUCT(EOS_Ecom_GetOfferImageInfoCountOptions, (
 	/** API Version: Set this to EOS_ECOM_GETOFFERIMAGEINFOCOUNT_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user whose offer image is being accessed. */
+	/** The Epic Account ID of the local user whose offer image is being accessed. */
 	EOS_EpicAccountId LocalUserId;
 	/** The ID of the offer to get the images for. */
 	EOS_Ecom_CatalogOfferId OfferId;
@@ -788,7 +790,7 @@ EOS_STRUCT(EOS_Ecom_GetOfferImageInfoCountOptions, (
 EOS_STRUCT(EOS_Ecom_CopyOfferImageInfoByIndexOptions, (
 	/** API Version: Set this to EOS_ECOM_COPYOFFERIMAGEINFOBYINDEX_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user whose offer image is being copied. */
+	/** The Epic Account ID of the local user whose offer image is being copied. */
 	EOS_EpicAccountId LocalUserId;
 	/** The ID of the offer to get the images for. */
 	EOS_Ecom_CatalogOfferId OfferId;
@@ -805,7 +807,7 @@ EOS_STRUCT(EOS_Ecom_CopyOfferImageInfoByIndexOptions, (
 EOS_STRUCT(EOS_Ecom_GetItemImageInfoCountOptions, (
 	/** API Version: Set this to EOS_ECOM_GETITEMIMAGEINFOCOUNT_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user whose item image is being accessed */
+	/** The Epic Account ID of the local user whose item image is being accessed */
 	EOS_EpicAccountId LocalUserId;
 	/** The ID of the item to get the images for. */
 	EOS_Ecom_CatalogItemId ItemId;
@@ -820,7 +822,7 @@ EOS_STRUCT(EOS_Ecom_GetItemImageInfoCountOptions, (
 EOS_STRUCT(EOS_Ecom_CopyItemImageInfoByIndexOptions, (
 	/** API Version: Set this to EOS_ECOM_COPYITEMIMAGEINFOBYINDEX_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user whose item image is being copied */
+	/** The Epic Account ID of the local user whose item image is being copied */
 	EOS_EpicAccountId LocalUserId;
 	/** The ID of the item to get the images for. */
 	EOS_Ecom_CatalogItemId ItemId;
@@ -837,7 +839,7 @@ EOS_STRUCT(EOS_Ecom_CopyItemImageInfoByIndexOptions, (
 EOS_STRUCT(EOS_Ecom_GetItemReleaseCountOptions, (
 	/** API Version: Set this to EOS_ECOM_GETITEMRELEASECOUNT_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user whose item release is being accessed */
+	/** The Epic Account ID of the local user whose item release is being accessed */
 	EOS_EpicAccountId LocalUserId;
 	/** The ID of the item to get the releases for. */
 	EOS_Ecom_CatalogItemId ItemId;
@@ -852,7 +854,7 @@ EOS_STRUCT(EOS_Ecom_GetItemReleaseCountOptions, (
 EOS_STRUCT(EOS_Ecom_CopyItemReleaseByIndexOptions, (
 	/** API Version: Set this to EOS_ECOM_COPYITEMRELEASEBYINDEX_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user whose item release is being copied */
+	/** The Epic Account ID of the local user whose item release is being copied */
 	EOS_EpicAccountId LocalUserId;
 	/** The ID of the item to get the releases for. */
 	EOS_Ecom_CatalogItemId ItemId;
@@ -869,7 +871,7 @@ EOS_STRUCT(EOS_Ecom_CopyItemReleaseByIndexOptions, (
 EOS_STRUCT(EOS_Ecom_GetTransactionCountOptions, (
 	/** API Version: Set this to EOS_ECOM_GETTRANSACTIONCOUNT_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user whose transaction count to get */
+	/** The Epic Account ID of the local user whose transaction count to get */
 	EOS_EpicAccountId LocalUserId;
 ));
 
@@ -882,7 +884,7 @@ EOS_STRUCT(EOS_Ecom_GetTransactionCountOptions, (
 EOS_STRUCT(EOS_Ecom_CopyTransactionByIndexOptions, (
 	/** API Version: Set this to EOS_ECOM_COPYTRANSACTIONBYINDEX_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user who is associated with the transaction */
+	/** The Epic Account ID of the local user who is associated with the transaction */
 	EOS_EpicAccountId LocalUserId;
 	/** The index of the transaction to get */
 	uint32_t TransactionIndex;
@@ -896,7 +898,7 @@ EOS_STRUCT(EOS_Ecom_CopyTransactionByIndexOptions, (
 EOS_STRUCT(EOS_Ecom_CopyTransactionByIdOptions, (
 	/** API Version: Set this to EOS_ECOM_COPYTRANSACTIONBYID_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user who is associated with the transaction */
+	/** The Epic Account ID of the local user who is associated with the transaction */
 	EOS_EpicAccountId LocalUserId;
 	/** The ID of the transaction to get */
 	const char* TransactionId;

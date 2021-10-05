@@ -47,7 +47,7 @@ EOS_DECLARE_FUNC(EOS_Bool) EOS_EResult_IsOperationComplete(EOS_EResult Result);
 EOS_DECLARE_FUNC(EOS_EResult) EOS_ByteArray_ToString(const uint8_t* ByteArray, const uint32_t Length, char* OutBuffer, uint32_t* InOutBufferLength);
 
 /**
- * A handle to a user's Epic Online Services Account ID
+ * A handle to a user's Epic Account ID
  * This ID is associated with a specific login associated with Epic Account Services
  *
  * @see EOS_Auth_Login
@@ -55,37 +55,37 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_ByteArray_ToString(const uint8_t* ByteArray, c
 typedef struct EOS_EpicAccountIdDetails* EOS_EpicAccountId;
 
 /** 
- * Check whether or not the given Epic Online Services Account ID is considered valid
+ * Check whether or not the given Epic Account ID is considered valid
  * NOTE: This will return true for any EOS_EpicAccountId created with EOS_EpicAccountId_FromString as there is no validation
  * 
- * @param AccountId The Epic Online Services Account ID to check for validity
+ * @param AccountId The Epic Account ID to check for validity
  * @return EOS_TRUE if the EOS_EpicAccountId is valid, otherwise EOS_FALSE
  */
 EOS_DECLARE_FUNC(EOS_Bool) EOS_EpicAccountId_IsValid(EOS_EpicAccountId AccountId);
 
 /**
- * Retrieve a null-terminated stringified Epic Online Services Account ID from an EOS_EpicAccountId. This is useful for replication of Epic Online Services Account IDs in multiplayer games.
+ * Retrieve a null-terminated stringified Epic Account ID from an EOS_EpicAccountId. This is useful for replication of Epic Account IDs in multiplayer games.
  * This string will be no larger than EOS_EPICACCOUNTID_MAX_LENGTH + 1 and will only contain UTF8-encoded printable characters (excluding the null-terminator).
  *
- * @param AccountId The Epic Online Services Account ID for which to retrieve the stringified version.
+ * @param AccountId The Epic Account ID for which to retrieve the stringified version.
  * @param OutBuffer The buffer into which the character data should be written
  * @param InOutBufferLength The size of the OutBuffer in characters.
  *                          The input buffer should include enough space to be null-terminated.
  *                          When the function returns, this parameter will be filled with the length of the string copied into OutBuffer including the null termination character.
  *
- * @return An EOS_EResult that indicates whether the Epic Online Services Account ID string was copied into the OutBuffer.
+ * @return An EOS_EResult that indicates whether the Epic Account ID string was copied into the OutBuffer.
  *         EOS_Success - The OutBuffer was filled, and InOutBufferLength contains the number of characters copied into OutBuffer including the null terminator.
  *         EOS_InvalidParameters - Either OutBuffer or InOutBufferLength were passed as NULL parameters.
  *         EOS_InvalidUser - The AccountId is invalid and cannot be stringified.
- *         EOS_LimitExceeded - The OutBuffer is not large enough to receive the Epic Online Services Account ID string. InOutBufferLength contains the required minimum length to perform the operation successfully.
+ *         EOS_LimitExceeded - The OutBuffer is not large enough to receive the Epic Account ID string. InOutBufferLength contains the required minimum length to perform the operation successfully.
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_EpicAccountId_ToString(EOS_EpicAccountId AccountId, char* OutBuffer, int32_t* InOutBufferLength);
 
 /**
- * Retrieve an EOS_EpicAccountId from a raw string representing an Epic Online Services Account ID. The input string must be null-terminated.
+ * Retrieve an EOS_EpicAccountId from a raw string representing an Epic Account ID. The input string must be null-terminated.
  * NOTE: There is no validation on the string format, this should only be used with values serialized from legitimate sources such as EOS_EpicAccountId_ToString
  *
- * @param AccountIdString The stringified account ID for which to retrieve the Epic Online Services Account ID
+ * @param AccountIdString The stringified account ID for which to retrieve the Epic Account ID
  * @return The EOS_EpicAccountId that corresponds to the AccountIdString
  */
 EOS_DECLARE_FUNC(EOS_EpicAccountId) EOS_EpicAccountId_FromString(const char* AccountIdString);
@@ -142,7 +142,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_ProductUserId_ToString(EOS_ProductUserId Accou
 EOS_DECLARE_FUNC(EOS_ProductUserId) EOS_ProductUserId_FromString(const char* ProductUserIdString);
 
 /** A character buffer of this size is large enough to fit a successful output of EOS_ProductUserId_ToString. This length does not include the null-terminator. */
-#define EOS_PRODUCTUSERID_MAX_LENGTH 128
+#define EOS_PRODUCTUSERID_MAX_LENGTH 32
 
 /** Handle to an existing registered notification (0 is an invalid handle) */
 EXTERN_C typedef uint64_t EOS_NotificationId;

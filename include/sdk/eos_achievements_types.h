@@ -19,7 +19,7 @@ EOS_STRUCT(EOS_Achievements_QueryDefinitionsOptions, (
 	int32_t ApiVersion;
 	/**
 	 * Product User ID for user who is querying definitions.
-	 * The localized text returned will be based on the locale code of the given user if they have a linked Epic Online Services Account ID.
+	 * The localized text returned will be based on the locale code of the given user if they have a linked Epic Account ID.
 	 * The localized text returned can also be overridden using EOS_Platform_SetOverrideLocaleCode to override the locale.
 	 * If the locale code is not overridden and LocalUserId is not valid, default text will be returned.
 	 */

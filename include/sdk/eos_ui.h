@@ -14,7 +14,7 @@
 /**
  * Opens the Social Overlay with a request to show the friends list.
  *
- * @param Options Structure containing the Epic Online Services Account ID of the friends list to show.
+ * @param Options Structure containing the Epic Account ID of the friends list to show.
  * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate.
  * @param CompletionDelegate A callback that is fired when the request to show the friends list has been sent to the Social Overlay, or on an error.
  *
@@ -28,7 +28,7 @@ EOS_DECLARE_FUNC(void) EOS_UI_ShowFriends(EOS_HUI Handle, const EOS_UI_ShowFrien
 /**
  * Hides the active Social Overlay.
  *
- * @param Options Structure containing the Epic Online Services Account ID of the browser to close.
+ * @param Options Structure containing the Epic Account ID of the browser to close.
  * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate.
  * @param CompletionDelegate A callback that is fired when the request to hide the friends list has been processed, or on an error.
  *
@@ -42,7 +42,7 @@ EOS_DECLARE_FUNC(void) EOS_UI_HideFriends(EOS_HUI Handle, const EOS_UI_HideFrien
 /**
  * Gets the friends overlay visibility.
  *
- * @param Options Structure containing the Epic Online Services Account ID of the friends Social Overlay owner.
+ * @param Options Structure containing the Epic Account ID of the friends Social Overlay owner.
  *
  * @return EOS_TRUE If the overlay is visible.
  */

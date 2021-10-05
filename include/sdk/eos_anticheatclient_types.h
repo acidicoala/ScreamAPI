@@ -208,7 +208,7 @@ EOS_STRUCT(EOS_AntiCheatClient_UnprotectMessageOptions, (
  * used in OnPeerActionRequiredCallback to quickly signal to the user
  * that they will not be able to join online play.
  */
-#define EOS_ANTICHEATCLIENT_PEER_SELF (-1)
+#define EOS_ANTICHEATCLIENT_PEER_SELF (EOS_AntiCheatCommon_ClientHandle)(-1)
 
 #define EOS_ANTICHEATCLIENT_REGISTERPEER_API_LATEST 1
 EOS_STRUCT(EOS_AntiCheatClient_RegisterPeerOptions, (

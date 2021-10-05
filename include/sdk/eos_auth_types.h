@@ -166,7 +166,7 @@ EOS_STRUCT(EOS_Auth_Token, (
 	const char* App;
 	/** Client ID that requested this token */
 	const char* ClientId;
-	/** The Epic Online Services Account ID associated with this auth token */
+	/** The Epic Account ID associated with this auth token */
 	EOS_EpicAccountId AccountId;
 	/** Access token for the current user login session */
 	const char* AccessToken;
@@ -191,7 +191,7 @@ EOS_STRUCT(EOS_Auth_Token, (
 /**
  * Release the memory associated with an EOS_Auth_Token structure. This must be called on data retrieved from EOS_Auth_CopyUserAuthToken.
  *
- * @param AuthToken - The auth token structure to be released
+ * @param AuthToken The auth token structure to be released.
  *
  * @see EOS_Auth_Token
  * @see EOS_Auth_CopyUserAuthToken
@@ -318,7 +318,7 @@ EOS_STRUCT(EOS_Auth_LoginCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Auth_Login */
 	void* ClientData;
-	/** The Epic Online Services Account ID of the local user who has logged in */
+	/** The Epic Account ID of the local user who has logged in */
 	EOS_EpicAccountId LocalUserId;
 	/** Optional data returned in the middle of a EOS_LCT_DeviceCode request */
 	const EOS_Auth_PinGrantInfo* PinGrantInfo;
@@ -326,6 +326,14 @@ EOS_STRUCT(EOS_Auth_LoginCallbackInfo, (
 	EOS_ContinuanceToken ContinuanceToken;
 	/** If the user trying to login is restricted from doing so, the ResultCode of this structure will be EOS_Auth_AccountFeatureRestricted, and AccountFeatureRestrictedInfo will be populated with the data needed to get past the restriction */
 	const EOS_Auth_AccountFeatureRestrictedInfo* AccountFeatureRestrictedInfo;
+	/** 
+	 * The Epic Account ID that has been previously selected to be used for the current application.
+	 * Applications should use this ID to authenticate with online backend services that store game-scoped data for users.
+	 *
+	 * Note: This ID may be different from LocalUserId if the user has previously merged Epic accounts into the account
+	 * represented by LocalUserId, and one of the accounts that got merged had game data associated with it for the application.
+	 */
+	EOS_EpicAccountId SelectedAccountId;
 ));
 
 /**
@@ -343,7 +351,7 @@ EOS_DECLARE_CALLBACK(EOS_Auth_OnLoginCallback, const EOS_Auth_LoginCallbackInfo*
 EOS_STRUCT(EOS_Auth_LogoutOptions, (
 	/** API Version: Set this to EOS_AUTH_LOGOUT_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the local user who is being logged out */
+	/** The Epic Account ID of the local user who is being logged out */
 	EOS_EpicAccountId LocalUserId;
 ));
 
@@ -355,7 +363,7 @@ EOS_STRUCT(EOS_Auth_LogoutCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Auth_Login */
 	void* ClientData;
-	/** The Epic Online Services Account ID of the local user requesting the information */
+	/** The Epic Account ID of the local user requesting the information */
 	EOS_EpicAccountId LocalUserId;
 ));
 
@@ -411,9 +419,8 @@ EOS_STRUCT(EOS_Auth_LinkAccountOptions, (
 	 * It can also be another external user account that the user is offered to login with.
 	 */
 	EOS_ContinuanceToken ContinuanceToken;
-	
 	/**
-	 * The Epic Online Services Account ID of the logged in local user whose Epic Account will be linked with the local Nintendo NSA ID Account. By default set to NULL.
+	 * The Epic Account ID of the logged in local user whose Epic Account will be linked with the local Nintendo NSA ID Account. By default set to NULL.
 	 *
 	 * This parameter is only used and required to be set when EOS_ELinkAccountFlags::EOS_LA_NintendoNsaId is specified.
 	 * Otherwise, set to NULL, as the standard account linking and login flow using continuance token will handle logging in the user to their Epic Account.
@@ -429,7 +436,7 @@ EOS_STRUCT(EOS_Auth_LinkAccountCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Auth_LinkAccount */
 	void* ClientData;
-	/** The Epic Online Services Account ID of the local user whose account has been linked during login */
+	/** The Epic Account ID of the local user whose account has been linked during login */
 	EOS_EpicAccountId LocalUserId;
 	/**
 	 * Optional data returned when ResultCode is EOS_Auth_PinGrantCode.
@@ -438,6 +445,14 @@ EOS_STRUCT(EOS_Auth_LinkAccountCallbackInfo, (
 	 * EOS_Auth_OnLinkAccountCallback will be fired again with ResultCode in EOS_Auth_LinkAccountCallbackInfo set to EOS_Success.
 	 */
 	const EOS_Auth_PinGrantInfo* PinGrantInfo;
+	/**
+	 * The Epic Account ID that has been previously selected to be used for the current application.
+	 * Applications should use this ID to authenticate with online backend services that store game-scoped data for users.
+	 *
+	 * Note: This ID may be different from LocalUserId if the user has previously merged Epic accounts into the account
+	 * represented by LocalUserId, and one of the accounts that got merged had game data associated with it for the application.
+	 */
+	EOS_EpicAccountId SelectedAccountId;
 ));
 
 /**
@@ -445,7 +460,6 @@ EOS_STRUCT(EOS_Auth_LinkAccountCallbackInfo, (
  * @param Data A EOS_Auth_LinkAccountCallbackInfo containing the output information and result
  */
 EOS_DECLARE_CALLBACK(EOS_Auth_OnLinkAccountCallback, const EOS_Auth_LinkAccountCallbackInfo* Data);
-
 
 /** The most recent version of the EOS_Auth_VerifyUserAuth API. */
 #define EOS_AUTH_VERIFYUSERAUTH_API_LATEST 1
@@ -477,7 +491,6 @@ EOS_STRUCT(EOS_Auth_VerifyUserAuthCallbackInfo, (
  */
 EOS_DECLARE_CALLBACK(EOS_Auth_OnVerifyUserAuthCallback, const EOS_Auth_VerifyUserAuthCallbackInfo* Data);
 
-
 /** The most recent version of the EOS_Auth_CopyUserAuthToken API. */
 #define EOS_AUTH_COPYUSERAUTHTOKEN_API_LATEST 1
 
@@ -489,6 +502,117 @@ EOS_STRUCT(EOS_Auth_CopyUserAuthTokenOptions, (
 	int32_t ApiVersion;
 ));
 
+/** The most recent version of the EOS_Auth_CopyIdToken API. */
+#define EOS_AUTH_COPYIDTOKEN_API_LATEST 1
+
+/**
+ * Input parameters for the EOS_Auth_CopyIdToken function.
+ */
+EOS_STRUCT(EOS_Auth_CopyIdTokenOptions, (
+	/** API Version: Set this to EOS_AUTH_COPYIDTOKEN_API_LATEST. */
+	int32_t ApiVersion;
+	/** The Epic Account ID of the user being queried. */
+	EOS_EpicAccountId AccountId;
+));
+
+/** The most recent version of the EOS_Auth_IdToken struct. */
+#define EOS_AUTH_IDTOKEN_API_LATEST 1
+
+/**
+ * A structure that contains an ID token.
+ * These structures are created by EOS_Auth_CopyIdToken and must be passed to EOS_Auth_IdToken_Release when finished.
+ */
+EOS_STRUCT(EOS_Auth_IdToken, (
+	/** API Version: Set this to EOS_AUTH_IDTOKEN_API_LATEST. */
+	int32_t ApiVersion;
+	/**
+	 * The Epic Account ID described by the ID token.
+	 * Use EOS_EpicAccountId_FromString to populate this field when validating a received ID token.
+	 */
+	EOS_EpicAccountId AccountId;
+	/** The ID token as a Json Web Token (JWT) string. */
+	const char* JsonWebToken;
+));
+
+/**
+ * Release the memory associated with an EOS_Auth_IdToken structure. This must be called on data retrieved from EOS_Auth_CopyIdToken.
+ *
+ * @param IdToken The ID token structure to be released.
+ *
+ * @see EOS_Auth_IdToken
+ * @see EOS_Auth_CopyIdToken
+ */
+EOS_DECLARE_FUNC(void) EOS_Auth_IdToken_Release(EOS_Auth_IdToken* IdToken);
+
+/** The most recent version of the EOS_Auth_QueryIdToken API. */
+#define EOS_AUTH_QUERYIDTOKEN_API_LATEST 1
+
+/**
+ * Input parameters for the EOS_Auth_QueryIdToken function.
+ */
+EOS_STRUCT(EOS_Auth_QueryIdTokenOptions, (
+	/** API Version: Set this to EOS_AUTH_QUERYIDTOKEN_API_LATEST. */
+	int32_t ApiVersion;
+	/** The Epic Account ID of the local authenticated user. */
+	EOS_EpicAccountId LocalUserId;
+	/**
+	 * The target Epic Account ID for which to query an ID token.
+	 * This account id may be the same as the input LocalUserId or another merged account id associated with the local user's Epic account.
+	 *
+	 * An ID token for the selected account id of a locally authenticated user will always be readily available.
+	 * To retrieve it for the selected account ID, you can use EOS_Auth_CopyIdToken directly after a successful user login.
+	 */
+	EOS_EpicAccountId TargetAccountId;
+));
+
+/**
+ * Output parameters for the EOS_Auth_QueryIdToken Function.
+ */
+EOS_STRUCT(EOS_Auth_QueryIdTokenCallbackInfo, (
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
+	EOS_EResult ResultCode;
+	/** Context that was passed into EOS_Auth_QueryIdToken */
+	void* ClientData;
+	/** The Epic Account ID of the local authenticated user. */
+	EOS_EpicAccountId LocalUserId;
+	/** The target Epic Account ID for which the ID token was retrieved. */
+	EOS_EpicAccountId TargetAccountId;
+));
+
+EOS_DECLARE_CALLBACK(EOS_Auth_OnQueryIdTokenCallback, const EOS_Auth_QueryIdTokenCallbackInfo* Data);
+
+/** The most recent version of the EOS_Auth_VerifyIdToken API. */
+#define EOS_AUTH_VERIFYIDTOKEN_API_LATEST 1
+
+/**
+ * Input parameters for the EOS_Auth_VerifyIdToken function.
+ */
+EOS_STRUCT(EOS_Auth_VerifyIdTokenOptions, (
+	/** API Version: Set this to EOS_AUTH_VERIFYIDTOKEN_API_LATEST. */
+	int32_t ApiVersion;
+	/**
+	 * The ID token to verify.
+	 * Use EOS_EpicAccountId_FromString to populate the AccountId field of this struct.
+	 */
+	const EOS_Auth_IdToken* IdToken;
+));
+
+/**
+ * Output parameters for the EOS_Auth_VerifyIdToken Function.
+ */
+EOS_STRUCT(EOS_Auth_VerifyIdTokenCallbackInfo, (
+	/** The EOS_EResult code for the operation. EOS_Success indicates that the operation succeeded; other codes indicate errors. */
+	EOS_EResult ResultCode;
+	/** Context that was passed into EOS_Auth_VerifyIdToken */
+	void* ClientData;
+));
+
+/**
+ * Function prototype definition for callbacks passed into EOS_Auth_VerifyIdToken.
+ *
+ * @param Data A EOS_Auth_VerifyIdTokenCallbackInfo containing the output information and result.
+ */
+EOS_DECLARE_CALLBACK(EOS_Auth_OnVerifyIdTokenCallback, const EOS_Auth_VerifyIdTokenCallbackInfo* Data);
 
 /** The most recent version of the EOS_Auth_AddNotifyLoginStatusChanged API. */
 #define EOS_AUTH_ADDNOTIFYLOGINSTATUSCHANGED_API_LATEST 1
@@ -500,7 +624,6 @@ EOS_STRUCT(EOS_Auth_AddNotifyLoginStatusChangedOptions, (
 	/** API Version: Set this to EOS_AUTH_ADDNOTIFYLOGINSTATUSCHANGED_API_LATEST. */
 	int32_t ApiVersion;
 ));
-
 
 /** The most recent version of the EOS_Auth_DeletePersistentAuth API. */
 #define EOS_AUTH_DELETEPERSISTENTAUTH_API_LATEST 2
@@ -534,14 +657,13 @@ EOS_STRUCT(EOS_Auth_DeletePersistentAuthCallbackInfo, (
  */
 EOS_DECLARE_CALLBACK(EOS_Auth_OnDeletePersistentAuthCallback, const EOS_Auth_DeletePersistentAuthCallbackInfo* Data);
 
-
 /**
  * Output parameters for the EOS_Auth_OnLoginStatusChangedCallback Function.
  */
 EOS_STRUCT(EOS_Auth_LoginStatusChangedCallbackInfo, (
 	/** Context that was passed into EOS_Auth_AddNotifyLoginStatusChanged */
 	void* ClientData;
-	/** The Epic Online Services Account ID of the local user whose status has changed */
+	/** The Epic Account ID of the local user whose status has changed */
 	EOS_EpicAccountId LocalUserId;
 	/** The status prior to the change */
 	EOS_ELoginStatus PrevStatus;

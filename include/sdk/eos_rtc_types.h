@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "eos_platform_prereqs.h"
 #include "eos_common.h"
 
 #pragma pack(push, 8)
@@ -262,5 +261,57 @@ EOS_STRUCT(EOS_RTC_ParticipantStatusChangedCallbackInfo, (
 ));
 
 EOS_DECLARE_CALLBACK(EOS_RTC_OnParticipantStatusChangedCallback, const EOS_RTC_ParticipantStatusChangedCallbackInfo* Data);
+
+
+
+/**
+* RTC SetSettings API
+*/
+
+/** The most recent version of the EOS_RTC_SetSetting API. */
+#define EOS_RTC_SETSETTING_API_LATEST 1
+
+/**
+ * This struct is used to call EOS_RTC_SetSetting
+ *
+ * Available values of SettingName:
+ * - DisableEchoCancelation: Disables the use of echo cancellation for the audio channel. Default "False".
+ * - DisableNoiseSupression: Disables the use of noise suppression for the audio channel. Default "False".
+ * - DisableAutoGainControl: Disables the use of auto gain control for the audio channel. Default "False".
+ * - DisableDtx: Allows to disable the use of DTX.  Default "False".
+ */
+EOS_STRUCT(EOS_RTC_SetSettingOptions, (
+	/** API Version: Set this to EOS_RTC_SETSETTING_API_LATEST. */
+	int32_t ApiVersion;
+	/** Setting that should be set. */
+	const char* SettingName;
+	/** Value to set the setting to. */
+	const char* SettingValue;
+));
+
+/** The most recent version of the EOS_RTC_SetRoomSetting API. */
+#define EOS_RTC_SETROOMSETTING_API_LATEST 1
+
+/**
+ * This struct is used to call EOS_RTC_SetRoomSetting
+ *
+ * Available values of SettingName:
+ * - DisableEchoCancelation: Disables the use of echo cancellation for the audio channel. Default "False".
+ * - DisableNoiseSupression: Disables the use of noise suppression for the audio channel. Default "False".
+ * - DisableAutoGainControl: Disables the use of auto gain control for the audio channel. Default "False".
+ * - DisableDtx: Allows to disable the use of DTX.  Default "False".
+ */
+EOS_STRUCT(EOS_RTC_SetRoomSettingOptions, (
+	/** API Version: Set this to EOS_RTC_SETROOMSETTING_API_LATEST. */
+	int32_t ApiVersion;
+	/** The Product User ID of the user trying to request this operation. */
+	EOS_ProductUserId LocalUserId;
+	/** The room the setting will be applied to. */
+	const char* RoomName;
+	/** Setting that should be set. */
+	const char* SettingName;
+	/** Value to set the setting to. */
+	const char* SettingValue;
+));
 
 #pragma pack(pop)

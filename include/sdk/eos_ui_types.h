@@ -22,7 +22,7 @@ EXTERN_C typedef uint64_t EOS_UI_EventId;
 EOS_STRUCT(EOS_UI_ShowFriendsOptions, (
 	/** API Version: Set this to EOS_UI_SHOWFRIENDS_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the user whose friend list is being shown. */
+	/** The Epic Account ID of the user whose friend list is being shown. */
 	EOS_EpicAccountId LocalUserId;
 ));
 
@@ -34,7 +34,7 @@ EOS_STRUCT(EOS_UI_ShowFriendsCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_UI_ShowFriends */
 	void* ClientData;
-	/** The Epic Online Services Account ID of the user whose friend list is being shown. */
+	/** The Epic Account ID of the user whose friend list is being shown. */
 	EOS_EpicAccountId LocalUserId;
 ));
 
@@ -53,7 +53,7 @@ EOS_DECLARE_CALLBACK(EOS_UI_OnShowFriendsCallback, const EOS_UI_ShowFriendsCallb
 EOS_STRUCT(EOS_UI_HideFriendsOptions, (
 	/** API Version: Set this to EOS_UI_HIDEFRIENDS_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the user whose friend list is being shown. */
+	/** The Epic Account ID of the user whose friend list is being shown. */
 	EOS_EpicAccountId LocalUserId;
 ));
 
@@ -65,7 +65,7 @@ EOS_STRUCT(EOS_UI_HideFriendsCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_UI_HideFriends */
 	void* ClientData;
-	/** The Epic Online Services Account ID of the user whose friend list is being shown. */
+	/** The Epic Account ID of the user whose friend list is being shown. */
 	EOS_EpicAccountId LocalUserId;
 ));
 
@@ -84,7 +84,7 @@ EOS_DECLARE_CALLBACK(EOS_UI_OnHideFriendsCallback, const EOS_UI_HideFriendsCallb
 EOS_STRUCT(EOS_UI_GetFriendsVisibleOptions, (
 	/** API Version: Set this to EOS_UI_GETFRIENDSVISIBLE_API_LATEST. */
 	int32_t ApiVersion;
-	/** The Epic Online Services Account ID of the user whose overlay is being updated. */
+	/** The Epic Account ID of the user whose overlay is being updated. */
 	EOS_EpicAccountId LocalUserId;
 ));
 

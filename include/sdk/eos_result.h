@@ -380,7 +380,7 @@ EOS_RESULT_VALUE(EOS_Mods_CannotGetManifestLocation, 11015)
 /** Attempting to perform an action with a mod that does not support the current operating system. */
 EOS_RESULT_VALUE(EOS_Mods_UnsupportedOS, 11016)
 
-/** The anti-cheat client protection is not available. Check that the game was started using the correct launcher. */
+/** The anti-cheat client protection is not available. Check that the game was started using the anti-cheat bootstrapper. */
 EOS_RESULT_VALUE(EOS_AntiCheat_ClientProtectionNotAvailable, 12000)
 /** The current anti-cheat mode is incorrect for using this API */
 EOS_RESULT_VALUE(EOS_AntiCheat_InvalidMode, 12001)
@@ -400,6 +400,10 @@ EOS_RESULT_VALUE(EOS_AntiCheat_PeerAlreadyRegistered, 12007)
 EOS_RESULT_VALUE(EOS_AntiCheat_PeerNotFound, 12008)
 /** (ReceiveMessageFromPeer) Invalid call: Peer is not protected */
 EOS_RESULT_VALUE(EOS_AntiCheat_PeerNotProtected, 12009)
+/** The DeploymentId provided to the anti-cheat client helper executable does not match what was used to initialize the EOS SDK */
+EOS_RESULT_VALUE(EOS_AntiCheat_ClientDeploymentIdMismatch, 12010)
+/** EOS Connect DeviceID auth method is not supported for anti-cheat */
+EOS_RESULT_VALUE(EOS_AntiCheat_DeviceIdAuthIsNotSupported, 12011)
 
 /** EOS RTC room cannot accept more participants */
 EOS_RESULT_VALUE(EOS_RTC_TooManyParticipants, 13000)

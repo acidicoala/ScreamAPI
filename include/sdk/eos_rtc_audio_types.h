@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "eos_platform_prereqs.h"
 #include "eos_common.h"
 
 #pragma pack(push, 8)
@@ -402,7 +401,6 @@ EOS_STRUCT(EOS_RTCAudio_AddNotifyAudioBeforeRenderOptions, (
 	const char* RoomName;
 	/**
 	 * Mixed audio or unmixed audio.
-     * For unmixed audio notifications it is not supported to modify the samples in the callback.
 	 */
 	EOS_Bool bUnmixedAudio;
 ));
@@ -420,8 +418,6 @@ EOS_STRUCT(EOS_RTCAudio_AudioBeforeRenderCallbackInfo, (
 	const char* RoomName;
 	/**
 	 * Audio buffer.
-	 * If bUnmixedAudio was set to true when setting the notifications (aka: you get buffers per participant), then you should
-	 * not modify this buffer.
 	 */
 	EOS_RTCAudio_AudioBuffer* Buffer;
 	/**

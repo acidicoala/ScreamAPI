@@ -22,7 +22,7 @@ EOS_ENUM(EOS_EUserControllerType,
 
 /** Account ID type for EOS_Metrics_BeginPlayerSession and EOS_Metrics_EndPlayerSession. */
 EOS_ENUM(EOS_EMetricsAccountIdType,
-	/** An Epic Online Services Account ID. */
+	/** An Epic Account ID. */
 	EOS_MAIT_Epic = 0,
 	/** An external service Account ID. */
 	EOS_MAIT_External = 1
@@ -40,7 +40,7 @@ EOS_STRUCT(EOS_Metrics_BeginPlayerSessionOptions, (
 	/** The Account ID for the player whose session is beginning. */
 	union
 	{
-		/** An Epic Online Services Account ID. Set this field when AccountIdType is set to EOS_MAIT_Epic. */
+		/** An Epic Account ID. Set this field when AccountIdType is set to EOS_MAIT_Epic. */
 		EOS_EpicAccountId Epic;
 		/** An Account ID for another service. Set this field when AccountIdType is set to EOS_MAIT_External. */
 		const char* External;
@@ -79,7 +79,7 @@ EOS_STRUCT(EOS_Metrics_EndPlayerSessionOptions, (
 	/** The Account ID for the player whose session is ending. */
 	union
 	{
-		/** An Epic Online Services Account ID. Set this field when AccountIdType is set to EOS_MAIT_Epic. */
+		/** An Epic Account ID. Set this field when AccountIdType is set to EOS_MAIT_Epic. */
 		EOS_EpicAccountId Epic;
 		/** An Account ID for another service. Set this field when AccountIdType is set to EOS_MAIT_External. */
 		const char* External;

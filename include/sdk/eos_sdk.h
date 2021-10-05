@@ -26,6 +26,7 @@
 #include "eos_kws_types.h"
 #include "eos_rtc_types.h"
 #include "eos_rtc_admin_types.h"
+#include "eos_progressionsnapshot_types.h"
 
 /**
  * The Platform Instance is used to gain access to all other Epic Online Service interfaces and to drive internal operations through the Tick.
@@ -235,6 +236,18 @@ EOS_DECLARE_FUNC(EOS_HAntiCheatClient) EOS_Platform_GetAntiCheatClientInterface(
  * @see eos_anticheatserver_types.h
  */
 EOS_DECLARE_FUNC(EOS_HAntiCheatServer) EOS_Platform_GetAntiCheatServerInterface(EOS_HPlatform Handle);
+
+/**
+ * Get the active country code that the SDK will send to services which require it.
+ * This returns the override value otherwise it will use the country code of the given user.
+ * This is currently used for determining pricing.
+ * Get a handle to the ProgressionSnapshot Interface.
+ * @return EOS_HProgressionSnapshot handle
+ *
+ * @see eos_progressionsnapshot.h
+ * @see eos_progressionsnapshot_types.h
+ */
+EOS_DECLARE_FUNC(EOS_HProgressionSnapshot) EOS_Platform_GetProgressionSnapshotInterface(EOS_HPlatform Handle);
 
 /**
  * Get a handle to the Reports Interface.

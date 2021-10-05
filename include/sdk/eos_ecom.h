@@ -83,7 +83,7 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_RedeemEntitlements(EOS_HEcom Handle, const EOS_E
 /**
  * Fetch the number of entitlements that are cached for a given local user.
  *
- * @param Options structure containing the Epic Online Services Account ID being accessed
+ * @param Options structure containing the Epic Account ID being accessed
  *
  * @see EOS_Ecom_CopyEntitlementByIndex
  *
@@ -94,7 +94,7 @@ EOS_DECLARE_FUNC(uint32_t) EOS_Ecom_GetEntitlementsCount(EOS_HEcom Handle, const
 /**
  * Fetch the number of entitlements with the given Entitlement Name that are cached for a given local user.
  *
- * @param Options structure containing the Epic Online Services Account ID and name being accessed
+ * @param Options structure containing the Epic Account ID and name being accessed
  *
  * @see EOS_Ecom_CopyEntitlementByNameAndIndex
  *
@@ -105,7 +105,7 @@ EOS_DECLARE_FUNC(uint32_t) EOS_Ecom_GetEntitlementsByNameCount(EOS_HEcom Handle,
 /**
  * Fetches an entitlement from a given index.
  *
- * @param Options structure containing the Epic Online Services Account ID and index being accessed
+ * @param Options structure containing the Epic Account ID and index being accessed
  * @param OutEntitlement the entitlement for the given index, if it exists and is valid, use EOS_Ecom_Entitlement_Release when finished
  *
  * @see EOS_Ecom_Entitlement_Release
@@ -122,7 +122,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyEntitlementByIndex(EOS_HEcom Handle, 
  * entitlements among those with the same Entitlement Name.  The Index can be a value from 0 to
  * one less than the result from EOS_Ecom_GetEntitlementsByNameCount.
  *
- * @param Options structure containing the Epic Online Services Account ID, entitlement name, and index being accessed
+ * @param Options structure containing the Epic Account ID, entitlement name, and index being accessed
  * @param OutEntitlement the entitlement for the given name index pair, if it exists and is valid, use EOS_Ecom_Entitlement_Release when finished
  *
  * @see EOS_Ecom_Entitlement_Release
@@ -137,7 +137,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyEntitlementByNameAndIndex(EOS_HEcom H
 /**
  * Fetches the entitlement with the given ID.
  *
- * @param Options structure containing the Epic Online Services Account ID and entitlement ID being accessed
+ * @param Options structure containing the Epic Account ID and entitlement ID being accessed
  * @param OutEntitlement the entitlement for the given ID, if it exists and is valid, use EOS_Ecom_Entitlement_Release when finished
  *
  * @see EOS_Ecom_CopyEntitlementByNameAndIndex
@@ -153,7 +153,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyEntitlementById(EOS_HEcom Handle, con
 /**
  * Fetch the number of offers that are cached for a given local user.
  *
- * @param Options structure containing the Epic Online Services Account ID being accessed
+ * @param Options structure containing the Epic Account ID being accessed
  *
  * @see EOS_Ecom_CopyOfferByIndex
  *
@@ -164,7 +164,7 @@ EOS_DECLARE_FUNC(uint32_t) EOS_Ecom_GetOfferCount(EOS_HEcom Handle, const EOS_Ec
 /**
  * Fetches an offer from a given index.  The pricing and text are localized to the provided account.
  *
- * @param Options structure containing the Epic Online Services Account ID and index being accessed
+ * @param Options structure containing the Epic Account ID and index being accessed
  * @param OutOffer the offer for the given index, if it exists and is valid, use EOS_Ecom_CatalogOffer_Release when finished
  *
  * @see EOS_Ecom_CatalogOffer_Release
@@ -181,7 +181,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyOfferByIndex(EOS_HEcom Handle, const 
 /**
  * Fetches an offer with a given ID.  The pricing and text are localized to the provided account.
  *
- * @param Options structure containing the Epic Online Services Account ID and offer ID being accessed
+ * @param Options structure containing the Epic Account ID and offer ID being accessed
  * @param OutOffer the offer for the given index, if it exists and is valid, use EOS_Ecom_CatalogOffer_Release when finished
  *
  * @see EOS_Ecom_CatalogOffer_Release
@@ -205,7 +205,7 @@ EOS_DECLARE_FUNC(uint32_t) EOS_Ecom_GetOfferItemCount(EOS_HEcom Handle, const EO
 /**
  * Fetches an item from a given index.
  *
- * @param Options structure containing the Epic Online Services Account ID and index being accessed
+ * @param Options structure containing the Epic Account ID and index being accessed
  * @param OutItem the item for the given index, if it exists and is valid, use EOS_Ecom_CatalogItem_Release when finished
  *
  * @see EOS_Ecom_CatalogItem_Release
@@ -315,7 +315,7 @@ EOS_DECLARE_FUNC(uint32_t) EOS_Ecom_GetTransactionCount(EOS_HEcom Handle, const 
 /**
  * Fetches the transaction handle at the given index.
  *
- * @param Options structure containing the Epic Online Services Account ID and index being accessed
+ * @param Options structure containing the Epic Account ID and index being accessed
  *
  * @see EOS_Ecom_CheckoutCallbackInfo
  * @see EOS_Ecom_Transaction_Release
@@ -329,7 +329,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyTransactionByIndex(EOS_HEcom Handle, 
 /**
  * Fetches the transaction handle at the given index.
  *
- * @param Options structure containing the Epic Online Services Account ID and transaction ID being accessed
+ * @param Options structure containing the Epic Account ID and transaction ID being accessed
  *
  * @see EOS_Ecom_CheckoutCallbackInfo
  * @see EOS_Ecom_Transaction_Release
@@ -358,7 +358,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_Transaction_GetTransactionId(EOS_Ecom_HTr
 /**
  * Fetch the number of entitlements that are part of this transaction.
  *
- * @param Options structure containing the Epic Online Services Account ID being accessed
+ * @param Options structure containing the Epic Account ID being accessed
  *
  * @see EOS_Ecom_Transaction_CopyEntitlementByIndex
  *

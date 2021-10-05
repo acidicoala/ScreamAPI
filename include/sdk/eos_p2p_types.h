@@ -33,7 +33,6 @@ EOS_ENUM(EOS_ENATType,
 	EOS_NAT_Strict = 3
 );
 
-
 /** The most recent version of the EOS_P2P_SocketId structure. */
 #define EOS_P2P_SOCKETID_API_LATEST 1
 
@@ -96,7 +95,6 @@ EOS_STRUCT(EOS_P2P_SendPacketOptions, (
 	EOS_EPacketReliability Reliability;
 ));
 
-
 /** The most recent version of the EOS_P2P_GetNextReceivedPacketSize API. */
 #define EOS_P2P_GETNEXTRECEIVEDPACKETSIZE_API_LATEST 2
 
@@ -112,7 +110,6 @@ EOS_STRUCT(EOS_P2P_GetNextReceivedPacketSizeOptions, (
 	const uint8_t* RequestedChannel;
 
 ));
-
 
 /** The most recent version of the EOS_P2P_ReceivePacket API. */
 #define EOS_P2P_RECEIVEPACKET_API_LATEST 2
@@ -130,7 +127,6 @@ EOS_STRUCT(EOS_P2P_ReceivePacketOptions, (
 	/** An optional channel to request the data for. If NULL, we're retrieving the next packet on any channel */
 	const uint8_t* RequestedChannel;
 ));
-
 
 /** The most recent version of the EOS_P2P_AddNotifyPeerConnectionRequest API. */
 #define EOS_P2P_ADDNOTIFYPEERCONNECTIONREQUEST_API_LATEST 1
@@ -165,7 +161,6 @@ EOS_STRUCT(EOS_P2P_OnIncomingConnectionRequestInfo, (
  * Callback for information related to incoming connection requests.
  */
 EOS_DECLARE_CALLBACK(EOS_P2P_OnIncomingConnectionRequestCallback, const EOS_P2P_OnIncomingConnectionRequestInfo* Data);
-
 
 /** The most recent version of the EOS_P2P_AddNotifyPeerConnectionClosed API. */
 #define EOS_P2P_ADDNOTIFYPEERCONNECTIONCLOSED_API_LATEST 1
@@ -231,6 +226,51 @@ EOS_STRUCT(EOS_P2P_OnRemoteConnectionClosedInfo, (
  */
 EOS_DECLARE_CALLBACK(EOS_P2P_OnRemoteConnectionClosedCallback, const EOS_P2P_OnRemoteConnectionClosedInfo* Data);
 
+/** The most recent version of the EOS_P2P_AddNotifyPeerConnectionEstablished API. */
+#define EOS_P2P_ADDNOTIFYPEERCONNECTIONESTABLISHED_API_LATEST 1
+
+/**
+ * Structure containing information about which connections should be notified
+ */
+EOS_STRUCT(EOS_P2P_AddNotifyPeerConnectionEstablishedOptions, (
+	/** API Version: Set this to EOS_P2P_ADDNOTIFYPEERCONNECTIONESTABLISHED_API_LATEST. */
+	int32_t ApiVersion;
+	/** The Product User ID of the local user who would like to receive notifications */
+	EOS_ProductUserId LocalUserId;
+	/** The optional socket ID, used as a filter for established connections. If NULL, this handler will be called for all sockets */
+	const EOS_P2P_SocketId* SocketId;
+));
+
+/**
+ * Type of established connection
+ */
+EOS_ENUM(EOS_EConnectionEstablishedType,
+	/** The connection is brand new */
+	EOS_CET_NewConnection = 0,
+	/** The connection is reestablished (reconnection) */
+	EOS_CET_Reconnection = 1
+);
+
+/**
+ * Structure containing information about a connection being established
+ */
+EOS_STRUCT(EOS_P2P_OnPeerConnectionEstablishedInfo, (
+	/** Client-specified data passed into EOS_P2P_AddNotifyPeerConnectionEstablishedInfo */
+	void* ClientData;
+	/** The Product User ID of the local user who is being notified of a connection being established */
+	EOS_ProductUserId LocalUserId;
+	/** The Product User ID of the remote user who this connection was with */
+	EOS_ProductUserId RemoteUserId;
+	/** The socket ID of the connection being established */
+	const EOS_P2P_SocketId* SocketId;
+	/** Information if this is a new connection or reconnection */
+	EOS_EConnectionEstablishedType ConnectionType;
+));
+
+/**
+ * Callback for information related to new connections being established
+ */
+EOS_DECLARE_CALLBACK(EOS_P2P_OnPeerConnectionEstablishedCallback, const EOS_P2P_OnPeerConnectionEstablishedInfo* Data);
 
 /** The most recent version of the EOS_P2P_AcceptConnection API. */
 #define EOS_P2P_ACCEPTCONNECTION_API_LATEST 1
@@ -249,7 +289,6 @@ EOS_STRUCT(EOS_P2P_AcceptConnectionOptions, (
 	const EOS_P2P_SocketId* SocketId;
 ));
 
-
 /** The most recent version of the EOS_P2P_CloseConnection API. */
 #define EOS_P2P_CLOSECONNECTION_API_LATEST 1
 
@@ -267,7 +306,6 @@ EOS_STRUCT(EOS_P2P_CloseConnectionOptions, (
 	const EOS_P2P_SocketId* SocketId;
 ));
 
-
 /** The most recent version of the EOS_P2P_CloseConnections API. */
 #define EOS_P2P_CLOSECONNECTIONS_API_LATEST 1
 
@@ -282,7 +320,6 @@ EOS_STRUCT(EOS_P2P_CloseConnectionsOptions, (
 	/** The socket ID of the connections to close */
 	const EOS_P2P_SocketId* SocketId;
 ));
-
 
 /** The most recent version of the EOS_P2P_QueryNATType API. */
 #define EOS_P2P_QUERYNATTYPE_API_LATEST 1
@@ -311,7 +348,6 @@ EOS_STRUCT(EOS_P2P_OnQueryNATTypeCompleteInfo, (
  * Callback for information related to our NAT type query completing.
  */
 EOS_DECLARE_CALLBACK(EOS_P2P_OnQueryNATTypeCompleteCallback, const EOS_P2P_OnQueryNATTypeCompleteInfo* Data);
-
 
 /** The most recent version of the EOS_P2P_GetNATType API. */
 #define EOS_P2P_GETNATTYPE_API_LATEST 1
@@ -392,7 +428,6 @@ EOS_STRUCT(EOS_P2P_GetPortRangeOptions, (
 	int32_t ApiVersion;
 ));
 
-
 /** Helper constant to signify that the packet queue is allowed to grow indefinitely */
 #define EOS_P2P_MAX_QUEUE_SIZE_UNLIMITED 0
 
@@ -410,7 +445,6 @@ EOS_STRUCT(EOS_P2P_SetPacketQueueSizeOptions, (
 	/** The ideal maximum amount of bytes the Outgoing packet queue can consume */
 	uint64_t OutgoingPacketQueueMaxSizeBytes;
 ));
-
 
 /** The most recent version of the EOS_P2P_GetPacketQueueInfo API. */
 #define EOS_P2P_GETPACKETQUEUEINFO_API_LATEST 1
@@ -442,7 +476,6 @@ EOS_STRUCT(EOS_P2P_PacketQueueInfo, (
 	/** The current amount of queued packets in the outgoing packet queue */
 	uint64_t OutgoingPacketQueueCurrentPacketCount;
 ));
-
 
 /** The most recent version of the EOS_P2P_AddNotifyIncomingPacketQueueFull API. */
 #define EOS_P2P_ADDNOTIFYINCOMINGPACKETQUEUEFULL_API_LATEST 1
@@ -478,5 +511,21 @@ EOS_STRUCT(EOS_P2P_OnIncomingPacketQueueFullInfo, (
  */
 EOS_DECLARE_CALLBACK(EOS_P2P_OnIncomingPacketQueueFullCallback, const EOS_P2P_OnIncomingPacketQueueFullInfo* Data);
 
+/** The most recent version of the EOS_P2P_ClearPacketQueue API. */
+#define EOS_P2P_CLEARPACKETQUEUE_API_LATEST 1
+
+/**
+ * Structure containing information about the packet queue to be cleared
+ */
+EOS_STRUCT(EOS_P2P_ClearPacketQueueOptions, (
+	/** API Version: Set this to EOS_P2P_CLEARPACKETQUEUE_API_LATEST. */
+	int32_t ApiVersion;
+	/** The Product User ID of the local user for whom we want to clear the queued packets */
+	EOS_ProductUserId LocalUserId;
+	/** The Product User ID to who (outgoing) or from who (incoming) packets are queued */
+	EOS_ProductUserId RemoteUserId;
+	/** The socket used for packets to be cleared */
+	const EOS_P2P_SocketId* SocketId;
+));
 
 #pragma pack(pop)

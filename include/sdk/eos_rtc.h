@@ -111,3 +111,23 @@ EOS_DECLARE_FUNC(EOS_NotificationId) EOS_RTC_AddNotifyParticipantStatusChanged(E
  * @param NotificationId The Notification ID representing the registered callback
  */
 EOS_DECLARE_FUNC(void) EOS_RTC_RemoveNotifyParticipantStatusChanged(EOS_HRTC Handle, EOS_NotificationId NotificationId);
+
+/**
+ * Use this function to control settings.
+ *
+ * The available settings are documented as part of EOS_RTC_SetSettingOptions.
+ *
+ * @param Options structure containing the parameters for the operation
+ * @return EOS_Success when the setting is successfully set, EOS_NotFound when the setting is unknown, EOS_InvalidParameters when the value is invalid.
+ */
+EOS_DECLARE_FUNC(EOS_EResult) EOS_RTC_SetSetting(EOS_HRTC Handle, const EOS_RTC_SetSettingOptions* Options);
+
+/**
+ * Use this function to control settings for the specific room.
+ *
+ * The available settings are documented as part of EOS_RTC_SetRoomSettingOptions.
+ *
+ * @param Options structure containing the parameters for the operation
+ * @return EOS_Success when the setting is successfully set, EOS_NotFound when the setting is unknown, EOS_InvalidParameters when the value is invalid.
+ */
+EOS_DECLARE_FUNC(EOS_EResult) EOS_RTC_SetRoomSetting(EOS_HRTC Handle, const EOS_RTC_SetRoomSettingOptions* Options);
