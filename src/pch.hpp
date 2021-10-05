@@ -22,7 +22,7 @@
 #include <string>    // std::string | std::wstring
 #include <utility>   // std::forward
 #include <vector>    // std::vector
-#include <set>       // std::vector
+#include <set>       // std::set
 
 // This definition turns import definitions into export definitions in EOS headers
 #define EOS_BUILDING_SDK TRUE
