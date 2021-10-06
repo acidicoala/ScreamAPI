@@ -19,11 +19,10 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlements(
     logger::info("❓ Game requested {} entitlements:", Options->EntitlementNameCount);
 
     for (uint32_t i = 0; i < Options->EntitlementNameCount; i++) {
-        auto id = Options->EntitlementNames[i];
+        const auto id = Options->EntitlementNames[i];
         logger::info("  ❔ {}", id);
 
         if (config::get().entitlements.unlock_all) {
-            logger::debug("Adding entitlement requested by game: {}", id);
             entitlement_set.insert(id);
         }
     }
@@ -65,16 +64,16 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlements(
                     { "variables", {{ "namespace", scream_api::namespace_id }}}
                 };
 
-                auto res = cpr::Post(
+                const auto res = cpr::Post(
                     cpr::Url{ "https://graphql.epicgames.com/graphql" },
                     cpr::Header{{ "content-type", "application/json" }},
                     cpr::Body{ payload.dump() }
                 );
 
                 if (res.status_code == cpr::status::HTTP_OK) {
-                    auto json = nlohmann::json::parse(res.text);
+                    const auto json = nlohmann::json::parse(res.text);
 
-                    auto elements = json["data"]["Catalog"]["catalogOffers"]["elements"];
+                    const auto elements = json["data"]["Catalog"]["catalogOffers"]["elements"];
 
                     for (auto& element: elements) {
                         for (auto& items: element) {
@@ -155,9 +154,9 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyEntitlementByIndex(
 
 EOS_DECLARE_FUNC(void) EOS_Ecom_Entitlement_Release(EOS_Ecom_Entitlement* Entitlement) {
     if (Entitlement) {
-        logger::debug("Releasing the memory of the entitlement: {}", Entitlement->EntitlementName);
+        logger::debug("Freeing a copy of the entitlement: {}", Entitlement->EntitlementName);
         delete Entitlement;
     } else {
-        logger::warn("Game attempted to delete a null entitlement");
+        logger::warn("Game attempted to free a null entitlement");
     }
 }
