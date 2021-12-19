@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/acidicoala/ScreamAPI/master/extra/ScreamAPI.schema.v1.json",
   "version": 1,
   "logging": true,
-  "block_metrics": true,
+  "block_metrics": false,
   "catalog_items": {
     "unlock_all": true,
     "override": []
