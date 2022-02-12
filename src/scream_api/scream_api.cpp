@@ -1,33 +1,44 @@
 #include <build_config.h>
 #include "scream_api.hpp"
-#include "logger/logger.hpp"
-#include "win_util/win_util.hpp"
+#include "config/config.hpp"
+#include "koalabox/logger/logger.hpp"
+#include "koalabox/win_util/win_util.hpp"
 
-void scream_api::init() {
-    logger::info("🐨 {} v{}", PROJECT_NAME, PROJECT_VERSION);
+namespace scream_api {
+    using namespace koalabox;
 
-    logger::debug("Initializing…");
+    HMODULE original_module = nullptr;
 
-    auto original_module_path = util::get_working_dir() / loader::get_original_module_name();
+    void init(HMODULE self_module) {
+        DisableThreadLibraryCalls(self_module);
 
-    if (not exists(original_module_path)) {
-        util::panic(
-            "Initialization error",
-            "Original library not found at: {}"_format(original_module_path.string())
-        );
+        koalabox::project_name = PROJECT_NAME;
+
+        const auto self_directory = util::get_module_dir(self_module);
+
+        config::init(self_directory / PROJECT_NAME".json");
+
+        if (config::instance.logging) {
+            logger::init(self_directory / PROJECT_NAME".log");
+        }
+
+        logger::info("🐨 {} v{}", PROJECT_NAME, PROJECT_VERSION);
+
+        logger::debug("Initializing…");
+
+        const auto original_module_path = self_directory / ORIG_DLL"_o.dll";
+
+        original_module = win_util::load_library(original_module_path);
+
+        logger::info("📚 Loaded original library from: '{}'", original_module_path.string());
+
+        logger::info("🚀 Initialization complete");
     }
 
-    win_util::load_library(original_module_path);
+    void shutdown() {
+        win_util::free_library(original_module);
 
-    logger::info("🚀 Initialization complete");
-}
+        logger::info("💀 Shutdown complete");
+    }
 
-void scream_api::shutdown() {
-    logger::debug("Shutting down…");
-
-    auto original_module = loader::get_original_module_handle();
-
-    win_util::free_library(original_module);
-
-    logger::info("💀 Shutdown complete");
 }

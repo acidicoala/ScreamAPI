@@ -1,30 +1,26 @@
 #include <build_config.h>
 #include "config.hpp"
-#include "util/util.hpp"
+#include "koalabox/util/util.hpp"
 
-const config::Config& config::get() {
+namespace config {
+    Config instance = {};
 
-    static auto config = [] {
-        Config config = {};
-
-        const auto config_path = util::get_working_dir() / PROJECT_NAME".json";
-
-        if (not exists(config_path))
-            return config;
+    void init(const Path path) { // NOLINT(performance-unnecessary-value-param)
+        if (not std::filesystem::exists(path)) {
+            return;
+        }
 
         try {
-            std::ifstream ifs(config_path);
+            std::ifstream ifs(path);
             nlohmann::json json;
             ifs >> json;
 
-            config = json.get<Config>();
+            instance = json.get<Config>();
         } catch (const std::exception& ex) {
-            util::error_box("config::get", "Failed to parse config file: {}"_format(ex.what()));
-            exit(GetLastError());
+            const auto message = fmt::format("Failed to parse config file: {}", ex.what());
+            util::error_box("config::init", message);
+            exit(::GetLastError()); // NOLINT(cppcoreguidelines-narrowing-conversions)
         }
+    }
 
-        return config;
-    }();
-
-    return config;
 }

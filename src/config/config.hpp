@@ -1,10 +1,14 @@
 #pragma once
 
+#include "koalabox/koalabox.hpp"
+
 namespace config {
+
+    using namespace koalabox;
 
     struct CatalogItems {
         bool unlock_all = true;
-        std::set<std::string> override;
+        Set<String> override;
 
         NLOHMANN_DEFINE_TYPE_INTRUSIVE(CatalogItems, unlock_all, override)
     };
@@ -12,7 +16,7 @@ namespace config {
     struct Entitlements {
         bool unlock_all = true;
         bool auto_inject = true;
-        std::set<std::string> inject;
+        Set<String> inject;
 
         NLOHMANN_DEFINE_TYPE_INTRUSIVE(Entitlements, unlock_all, auto_inject, inject)
     };
@@ -26,6 +30,8 @@ namespace config {
         NLOHMANN_DEFINE_TYPE_INTRUSIVE(Config, logging, block_metrics, catalog_items, entitlements)
     };
 
-    const Config& get();
+    extern Config instance;
+
+    void init(Path path);
 
 }

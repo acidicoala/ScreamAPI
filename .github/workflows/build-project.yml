@@ -1,15 +1,6 @@
 name: Build Project
-on:
-  push:
-    paths-ignore:
-      - '.idea/**'
-      - 'README.md'
-      - 'build.ps1'
-      - 'extra/**'
-env:
-  SCREAM_API_VERSION: 2.1.0
+on: push
 
-# Based on: https://github.com/lukka/CppBuildTasks-Validation
 jobs:
   build-project:
     name: Build ${{ matrix.config }} for ${{ matrix.arch }}-bit architecture
@@ -17,12 +8,7 @@ jobs:
     strategy:
       matrix:
         arch: [ 32, 64 ]
-        config: [ Release, RelWithDebInfo ]
-        is_master:
-          - ${{ github.ref == 'refs/heads/master' }}
-        exclude: # Don't build Release unless pushed on master branch
-          - is_master: false
-            config: Release
+        config: [ Release ]
         include:
           - arch: 32
             platform: Win32
@@ -34,13 +20,9 @@ jobs:
     env:
       BUILD_DIR: ${{ github.workspace }}\build\${{ matrix.arch }}
       VCPKG_ROOT: ${{ github.workspace }}\vcpkg
+      VCPKG_DISABLE_METRICS: true
       DLL_FILE: EOSSDK-Win${{ matrix.arch }}-Shipping
     steps:
-      # A workaround for missing conditional expressions
-      - name: Set version suffix to '-develop'
-        if: github.ref == 'refs/heads/develop'
-        run: echo "VERSION_SUFFIX=-develop" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
-
       - name: Check out repository code
         uses: actions/checkout@v2
         with:
@@ -91,6 +73,10 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Setup version tag
+        id: env_setup
+        run: echo "VERSION_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
       - name: Install required tools
         run: |
           sudo apt update
@@ -109,26 +95,19 @@ jobs:
 
       - name: Make release zip
         run: >
-          zip -j ScreamAPI-v${{ env.SCREAM_API_VERSION }}.zip
-          artifacts/*-Release/*.dll
-          extra/README.txt res/ScreamAPI.json
+          zip -j ScreamAPI-v${{ env.VERSION_TAG }}.zip
+          artifacts/EOSSDK*/*.dll
+          extra/README.txt
+          res/ScreamAPI.json
 
-      - name: Make release zip with debug info
-        run: >
-          zip -j ScreamAPI-v${{ env.SCREAM_API_VERSION }}-debug-info.zip
-          artifacts/*-RelWithDebInfo/*.dll artifacts/*-RelWithDebInfo/*.pdb
-          extra/README.txt res/ScreamAPI.json
-
-      - name: Create a Release draft
+      - name: Create a release draft
         uses: softprops/action-gh-release@v1
         with:
           body: '# 📑 Changelog'
           draft: true
           prerelease: false
-          files: |
-            ScreamAPI-v${{ env.SCREAM_API_VERSION }}.zip
-            ScreamAPI-v${{ env.SCREAM_API_VERSION }}-debug-info.zip
-          name: Release v${{ env.SCREAM_API_VERSION }}
-          tag_name: v${{ env.SCREAM_API_VERSION }}
+          files: ScreamAPI-v${{ env.VERSION_TAG }}.zip
+          name: Release ${{ env.VERSION_TAG }}
+          tag_name: ${{ env.VERSION_TAG }}
           fail_on_unmatched_files: true
 

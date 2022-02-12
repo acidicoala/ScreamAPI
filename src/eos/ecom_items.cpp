@@ -1,16 +1,21 @@
 #include <sdk/eos_ecom.h>
 #include <sdk/eos_common.h>
 #include "config/config.hpp"
-#include "logger/logger.hpp"
+#include "koalabox/logger/logger.hpp"
 #include "scream_api/scream_api.hpp"
 
-EOS_DECLARE_FUNC(void) EOS_Ecom_QueryOwnership(
+using namespace koalabox;
+
+DLL_EXPORT(void) EOS_Ecom_QueryOwnership(
     EOS_HEcom Handle,
     const EOS_Ecom_QueryOwnershipOptions* Options,
     void* ClientData,
     const EOS_Ecom_OnQueryOwnershipCallback CompletionDelegate
 ) {
-    static auto proxy = scream_api::get_original_function(&EOS_Ecom_QueryOwnership, __func__);
+    static auto EOS_Ecom_QueryOwnership_o = scream_api::get_original_function(
+        &EOS_Ecom_QueryOwnership,
+        __func__
+    );
 
     logger::info("❓ Game requested ownership of {} items:", Options->CatalogItemIdCount);
     for (uint32_t i = 0; i < Options->CatalogItemIdCount; i++) {
@@ -22,7 +27,7 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryOwnership(
         EOS_Ecom_OnQueryOwnershipCallback CompletionDelegate;
     };
 
-    proxy(Handle, Options, new Container{ ClientData, CompletionDelegate },
+    EOS_Ecom_QueryOwnership_o(Handle, Options, new Container{ ClientData, CompletionDelegate },
         [](const EOS_Ecom_QueryOwnershipCallbackInfo* Data) {
             const auto container = static_cast<Container*>(Data->ClientData);
 
@@ -31,8 +36,8 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryOwnership(
             for (uint32_t i = 0; i < Data->ItemOwnershipCount; i++) {
                 auto item = Data->ItemOwnership + i;
 
-                const auto unlock_all = config::get().catalog_items.unlock_all;
-                const auto override = config::get().catalog_items.override.contains(item->Id);
+                const auto unlock_all = config::instance.catalog_items.unlock_all;
+                const auto override = config::instance.catalog_items.override.contains(item->Id);
                 const auto owned = unlock_all != override;  // Logical XOR
 
                 const auto status = owned

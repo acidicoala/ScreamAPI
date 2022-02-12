@@ -1,22 +1,16 @@
-
-| Branch   | Workflow |
-|-------------|----------|
-| `master` | [![Build Project](https://github.com/acidicoala/ScreamAPI/actions/workflows/build-project.yml/badge.svg?branch=master)](https://github.com/acidicoala/ScreamAPI/actions/workflows/build-project.yml?query=branch%3Amaster) |
-| `develop` | [![Build Project](https://github.com/acidicoala/ScreamAPI/actions/workflows/build-project.yml/badge.svg?branch=develop)](https://github.com/acidicoala/ScreamAPI/actions/workflows/build-project.yml?query=branch%3Adevelop) |
-
-# 🐨 ScreamAPI
+# 🐨 ScreamAPI 😱
 
 **Legit DLC Unlocker for Epic Online Services**
 
-📥 [Download Latest Release](https://github.com/acidicoala/ScreamAPI/releases/latest)
+📥 [Download the latest release](https://github.com/acidicoala/ScreamAPI/releases/latest)
 
-💬 [Official Forum Topic](https://cs.rin.ru/forum/viewtopic.php?p=2161197#p2161197)
+💬 [Official forum topic](https://cs.rin.ru/forum/viewtopic.php?p=2161197#p2161197)
 
-📊 [Compatibility Spreadsheet](https://docs.google.com/spreadsheets/d/1yCm2KWSFlV283SI35QpI86v68bFnK7MwxicKBEihIJM)
+📊 [Compatibility spreadsheet](https://docs.google.com/spreadsheets/d/1yCm2KWSFlV283SI35QpI86v68bFnK7MwxicKBEihIJM)
 
-📃 [Test Result Form](https://docs.google.com/forms/d/e/1FAIpQLSeEGotx8ThaHQK8ywW_UPwTJysUZWnCPIDNBJjNpvXAYLPBEg/viewform)
+📃 [Test result form](https://docs.google.com/forms/d/e/1FAIpQLSeEGotx8ThaHQK8ywW_UPwTJysUZWnCPIDNBJjNpvXAYLPBEg/viewform)
 
-🗃 [DLC Database](https://scream-db.web.app/)
+🗃 [DLC database](https://scream-db.web.app/)
 
 ## ℹ Introduction
 

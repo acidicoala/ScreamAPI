@@ -1,18 +1,23 @@
 #include <sdk/eos_ecom.h>
 #include "config/config.hpp"
-#include "logger/logger.hpp"
-#include "util/util.hpp"
+#include "koalabox/logger/logger.hpp"
+#include "koalabox/util/util.hpp"
 #include "scream_api/scream_api.hpp"
+
+using namespace koalabox;
 
 static std::vector<std::string> entitlements;
 
-EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlements(
+DLL_EXPORT(void) EOS_Ecom_QueryEntitlements(
     EOS_HEcom Handle,
     const EOS_Ecom_QueryEntitlementsOptions* Options,
     void* ClientData,
     const EOS_Ecom_OnQueryEntitlementsCallback CompletionDelegate
 ) {
-    static auto proxy = scream_api::get_original_function(&EOS_Ecom_QueryEntitlements, __func__);
+    static auto EOS_Ecom_QueryEntitlements_o = scream_api::get_original_function(
+        &EOS_Ecom_QueryEntitlements,
+        __func__
+    );
 
     static std::set<std::string> entitlement_set;
 
@@ -22,7 +27,7 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlements(
         const auto id = Options->EntitlementNames[i];
         logger::info("  ❔ {}", id);
 
-        if (config::get().entitlements.unlock_all) {
+        if (config::instance.entitlements.unlock_all) {
             entitlement_set.insert(id);
         }
     }
@@ -32,18 +37,18 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlements(
         EOS_Ecom_OnQueryEntitlementsCallback CompletionDelegate;
     };
 
-    proxy(Handle, Options, new Container{ ClientData, CompletionDelegate },
+    EOS_Ecom_QueryEntitlements_o(Handle, Options, new Container{ ClientData, CompletionDelegate },
         [](const EOS_Ecom_QueryEntitlementsCallbackInfo* Data) {
             const auto container = static_cast<Container*>(Data->ClientData);
 
             // Manually inject entitlements
-            for (auto& id: config::get().entitlements.inject) {
+            for (auto& id: config::instance.entitlements.inject) {
                 logger::debug("Adding entitlement from config: {}", id);
                 entitlement_set.insert(id);
             }
 
             // Automatically inject entitlements
-            if (config::get().entitlements.auto_inject) {
+            if (config::instance.entitlements.auto_inject) {
                 nlohmann::json payload = {
                     { "query",     R"(query($namespace: String!) {
                         Catalog {
@@ -109,7 +114,7 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlements(
     );
 }
 
-EOS_DECLARE_FUNC(uint32_t) EOS_Ecom_GetEntitlementsCount(
+DLL_EXPORT(uint32_t) EOS_Ecom_GetEntitlementsCount(
     EOS_HEcom,
     const EOS_Ecom_GetEntitlementsCountOptions*
 ) {
@@ -120,7 +125,7 @@ EOS_DECLARE_FUNC(uint32_t) EOS_Ecom_GetEntitlementsCount(
     return count;
 }
 
-EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyEntitlementByIndex(
+DLL_EXPORT(EOS_EResult) EOS_Ecom_CopyEntitlementByIndex(
     EOS_HEcom,
     const EOS_Ecom_CopyEntitlementByIndexOptions* Options,
     EOS_Ecom_Entitlement** OutEntitlement
@@ -152,7 +157,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyEntitlementByIndex(
     return EOS_EResult::EOS_Success;
 }
 
-EOS_DECLARE_FUNC(void) EOS_Ecom_Entitlement_Release(EOS_Ecom_Entitlement* Entitlement) {
+DLL_EXPORT(void) EOS_Ecom_Entitlement_Release(EOS_Ecom_Entitlement* Entitlement) {
     if (Entitlement) {
         logger::debug("Freeing a copy of the entitlement: {}", Entitlement->EntitlementName);
         delete Entitlement;

@@ -5,9 +5,6 @@
   "dependencies": [
     "cpr",
     "nlohmann-json",
-    {
-      "name": "spdlog",
-      "default-features": false
-    }
+    "spdlog"
   ]
 }
