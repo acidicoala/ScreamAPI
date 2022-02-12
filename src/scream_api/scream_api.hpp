@@ -4,7 +4,7 @@
 #include "koalabox/util/util.hpp"
 #include "koalabox/win_util/win_util.hpp"
 
-#define DLL_EXPORT(TYPE) extern "C" _declspec(dllexport) TYPE
+#define DLL_EXPORT(TYPE) EOS_DECLARE_FUNC(TYPE)
 
 namespace scream_api {
     using namespace koalabox;
