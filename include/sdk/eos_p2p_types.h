@@ -255,7 +255,7 @@ EOS_ENUM(EOS_EConnectionEstablishedType,
  * Structure containing information about a connection being established
  */
 EOS_STRUCT(EOS_P2P_OnPeerConnectionEstablishedInfo, (
-	/** Client-specified data passed into EOS_P2P_AddNotifyPeerConnectionEstablishedInfo */
+	/** Client-specified data passed into EOS_P2P_AddNotifyPeerConnectionEstablished */
 	void* ClientData;
 	/** The Product User ID of the local user who is being notified of a connection being established */
 	EOS_ProductUserId LocalUserId;

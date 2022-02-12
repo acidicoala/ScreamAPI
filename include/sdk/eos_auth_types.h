@@ -605,6 +605,64 @@ EOS_STRUCT(EOS_Auth_VerifyIdTokenCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Auth_VerifyIdToken */
 	void* ClientData;
+	/**
+	 * Epic Account Services Application ID.
+	 */
+	const char* ApplicationId;
+	/**
+	 * Client ID of the authorized client.
+	 */
+	const char* ClientId;
+	/**
+	 * Product ID.
+	 */
+	const char* ProductId;
+	/**
+	 * Sandbox ID.
+	 */
+	const char* SandboxId;
+	/**
+	 * Deployment ID.
+	 */
+	const char* DeploymentId;
+	/**
+	 * Epic Account display name.
+	 *
+	 * This value may be set to an empty string.
+	 */
+	const char* DisplayName;
+	/**
+	 * Flag set to indicate whether external account information is present.
+	 * Applications must always first check this value to be set before attempting
+	 * to read the ExternalAccountIdType, ExternalAccountId, ExternalAccountDisplayName and Platform fields.
+	 *
+	 * This flag is set when the user has logged in to their Epic Account using external account credentials, e.g. through local platform authentication.
+	 */
+	EOS_Bool bIsExternalAccountInfoPresent;
+	/**
+	 * The identity provider that the user logged in with to their Epic Account.
+	 *
+	 * If bIsExternalAccountInfoPresent is set, this field describes the external account type.
+	 */
+	EOS_EExternalAccountType ExternalAccountIdType;
+	/**
+	 * The external account ID of the logged in user.
+	 *
+	 * This value may be set to an empty string.
+	 */
+	const char* ExternalAccountId;
+	/**
+	 * The external account display name.
+	 *
+	 * This value may be set to an empty string.
+	 */
+	const char* ExternalAccountDisplayName;
+	/**
+	 * Platform that the user is connected from.
+	 *
+	 * This value may be set to an empty string.
+	 */
+	const char* Platform;
 ));
 
 /**

@@ -295,12 +295,7 @@ EOS_ENUM(EOS_EExternalAccountType,
 	EOS_EAT_STEAM = 1,
 	/** External account is associated with PlayStation(TM)Network */
 	EOS_EAT_PSN = 2,
-	/**
-	 * External account is associated with Xbox Live
-	 *
-	 * With EOS Connect API, the associated account type is Partner XUID (PXUID).
-	 * With EOS UserInfo API, the associated account type is Xbox Live ID (XUID).
-	 */
+	/** External account is associated with Xbox Live */
 	EOS_EAT_XBL = 3,
 	/** External account is associated with Discord */
 	EOS_EAT_DISCORD = 4,
@@ -324,7 +319,9 @@ EOS_ENUM(EOS_EExternalAccountType,
 	/** External account is associated with Oculus */
 	EOS_EAT_OCULUS = 11,
 	/** External account is associated with itch.io */
-	EOS_EAT_ITCHIO = 12
+	EOS_EAT_ITCHIO = 12,
+	/** External account is associated with Amazon */
+	EOS_EAT_AMAZON = 13
 );
 
 /**
@@ -340,11 +337,15 @@ EOS_ENUM(EOS_EExternalAccountType,
  */
 EOS_ENUM(EOS_EExternalCredentialType,
 	/**
-	 * Epic Games User Token
+	 * Epic Account Services Token
 	 *
-	 * Acquired using EOS_Auth_CopyUserAuthToken that returns EOS_Auth_Token::AccessToken.
+	 * Using ID Token is preferred, retrieved with EOS_Auth_CopyIdToken that returns EOS_Auth_IdToken::JsonWebToken.
+	 * Using Auth Token is supported for backwards compatibility, retrieved with EOS_Auth_CopyUserAuthToken that returns EOS_Auth_Token::AccessToken.
 	 *
 	 * Supported with EOS_Connect_Login.
+	 *
+	 * @see EOS_Auth_CopyIdToken
+	 * @see EOS_Auth_CopyUserAuthToken
 	 */
 	EOS_ECT_EPIC = 0,
 	/**
@@ -494,7 +495,21 @@ EOS_ENUM(EOS_EExternalCredentialType,
 	 *
 	 * Supported with EOS_Connect_Login.
 	 */
-	EOS_ECT_ITCHIO_KEY = 15
+	EOS_ECT_ITCHIO_KEY = 15,
+	/**
+	 * Epic Games ID Token
+	 * 
+	 * Acquired using EOS_Auth_CopyIdToken that returns EOS_Auth_IdToken::JsonWebToken.
+	 *
+	 * Supported with EOS_Connect_Login.
+	 */
+	EOS_ECT_EPIC_ID_TOKEN = 16,
+	/**
+	 * Amazon Access Token
+	 *
+	 * Supported with EOS_Connect_Login.
+	 */
+	EOS_ECT_AMAZON_ACCESS_TOKEN = 17
 );
 
 #pragma pack(pop)

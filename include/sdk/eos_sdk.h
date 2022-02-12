@@ -27,6 +27,7 @@
 #include "eos_rtc_types.h"
 #include "eos_rtc_admin_types.h"
 #include "eos_progressionsnapshot_types.h"
+#include "eos_custominvites_types.h"
 
 /**
  * The Platform Instance is used to gain access to all other Epic Online Service interfaces and to drive internal operations through the Tick.
@@ -275,6 +276,15 @@ EOS_DECLARE_FUNC(EOS_HSanctions) EOS_Platform_GetSanctionsInterface(EOS_HPlatfor
  * @see eos_kws_types.h
  */
 EOS_DECLARE_FUNC(EOS_HKWS) EOS_Platform_GetKWSInterface(EOS_HPlatform Handle);
+
+/**
+ * Get a handle to the Custom Invites Interface.
+ * @return EOS_HCustomInvites handle
+ *
+ * @see eos_custominvites.h
+ * @see eos_custominvites_types.h
+ */
+EOS_DECLARE_FUNC(EOS_HCustomInvites) EOS_Platform_GetCustomInvitesInterface(EOS_HPlatform Handle);
 
 /**
  * This only will return the value set as the override otherwise EOS_NotFound is returned.

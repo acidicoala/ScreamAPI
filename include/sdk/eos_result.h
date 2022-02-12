@@ -243,6 +243,8 @@ EOS_RESULT_VALUE(EOS_Sessions_PresenceSessionExists, 5016)
 EOS_RESULT_VALUE(EOS_Sessions_DeploymentAtCapacity, 5017)
 /** Session operation not allowed */
 EOS_RESULT_VALUE(EOS_Sessions_NotAllowed, 5018)
+/** Session operation not allowed */
+EOS_RESULT_VALUE(EOS_Sessions_PlayerSanctioned, 5019)
 
 /** Request filename was invalid */
 EOS_RESULT_VALUE(EOS_PlayerDataStorage_FilenameInvalid, 6000)

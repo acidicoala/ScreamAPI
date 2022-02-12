@@ -115,7 +115,7 @@ EOS_ENUM(EOS_ESessionAttributeAdvertisementType,
 #define EOS_SESSIONMODIFICATION_MAX_SESSIONIDOVERRIDE_LENGTH 64
 
 /** The most recent version of the EOS_Sessions_CreateSessionModification API. */
-#define EOS_SESSIONS_CREATESESSIONMODIFICATION_API_LATEST 3
+#define EOS_SESSIONS_CREATESESSIONMODIFICATION_API_LATEST 4 
 
 /**
  * Input parameters for the EOS_Sessions_CreateSessionModification function.
@@ -152,6 +152,11 @@ EOS_STRUCT(EOS_Sessions_CreateSessionModificationOptions, (
 	 * This value can be of size [EOS_SESSIONMODIFICATION_MIN_SESSIONIDOVERRIDE_LENGTH, EOS_SESSIONMODIFICATION_MAX_SESSIONIDOVERRIDE_LENGTH]
 	 */
 	const char* SessionId;
+	/**
+	 * If true, sanctioned players can neither join nor register with this session and, in the case of join, 
+	 * will return EOS_EResult code EOS_Sessions_PlayerSanctioned
+	 */
+	EOS_Bool bSanctionsEnabled;
 ));
 
 /** The most recent version of the EOS_Sessions_UpdateSessionModification API. */
@@ -465,7 +470,7 @@ EOS_STRUCT(EOS_Sessions_EndSessionCallbackInfo, (
 EOS_DECLARE_CALLBACK(EOS_Sessions_OnEndSessionCallback, const EOS_Sessions_EndSessionCallbackInfo* Data);
 
 /** The most recent version of the EOS_Sessions_RegisterPlayers API. */
-#define EOS_SESSIONS_REGISTERPLAYERS_API_LATEST 1
+#define EOS_SESSIONS_REGISTERPLAYERS_API_LATEST 2
 
 /**
  * Input parameters for the EOS_Sessions_RegisterPlayers function.
@@ -486,6 +491,14 @@ EOS_STRUCT(EOS_Sessions_RegisterPlayersCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Sessions_RegisterPlayers */
 	void* ClientData;
+	/** The players that were successfully registered */
+	EOS_ProductUserId* RegisteredPlayers;
+	/** The number of players successfully registered */
+	uint32_t RegisteredPlayersCount;
+	/** The players that failed to register because they are sanctioned */
+	EOS_ProductUserId* SanctionedPlayers;
+	/** The number of players that failed to register because they are sanctioned */
+	uint32_t SanctionedPlayersCount;
 ));
 
 /**
@@ -495,7 +508,7 @@ EOS_STRUCT(EOS_Sessions_RegisterPlayersCallbackInfo, (
 EOS_DECLARE_CALLBACK(EOS_Sessions_OnRegisterPlayersCallback, const EOS_Sessions_RegisterPlayersCallbackInfo* Data);
 
 /** The most recent version of the EOS_Sessions_UnregisterPlayers API. */
-#define EOS_SESSIONS_UNREGISTERPLAYERS_API_LATEST 1
+#define EOS_SESSIONS_UNREGISTERPLAYERS_API_LATEST 2
 
 /**
  * Input parameters for the EOS_Sessions_UnregisterPlayers function.
@@ -516,6 +529,10 @@ EOS_STRUCT(EOS_Sessions_UnregisterPlayersCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Sessions_UnregisterPlayers */
 	void* ClientData;
+	/** The players that successfully unregistered */
+	EOS_ProductUserId* UnregisteredPlayers;
+	/** The number of players that successfully unregistered */
+	uint32_t UnregisteredPlayersCount;
 ));
 
 /**
@@ -878,7 +895,7 @@ EOS_STRUCT(EOS_SessionSearch_RemoveParameterOptions, (
 ));
 
 /** The most recent version of the EOS_SessionDetails_Settings struct. */
-#define EOS_SESSIONDETAILS_SETTINGS_API_LATEST 2
+#define EOS_SESSIONDETAILS_SETTINGS_API_LATEST 3
 
 /** Common settings associated with a single session */
 EOS_STRUCT(EOS_SessionDetails_Settings, (
@@ -894,6 +911,8 @@ EOS_STRUCT(EOS_SessionDetails_Settings, (
 	EOS_EOnlineSessionPermissionLevel PermissionLevel;
 	/** Are players allowed to send invites for the session */
 	EOS_Bool bInvitesAllowed;
+	/** Are sanctioned players allowed to join - sanctioned players will be rejected if set to true */
+	EOS_Bool bSanctionsEnabled;
 ));
 
 /** The most recent version of the EOS_SessionDetails_Info struct. */

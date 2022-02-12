@@ -98,6 +98,8 @@ EOS_ENUM(EOS_ELogCategory,
 	EOS_LC_Inventory = 31,
 	/** Logs related to the Receipt Validator API */
 	EOS_LC_ReceiptValidator = 32,
+	/** Logs related to the Custom Invites API */
+	EOS_LC_CustomInvites = 33,
 
 	/** Not a real log category. Used by EOS_Logging_SetLogLevel to set the log level for all categories at the same time */
 	EOS_LC_ALL_CATEGORIES = 0x7fffffff

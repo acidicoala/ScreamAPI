@@ -104,6 +104,13 @@ EOS_DECLARE_FUNC(void) EOS_Connect_CreateDeviceId(EOS_HConnect Handle, const EOS
  * The deletion is permanent and it is not possible to recover lost game data and progression
  * if the Device ID had not been linked with at least one real external user account.
  *
+ * On Android and iOS devices, uninstalling the application will automatically delete any local
+ * Device ID credentials created by the application.
+ *
+ * On Desktop platforms (Linux, macOS, Windows), Device ID credentials are not automatically deleted.
+ * Applications may re-use existing Device ID credentials for the local OS user when the application is
+ * re-installed, or call the DeleteDeviceId API on the first run to ensure a fresh start for the user.
+ *
  * @param Options structure containing operation input parameters
  * @param ClientData arbitrary data that is passed back to you in the CompletionDelegate
  * @param CompletionDelegate a callback that is fired when the delete operation completes, either successfully or in error
@@ -181,6 +188,9 @@ EOS_DECLARE_FUNC(void) EOS_Connect_TransferDeviceIdAccount(EOS_HConnect Handle, 
  * Retrieve the equivalent Product User IDs from a list of external account IDs from supported account providers.
  * The values will be cached and retrievable through EOS_Connect_GetExternalAccountMapping.
  *
+ * @note A common use case is to query other users who are connected through the same account system as the local user.
+ * Queries using external account IDs of another account system may not be available, depending on the account system specifics.
+ *
  * @param Options structure containing a list of external account IDs, in string form, to query for the Product User ID representation.
  * @param ClientData arbitrary data that is passed back to you in the CompletionDelegate.
  * @param CompletionDelegate a callback that is fired when the query operation completes, either successfully or in error.
@@ -189,7 +199,6 @@ EOS_DECLARE_FUNC(void) EOS_Connect_QueryExternalAccountMappings(EOS_HConnect Han
 
 /**
  * Retrieve the equivalent external account mappings from a list of Product User IDs.
- * This will include data for each external account info found for the linked product IDs.
  *
  * The values will be cached and retrievable via EOS_Connect_GetProductUserIdMapping, EOS_Connect_CopyProductUserExternalAccountByIndex,
  * EOS_Connect_CopyProductUserExternalAccountByAccountType or EOS_Connect_CopyProductUserExternalAccountByAccountId.

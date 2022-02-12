@@ -834,7 +834,7 @@ EOS_STRUCT(EOS_Lobby_CopyLobbyDetailsHandleOptions, (
  * Input parameters for the EOS_Lobby_GetRTCRoomName function.
  */
 EOS_STRUCT(EOS_Lobby_GetRTCRoomNameOptions, (
-	/** API Version: Set this to EOS_LOBBY_GETRTCROOMNAME_API_LATEST */
+	/** API Version: Set this to EOS_LOBBY_GETRTCROOMNAME_API_LATEST. */
 	int32_t ApiVersion;
 	/** The ID of the lobby to get the RTC Room name for */
 	EOS_LobbyId LobbyId;
@@ -847,7 +847,7 @@ EOS_STRUCT(EOS_Lobby_GetRTCRoomNameOptions, (
 #define EOS_LOBBY_ISRTCROOMCONNECTED_API_LATEST 1
 
 EOS_STRUCT(EOS_Lobby_IsRTCRoomConnectedOptions, (
-	/** API Version: Set this to EOS_LOBBY_ISRTCROOMCONNECTED_API_LATEST */
+	/** API Version: Set this to EOS_LOBBY_ISRTCROOMCONNECTED_API_LATEST. */
 	int32_t ApiVersion;
 	/** The ID of the lobby to get the RTC Room name for */
 	EOS_LobbyId LobbyId;
@@ -863,7 +863,7 @@ EOS_STRUCT(EOS_Lobby_IsRTCRoomConnectedOptions, (
  * Input parameters for the EOS_Lobby_AddNotifyRTCRoomConnectionChanged function.
  */
 EOS_STRUCT(EOS_Lobby_AddNotifyRTCRoomConnectionChangedOptions, (
-	/** API Version: Set this to EOS_LOBBY_ADDNOTIFYRTCROOMCONNECTIONCHANGED_API_LATEST */
+	/** API Version: Set this to EOS_LOBBY_ADDNOTIFYRTCROOMCONNECTIONCHANGED_API_LATEST. */
 	int32_t ApiVersion;
 	/** The ID of the lobby to receive RTC Room connection change notifications for */
 	EOS_LobbyId LobbyId;

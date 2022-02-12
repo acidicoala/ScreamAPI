@@ -121,17 +121,18 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_AntiCheatClient_EndSession(EOS_HAntiCheatClien
  * check for violations, it only provides information about violations which have
  * automatically been discovered by the anti-cheat client. Such a violation may occur
  * at any time and afterwards the user will be unable to join any protected multiplayer
- * session until after restarting the game.
+ * session until after restarting the game. Note that this function returns EOS_NotFound
+ * when everything is normal and there is no violation to display.
  *
  * @param Options Structure containing input data.
- * @param ViolationType On success, receives a code describing the violation that occurred.
+ * @param OutViolationType On success, receives a code describing the violation that occurred.
  * @param OutMessage On success, receives a string describing the violation which should be displayed to the user.
  *
  * @return EOS_Success - If violation information was returned successfully
  *		   EOS_LimitExceeded - If OutMessage is too small to receive the message string. Call again with a larger OutMessage.
  *         EOS_NotFound - If no violation has occurred since the last call
  */
-EOS_DECLARE_FUNC(EOS_EResult) EOS_AntiCheatClient_PollStatus(EOS_HAntiCheatClient Handle, const EOS_AntiCheatClient_PollStatusOptions* Options, EOS_EAntiCheatClientViolationType* ViolationType, char* OutMessage);
+EOS_DECLARE_FUNC(EOS_EResult) EOS_AntiCheatClient_PollStatus(EOS_HAntiCheatClient Handle, const EOS_AntiCheatClient_PollStatusOptions* Options, EOS_EAntiCheatClientViolationType* OutViolationType, char* OutMessage);
 
 /**
  * Optional. Adds an integrity catalog and certificate pair from outside the game directory,
@@ -164,7 +165,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_AntiCheatClient_ReceiveMessageFromServer(EOS_H
  * Mode: EOS_ACCM_ClientServer.
  *
  * @param Options Structure containing input data.
- * @param OutBufferLengthBytes On success, the OutBuffer length in bytes that is required to call ProtectMessage on the given input size.
+ * @param OutBufferSizeBytes On success, the OutBuffer length in bytes that is required to call ProtectMessage on the given input size.
  *
  * @return EOS_Success - If the output length was calculated successfully
  *         EOS_InvalidParameters - If input data was invalid
