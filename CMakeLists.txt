@@ -42,6 +42,17 @@ add_executable(exports_generator ${RES_DIR}/exports_generator.cpp)
 
 # 2. Generate the linker exports
 
+set(
+        EOS_SOURCES
+        "${SRC_DIR}/eos/init.cpp"
+        "${SRC_DIR}/eos/common.cpp"
+        "${SRC_DIR}/eos/logging.cpp"
+        "${SRC_DIR}/eos/metrics.cpp"
+        "${SRC_DIR}/eos/ecom_misc.cpp"
+        "${SRC_DIR}/eos/ecom_items.cpp"
+        "${SRC_DIR}/eos/ecom_entitlements.cpp"
+)
+
 add_custom_command(
         OUTPUT ${LINKER_EXPORTS}
         COMMAND exports_generator # (Output from step 1)
@@ -49,12 +60,7 @@ add_custom_command(
         "${SRC_DIR}/eos" # Input sources
         "${LINKER_EXPORTS}" # Output header
         DEPENDS exports_generator "${EOSSDK_DLL_PATH}"
-        "${SRC_DIR}/eos/init.cpp"
-        "${SRC_DIR}/eos/logging.cpp"
-        "${SRC_DIR}/eos/metrics.cpp"
-        "${SRC_DIR}/eos/ecom_misc.cpp"
-        "${SRC_DIR}/eos/ecom_items.cpp"
-        "${SRC_DIR}/eos/ecom_entitlements.cpp"
+        ${EOS_SOURCES}
 )
 
 # Make the linker_exports header available before build
@@ -81,12 +87,7 @@ add_library(
         ${SRC_DIR}/config/config.cpp
         ${SRC_DIR}/logger/logger.cpp
         ${SRC_DIR}/scream_api/scream_api.cpp
-        ${SRC_DIR}/eos/init.cpp
-        ${SRC_DIR}/eos/logging.cpp
-        ${SRC_DIR}/eos/metrics.cpp
-        ${SRC_DIR}/eos/ecom_misc.cpp
-        ${SRC_DIR}/eos/ecom_items.cpp
-        ${SRC_DIR}/eos/ecom_entitlements.cpp
+        ${EOS_SOURCES}
         ${LINKER_EXPORTS}
         ${GEN_DIR}/version.rc
 )

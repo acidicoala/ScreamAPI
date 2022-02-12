@@ -20,5 +20,20 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Logging_SetLogLevel(
 // Dummy implementation for use in ScreamAPI
 EOS_DECLARE_FUNC(EOS_EResult) EOS_Logging_SetCallback(EOS_LogMessageFunc Callback) {
     static auto proxy = scream_api::get_original_function(&EOS_Logging_SetCallback, __func__);
-    return proxy(Callback);
+
+    if (config::get().logging) {
+        static std::set<EOS_LogMessageFunc> callbacks;
+
+        callbacks.insert(Callback);
+
+        return proxy(
+            [](const EOS_LogMessage* Message) {
+                for (const auto callback: callbacks) {
+                    callback(Message);
+                }
+            }
+        );
+    } else {
+        return proxy(Callback);
+    }
 }

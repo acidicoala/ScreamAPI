@@ -14,6 +14,8 @@ EOS_DECLARE_FUNC(EOS_HPlatform) EOS_Platform_Create(const EOS_Platform_Options* 
         scream_api::namespace_id = Options->SandboxId;
     }
 
+    auto result = proxy(Options);
+
     if (config::get().logging) {
         // Enable EOS logging
         EOS_Logging_SetCallback(
@@ -28,5 +30,5 @@ EOS_DECLARE_FUNC(EOS_HPlatform) EOS_Platform_Create(const EOS_Platform_Options* 
         );
     }
 
-    return proxy(Options);
+    return result;
 }
