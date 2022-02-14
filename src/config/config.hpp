@@ -23,11 +23,14 @@ namespace config {
 
     struct Config {
         bool logging = false;
+        bool eos_logging = false;
         bool block_metrics = false;
         CatalogItems catalog_items;
         Entitlements entitlements;
 
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(Config, logging, block_metrics, catalog_items, entitlements)
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(Config,
+            logging, eos_logging, block_metrics, catalog_items, entitlements
+        )
     };
 
     extern Config instance;

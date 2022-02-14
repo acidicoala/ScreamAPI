@@ -1,7 +1,6 @@
 #include <sdk/eos_ecom.h>
 #include "config/config.hpp"
 #include "koalabox/logger/logger.hpp"
-#include "koalabox/util/util.hpp"
 #include "scream_api/scream_api.hpp"
 
 using namespace koalabox;
@@ -14,10 +13,7 @@ DLL_EXPORT(void) EOS_Ecom_QueryEntitlements(
     void* ClientData,
     const EOS_Ecom_OnQueryEntitlementsCallback CompletionDelegate
 ) {
-    static auto EOS_Ecom_QueryEntitlements_o = scream_api::get_original_function(
-        &EOS_Ecom_QueryEntitlements,
-        __func__
-    );
+    GET_ORIGINAL_FUNCTION(EOS_Ecom_QueryEntitlements)
 
     static std::set<std::string> entitlement_set;
 

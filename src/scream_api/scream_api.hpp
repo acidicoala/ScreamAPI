@@ -1,48 +1,31 @@
 #pragma once
 
 #include <sdk/eos_base.h>
+#include "koalabox/loader/loader.hpp"
 #include "koalabox/util/util.hpp"
 #include "koalabox/win_util/win_util.hpp"
 
 #define DLL_EXPORT(TYPE) EOS_DECLARE_FUNC(TYPE)
 
+#define GET_ORIGINAL_FUNCTION(FUNC)\
+    static const auto FUNC##_o = koalabox::loader::get_original_function(\
+        scream_api::is_hook_mode,\
+        scream_api::original_library,\
+        koalabox::loader::get_undecorated_function(scream_api::original_library, #FUNC),\
+        FUNC\
+    );\
+
 namespace scream_api {
     using namespace koalabox;
 
-    extern std::string namespace_id;
+    extern String namespace_id;
 
-    extern HMODULE original_module;
+    extern HMODULE original_library;
+
+    extern bool is_hook_mode;
 
     void init(HMODULE self_module);
 
     void shutdown();
 
-    template<typename RetType, typename... ArgTypes>
-    auto get_original_function(
-        RetType(EOS_CALL*)(ArgTypes...),
-        LPCSTR undecorated_function_name,
-        int arg_bytes = 0
-    ) {
-        // No idea what how this works 🙃
-        using func_type = RetType(EOS_CALL*)(ArgTypes...);
-
-        if (arg_bytes == 0) {
-            // Guess byte count
-            arg_bytes = 4 * sizeof...(ArgTypes);
-        }
-
-        std::string function_name =
-            util::is_64_bit()
-                ? undecorated_function_name
-                : fmt::format("_{}@{}", undecorated_function_name, arg_bytes);
-
-        // Get C-style pointer to function
-        auto function_address = win_util::get_proc_address(
-            scream_api::original_module,
-            function_name.c_str()
-        );
-
-        // Cast it to target function type
-        return reinterpret_cast<func_type>(function_address);
-    }
 }

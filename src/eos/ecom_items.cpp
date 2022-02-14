@@ -12,10 +12,7 @@ DLL_EXPORT(void) EOS_Ecom_QueryOwnership(
     void* ClientData,
     const EOS_Ecom_OnQueryOwnershipCallback CompletionDelegate
 ) {
-    static auto EOS_Ecom_QueryOwnership_o = scream_api::get_original_function(
-        &EOS_Ecom_QueryOwnership,
-        __func__
-    );
+    GET_ORIGINAL_FUNCTION(EOS_Ecom_QueryOwnership)
 
     logger::info("❓ Game requested ownership of {} items:", Options->CatalogItemIdCount);
     for (uint32_t i = 0; i < Options->CatalogItemIdCount; i++) {

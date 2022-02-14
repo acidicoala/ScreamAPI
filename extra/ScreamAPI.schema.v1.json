@@ -23,6 +23,7 @@
     {
       "version": 1,
       "logging": true,
+      "eos_logging": true,
       "block_metrics": false,
       "catalog_items": {
         "unlock_all": true,
@@ -43,6 +44,7 @@
   "required": [
     "version",
     "logging",
+    "eos_logging",
     "block_metrics",
     "catalog_items",
     "entitlements"
@@ -67,6 +69,14 @@
       "type": "boolean",
       "title": "Logging",
       "description": "Enables or disables logging into a _ScreamAPI.log_ file.",
+      "default": false,
+      "examples": [true, false]
+    },
+    "eos_logging": {
+      "$id": "#/properties/eos_logging",
+      "type": "boolean",
+      "title": "EOS Logging",
+      "description": "Enables or disables interception of EOS SDK logs",
       "default": false,
       "examples": [true, false]
     },

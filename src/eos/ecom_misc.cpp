@@ -8,7 +8,7 @@ using namespace koalabox;
 /// for the purposes of logging and potential future improvements
 
 #define IMPLEMENTATION(FUNC, ...) \
-    static auto FUNC##_o = scream_api::get_original_function(&FUNC, #FUNC); \
+    GET_ORIGINAL_FUNCTION(FUNC) \
     logger::debug("Function called: {}", #FUNC); \
     return FUNC##_o(__VA_ARGS__);
 
@@ -29,7 +29,6 @@ DLL_EXPORT(void) EOS_Ecom_RedeemEntitlements(
 ) {
     IMPLEMENTATION(EOS_Ecom_RedeemEntitlements, Handle, Options, ClientData, CompletionDelegate)
 }
-
 
 DLL_EXPORT(uint32_t) EOS_Ecom_GetEntitlementsByNameCount(
     EOS_HEcom Handle,

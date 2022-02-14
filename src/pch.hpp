@@ -1,30 +1,21 @@
 #pragma once
 
-// Windows headers
-#define WIN32_LEAN_AND_MEAN
-#define UNICODE
-
-#include <windows.h>
-
-// 3rd party headers
-#include <spdlog/logger.h>               // spdlog::logger
-#include <spdlog/sinks/basic_file_sink.h>// spdlog::basic_logger_mt
-#include <spdlog/sinks/null_sink.h>      // spdlog::null_logger_mt
-#include <spdlog/pattern_formatter.h>    // spdlog::custom_flag_formatter
+#include "koalabox/pch.hpp"
 
 #include <cpr/cpr.h>
 
 #include <nlohmann/json.hpp>
 
-// C++ Standard Library
-#include <filesystem>// std::filesystem
-#include <memory>    // std::shared_ptr
-#include <string>    // std::string | std::wstring
-#include <utility>   // std::forward
-#include <vector>    // std::vector
-#include <set>       // std::set
+#include <polyhook2/CapstoneDisassembler.hpp>
+#include <polyhook2/Detour/x86Detour.hpp>
+#include <polyhook2/Detour/x64Detour.hpp>
 
 // This definition turns import definitions into export definitions in EOS headers
 #define EOS_BUILDING_SDK TRUE
 
-using namespace fmt::literals; // "{}"_format() helper
+#include "koalabox/dll_monitor/dll_monitor.hpp"
+#include "koalabox/hook/hook.hpp"
+#include "koalabox/loader/loader.hpp"
+#include "koalabox/logger/logger.hpp"
+#include "koalabox/util/util.hpp"
+#include "koalabox/win_util/win_util.hpp"
