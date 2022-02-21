@@ -10,7 +10,7 @@
 // This definition turns import definitions into export definitions in EOS headers
 #define EOS_BUILDING_SDK TRUE
 
-#include "koalabox/config/config_parser.hpp"
+#include "koalabox/config_parser/config_parser.hpp"
 #include "koalabox/dll_monitor/dll_monitor.hpp"
 #include "koalabox/hook/hook.hpp"
 #include "koalabox/loader/loader.hpp"
