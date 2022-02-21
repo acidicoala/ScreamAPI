@@ -1,11 +1,10 @@
-#include <sdk/eos_ecom.h>
-#include "config/config.hpp"
-#include "koalabox/logger/logger.hpp"
 #include "scream_api/scream_api.hpp"
 
-using namespace koalabox;
+#include <sdk/eos_ecom.h>
 
-static std::vector<std::string> entitlements;
+using namespace scream_api;
+
+static Vector<String> entitlements;
 
 DLL_EXPORT(void) EOS_Ecom_QueryEntitlements(
     EOS_HEcom Handle,
@@ -15,15 +14,15 @@ DLL_EXPORT(void) EOS_Ecom_QueryEntitlements(
 ) {
     GET_ORIGINAL_FUNCTION(EOS_Ecom_QueryEntitlements)
 
-    static std::set<std::string> entitlement_set;
+    static Set<String> entitlement_set;
 
-    logger::info("❓ Game requested {} entitlements:", Options->EntitlementNameCount);
+    logger->info("❓ Game requested {} entitlements:", Options->EntitlementNameCount);
 
     for (uint32_t i = 0; i < Options->EntitlementNameCount; i++) {
         const auto id = Options->EntitlementNames[i];
-        logger::info("  ❔ {}", id);
+        logger->info("  ❔ {}", id);
 
-        if (config::instance.entitlements.unlock_all) {
+        if (config.entitlements.unlock_all) {
             entitlement_set.insert(id);
         }
     }
@@ -38,13 +37,13 @@ DLL_EXPORT(void) EOS_Ecom_QueryEntitlements(
             const auto container = static_cast<Container*>(Data->ClientData);
 
             // Manually inject entitlements
-            for (auto& id: config::instance.entitlements.inject) {
-                logger::debug("Adding entitlement from config: {}", id);
+            for (auto& id: config.entitlements.inject) {
+                logger->debug("Adding entitlement from config: {}", id);
                 entitlement_set.insert(id);
             }
 
             // Automatically inject entitlements
-            if (config::instance.entitlements.auto_inject) {
+            if (config.entitlements.auto_inject) {
                 nlohmann::json payload = {
                     { "query",     R"(query($namespace: String!) {
                         Catalog {
@@ -76,17 +75,17 @@ DLL_EXPORT(void) EOS_Ecom_QueryEntitlements(
 
                     const auto elements = json["data"]["Catalog"]["catalogOffers"]["elements"];
 
-                    for (auto& element: elements) {
-                        for (auto& items: element) {
-                            for (auto& item: items) {
-                                std::string id(item["id"]);
-                                logger::debug("Adding auto-fetched entitlement: {}", id);
+                    for (const auto& element: elements) {
+                        for (const auto& items: element) {
+                            for (const auto& item: items) {
+                                String id(item["id"]);
+                                logger->debug("Adding auto-fetched entitlement: {}", id);
                                 entitlement_set.insert(id);
                             }
                         }
                     }
                 } else {
-                    logger::error(
+                    logger->error(
                         "Failed to automatically fetch entitlement ids. "
                         "Status code: {}. Text: {}", res.status_code, res.text
                     );
@@ -95,9 +94,9 @@ DLL_EXPORT(void) EOS_Ecom_QueryEntitlements(
 
             entitlements = std::vector(entitlement_set.begin(), entitlement_set.end());
 
-            logger::info("🍀 ScreamAPI prepared {} entitlements:", entitlements.size());
-            for (auto& entitlement: entitlements) {
-                logger::info("  ✔ {}", entitlement);
+            logger->info("🍀 ScreamAPI prepared {} entitlements:", entitlements.size());
+            for (const auto& entitlement: entitlements) {
+                logger->info("  ✅ {}", entitlement);
             }
 
             const_cast<EOS_Ecom_QueryEntitlementsCallbackInfo*>(Data)->ResultCode = EOS_EResult::EOS_Success;
@@ -116,7 +115,7 @@ DLL_EXPORT(uint32_t) EOS_Ecom_GetEntitlementsCount(
 ) {
     const auto count = entitlements.size();
 
-    logger::debug("Responding with the count of {} entitlements", count);
+    logger->debug("Responding with the count of {} entitlements", count);
 
     return count;
 }
@@ -128,7 +127,7 @@ DLL_EXPORT(EOS_EResult) EOS_Ecom_CopyEntitlementByIndex(
 ) {
     const auto index = Options->EntitlementIndex;
     if (index < 0 or index >= entitlements.size()) {
-        logger::warn(
+        logger->warn(
             "Game requested invalid entitlement index: {}. Max size: {}",
             index, entitlements.size()
         );
@@ -138,7 +137,7 @@ DLL_EXPORT(EOS_EResult) EOS_Ecom_CopyEntitlementByIndex(
 
     const auto id = entitlements[index].c_str();
 
-    logger::debug("Copying the entitlement: {} at index: {}", id, index);
+    logger->debug("Copying the entitlement: {} at index: {}", id, index);
 
     *OutEntitlement = new EOS_Ecom_Entitlement{
         .ApiVersion = EOS_ECOM_ENTITLEMENT_API_LATEST,
@@ -155,9 +154,9 @@ DLL_EXPORT(EOS_EResult) EOS_Ecom_CopyEntitlementByIndex(
 
 DLL_EXPORT(void) EOS_Ecom_Entitlement_Release(EOS_Ecom_Entitlement* Entitlement) {
     if (Entitlement) {
-        logger::debug("Freeing a copy of the entitlement: {}", Entitlement->EntitlementName);
+        logger->debug("Freeing a copy of the entitlement: {}", Entitlement->EntitlementName);
         delete Entitlement;
     } else {
-        logger::warn("Game attempted to free a null entitlement");
+        logger->warn("Game attempted to free a null entitlement");
     }
 }

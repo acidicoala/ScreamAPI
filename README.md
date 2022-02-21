@@ -19,7 +19,7 @@
 <details>
 <summary>What is ScreamAPI?</summary>
 
-ScreamAPI is a DLC unlocker for the games that are legitimately owned in your Epic Games account. It attempts to fool games that uses Epic Online Services Software Development Kit (EOSSDK) into thinking that you own the desired DLCs. However, ScreamAPI does not modify the rest of the EOSSDK, hence features like multiplayer, achievements, etc. remain fully functional.
+ScreamAPI is a DLC unlocker for the games that are legitimately owned in your Epic Games account. It attempts to fool games that use Epic Online Services Software Development Kit (EOSSDK) into thinking that you own the desired DLCs. However, ScreamAPI does not modify the rest of the EOSSDK, hence features like multiplayer, achievements, etc. remain fully functional.
 
 </details>
 
@@ -87,8 +87,9 @@ ScreamAPI does not require any manual configuration. By default, it uses most re
 
 The description of each available option is presented below:
 
-- `version`: This field is used by ScreamAPI to identify how to parse the config file. This allows ScreamAPI to parse older config files in a backward compatible manner. Therefore, **this field must not be edited manually**! Default: `1`.
+- `version`: This field may be used by ScreamAPI to identify how to parse the config file. This allows ScreamAPI to parse older config files in a backward compatible manner. Therefore, **this field must not be edited manually**! Default: `2`.
 - `logging`: Enables or disables logging into a _ScreamAPI.log_ file. Default: `false`.
+- `eos_logging`: Enables or disables interception of EOS SDK logs. Enabling this option can cause issues in *hook* mode. Default: `false`.
 - `block_metrics`: Blocks reporting of analytics and usage metrics by the game to Epic Online Services. Metrics sent by EOS SDK itself remain unaffected. Default: `false`.
 - `catalog_items`: Options in this object specify behaviour when games use `EOS_Ecom_QueryOwnership` function.
   - `unlock_all`: Controls if all items should be automatically unlocked. Default: `true`.

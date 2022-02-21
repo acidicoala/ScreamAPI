@@ -76,7 +76,7 @@
       "$id": "#/properties/eos_logging",
       "type": "boolean",
       "title": "EOS Logging",
-      "description": "Enables or disables interception of EOS SDK logs",
+      "description": "Enables or disables interception of EOS SDK logs. Can cause issues when enabled.",
       "default": false,
       "examples": [true, false]
     },

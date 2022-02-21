@@ -1,5 +1,3 @@
-root = true
-
 [*]
 charset = utf-8
 end_of_line = crlf
@@ -8,7 +6,7 @@ indent_style = space
 insert_final_newline = true
 max_line_length = 120
 tab_width = 4
-ij_continuation_indent_size = 4
+ij_continuation_indent_size = 8
 ij_formatter_off_tag = @formatter:off
 ij_formatter_on_tag = @formatter:on
 ij_formatter_tags_enabled = false
@@ -25,7 +23,6 @@ ij_editorconfig_space_before_comma = false
 ij_editorconfig_spaces_around_assignment_operators = true
 
 [{*.c,*.c++,*.cc,*.cp,*.cpp,*.cu,*.cuh,*.cxx,*.h,*.h++,*.hh,*.hp,*.hpp,*.hxx,*.i,*.icc,*.ii,*.inl,*.ino,*.ipp,*.m,*.mm,*.pch,*.tcc,*.tpp,version.gen.rc}]
-max_line_length = 100
 ij_c_add_brief_tag = false
 ij_c_add_getter_prefix = true
 ij_c_add_setter_prefix = true
@@ -129,10 +126,10 @@ ij_c_introduce_prop_to_private_category = false
 ij_c_introduce_static_consts = true
 ij_c_introduce_use_ns_types = false
 ij_c_ivars_prefix = _
-ij_c_keep_blank_lines_before_end = 2
-ij_c_keep_blank_lines_before_right_brace = 2
-ij_c_keep_blank_lines_in_code = 2
-ij_c_keep_blank_lines_in_declarations = 2
+ij_c_keep_blank_lines_before_end = 1
+ij_c_keep_blank_lines_before_right_brace = 1
+ij_c_keep_blank_lines_in_code = 1
+ij_c_keep_blank_lines_in_declarations = 1
 ij_c_keep_case_expressions_in_one_line = false
 ij_c_keep_control_statement_in_one_line = true
 ij_c_keep_directive_at_first_column = true
@@ -306,6 +303,7 @@ ij_c_while_on_new_line = false
 ij_c_wrap_property_declaration = off
 
 [{*.cmake,CMakeLists.txt}]
+ij_continuation_indent_size = 4
 ij_cmake_align_multiline_parameters_in_calls = false
 ij_cmake_force_commands_case = 2
 ij_cmake_keep_blank_lines_in_code = 2

@@ -1,6 +1,8 @@
-#include <sdk/eos_logging.h>
 #include "scream_api/scream_api.hpp"
-#include "config/config.hpp"
+
+#include <sdk/eos_logging.h>
+
+using namespace scream_api;
 
 DLL_EXPORT(EOS_EResult) EOS_Logging_SetLogLevel(
     EOS_ELogCategory LogCategory,
@@ -8,7 +10,7 @@ DLL_EXPORT(EOS_EResult) EOS_Logging_SetLogLevel(
 ) {
     GET_ORIGINAL_FUNCTION(EOS_Logging_SetLogLevel)
 
-    if (config::instance.logging && config::instance.eos_logging) {
+    if (config.logging && config.eos_logging) {
         // Override game's preferences
         LogCategory = EOS_ELogCategory::EOS_LC_ALL_CATEGORIES;
         LogLevel = EOS_ELogLevel::EOS_LOG_VeryVerbose;
@@ -21,8 +23,8 @@ DLL_EXPORT(EOS_EResult) EOS_Logging_SetLogLevel(
 DLL_EXPORT(EOS_EResult) EOS_Logging_SetCallback(EOS_LogMessageFunc Callback) {
     GET_ORIGINAL_FUNCTION(EOS_Logging_SetCallback)
 
-    if (config::instance.logging && config::instance.eos_logging) {
-        static std::set<EOS_LogMessageFunc> callbacks;
+    if (config.logging && config.eos_logging) {
+        static Set<EOS_LogMessageFunc> callbacks;
 
         callbacks.insert(Callback);
 

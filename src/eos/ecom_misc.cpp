@@ -1,6 +1,6 @@
-#include <sdk/eos_ecom.h>
 #include "scream_api/scream_api.hpp"
-#include "koalabox/logger/logger.hpp"
+
+#include <sdk/eos_ecom.h>
 
 using namespace koalabox;
 
@@ -9,7 +9,7 @@ using namespace koalabox;
 
 #define IMPLEMENTATION(FUNC, ...) \
     GET_ORIGINAL_FUNCTION(FUNC) \
-    logger::debug("Function called: {}", #FUNC); \
+    logger->debug("Function called: {}", #FUNC); \
     return FUNC##_o(__VA_ARGS__);
 
 DLL_EXPORT(void) EOS_Ecom_QueryOwnershipToken(
@@ -58,4 +58,10 @@ DLL_EXPORT(uint32_t) EOS_Ecom_GetItemReleaseCount(
     const EOS_Ecom_GetItemReleaseCountOptions* Options
 ) {
     IMPLEMENTATION(EOS_Ecom_GetItemReleaseCount, Handle, Options)
+}
+
+// This function is used in ScreamAPI
+
+DLL_EXPORT(const char*) EOS_EResult_ToString(EOS_EResult Result) {
+    IMPLEMENTATION(EOS_EResult_ToString, Result)
 }

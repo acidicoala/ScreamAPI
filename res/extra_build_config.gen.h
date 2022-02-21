@@ -1,3 +1,3 @@
 #pragma once
 
-#define ORIG_DLL "${ORIG_DLL}"
+#define ORIGINAL_DLL "${ORIGINAL_DLL}"

@@ -1,10 +1,8 @@
-#include <sdk/eos_ecom.h>
-#include <sdk/eos_common.h>
-#include "config/config.hpp"
-#include "koalabox/logger/logger.hpp"
 #include "scream_api/scream_api.hpp"
 
-using namespace koalabox;
+#include <sdk/eos_ecom.h>
+
+using namespace scream_api;
 
 DLL_EXPORT(void) EOS_Ecom_QueryOwnership(
     EOS_HEcom Handle,
@@ -14,9 +12,9 @@ DLL_EXPORT(void) EOS_Ecom_QueryOwnership(
 ) {
     GET_ORIGINAL_FUNCTION(EOS_Ecom_QueryOwnership)
 
-    logger::info("❓ Game requested ownership of {} items:", Options->CatalogItemIdCount);
+    logger->info("❓ Game requested ownership of {} items:", Options->CatalogItemIdCount);
     for (uint32_t i = 0; i < Options->CatalogItemIdCount; i++) {
-        logger::info("  ❔ {}", Options->CatalogItemIds[i]);
+        logger->info("  ❔ {}", Options->CatalogItemIds[i]);
     }
 
     struct Container {
@@ -28,13 +26,13 @@ DLL_EXPORT(void) EOS_Ecom_QueryOwnership(
         [](const EOS_Ecom_QueryOwnershipCallbackInfo* Data) {
             const auto container = static_cast<Container*>(Data->ClientData);
 
-            logger::info("🍀 ScreamAPI prepared {} items:", Data->ItemOwnershipCount);
+            logger->info("🍀 ScreamAPI prepared {} items:", Data->ItemOwnershipCount);
 
             for (uint32_t i = 0; i < Data->ItemOwnershipCount; i++) {
-                auto item = Data->ItemOwnership + i;
+                const auto item = Data->ItemOwnership + i;
 
-                const auto unlock_all = config::instance.catalog_items.unlock_all;
-                const auto override = config::instance.catalog_items.override.contains(item->Id);
+                const auto unlock_all = config.catalog_items.unlock_all;
+                const auto override = config.catalog_items.override.contains(item->Id);
                 const auto owned = unlock_all != override;  // Logical XOR
 
                 const auto status = owned
@@ -42,7 +40,7 @@ DLL_EXPORT(void) EOS_Ecom_QueryOwnership(
                     : EOS_EOwnershipStatus::EOS_OS_NotOwned;
 
                 const auto ownership_icon = owned
-                    ? "✔"
+                    ? "✅"
                     : "❌";
 
                 const auto ownership_status = owned
@@ -51,7 +49,7 @@ DLL_EXPORT(void) EOS_Ecom_QueryOwnership(
 
                 const_cast<EOS_Ecom_ItemOwnership*>(item)->OwnershipStatus = status;
 
-                logger::info("  {} {} ({})", ownership_icon, item->Id, ownership_status);
+                logger->info("  {} {} ({})", ownership_icon, item->Id, ownership_status);
             }
 
             const_cast<EOS_Ecom_QueryOwnershipCallbackInfo*>(Data)->ClientData = container->ClientData;
