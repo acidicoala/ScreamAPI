@@ -103,10 +103,10 @@ This completes the installation process. Now you can launch the game from Epic G
 **Keep in mind that you have to repeat this process again if the game gets updated by the Epic Games launcher.**
 
 > **If the game is crashing...**<br>
-If the game is crashing or not opening as expected after installing ScreamAPI, then try to download and install the latest [Microsoft Visual C++ Redistributable for Visual Studio 2015, 2017 and 2019](https://support.microsoft.com/en-gb/help/2977003/the-latest-supported-visual-c-downloads)
+If the game is crashing or not opening as expected after installing ScreamAPI, then try to download and install the latest [Microsoft Visual C++ Redistributable for Visual Studio 2015, 2017, 2019, and 2022](https://support.microsoft.com/en-gb/help/2977003/the-latest-supported-visual-c-downloads)
 > <details><summary>Download page</summary>
 >
-> ![Download page](https://i.ibb.co/7NqHycx/redist.webp)
+> ![Download page](https://i.ibb.co/n6K0X27/redist.jpg)
 > </details>
 
 [GitHub Releases]: https://github.com/acidicoala/ScreamAPI/releases/latest
