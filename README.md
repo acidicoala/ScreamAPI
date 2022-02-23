@@ -53,13 +53,18 @@ Epic Games or a game publisher will obviously have the right to do so, as modify
 
 ## 🛠 Installation Instructions
 
-There are several simple steps required to install and use the ScreamAPI.
+> Note: These examples assumes a 64-bit game. If you are interested in a 32-bit game, then repeat the same steams with 32-bit versions of the binaries instead.
 
-> Note: This example assumes a 64-bit game. If you are interested in a 32-bit game, then repeat the same steams with 32-bit versions of the binaries instead.
+ScreamAPI supports 2 modes of operation: **Proxy** mode, and **Hook** mode.
+
+
+<details><summary><b>Proxy mode</b></summary>
+
+In **Proxy** mode ScreamAPI DLL assumes the role of a proxy DLL that gets loaded by the game which thinks it has loaded the original DLL. ScreamAPI DLL in this mode will redirect most of the function calls to the original DLL. Kind of like how web proxy redirects requests to the original server. This is a classical, time-proven installation method that is stable, but has a number of shortcomings. The primary of them is that the unlocker binaries may be overwritten after a game updated, requiring re-installation of DLL. Another one is that some users don't feel like reading instructions properly, and just go ahead replacing the original DLL, instead of renaming it. Or they rename it incorrectly, for example by adding number zero, instead of letter 0. Below are the instructions for the Proxy mode:
 
 1. Find a file _EOSSDK-Win64-Shipping.dll_ in your game's installation folder.
 1. Rename it by adding 2 characters: **_o** (notice that it is a letter **o** at the end, not a numeral **0**). In the end it should be named as _EOSSDK-Win64-Shipping_o.dll_.
-1. Download the latest release zip from [GitHub Releases](https://github.com/acidicoala/ScreamAPI/releases/latest). In case you have a hard time finding it, click on the **Assets** spoiler, then click on the link that looks like _ScreamAPI-vX.Y.Z.zip_
+1. Download the latest release zip from [GitHub Releases]. In case you have a hard time finding it, click on the **Assets** spoiler, then click on the link that looks like _ScreamAPI-vX.Y.Z.zip_
 1. Open up the downloaded zip and unpack the _EOSSDK-Win64-Shipping.dll_ file alongside the original **EOSSDK-Win64-Shipping_o.dll** in the game's binary folder.
 
 <details><summary>64-bit example</summary>
@@ -71,6 +76,29 @@ There are several simple steps required to install and use the ScreamAPI.
 ![32-bit example](https://i.ibb.co/1rdvN3B/install.webp)
 </details>
 
+</details>
+
+---
+
+<details><summary><b>Hook mode</b></summary>
+
+In **Hook** mode ScreamAPI DLL is injected into the game process and dynamically patches the functions of interest in the original DLL, leaving the rest untouched. The unlocker DLL can be loaded automatically by exploiting DLL search order, which is what project Koaloader is used for. Koaloader DLL can be disguised as a system DLL, so that it can be automatically loaded by the game. In turn, Koaloader will load the ScreamAPI DLL. This has the advantage of not modifying any binary files on the disc, hence the unlocker will remain intact after updates. It should be also easier to install for some users. The only disadvantage is that Koaloader requires per-game configuration. Below are the instructions for the Hook mode (in combination with Koaloader):
+
+1. Download the latest ScreamAPI release zip from [GitHub Releases].
+2. Open up the downloaded zip, unpack the _EOSSDK-Win64(32)-Shipping.dll_ and rename it however you like, for example to *ScreamAPI.dll*
+3. Place the ScreamAPI DLL anywhere you like, for example in game's root directory.
+4. Download the latest Koaloader release zip from [GitHub Releases](https://github.com/acidicoala/Koaloader/releases/latest).
+5. Pick a DLL that is supported by the target game. In this example, we will select *version-64/version.dll*. Place this DLL in the game directory where a game first attempts to find a DLL, such as the game's binary directory.
+6. Place the `Koaloder.json` config file next to the Koaloader DLL and configure Koaloader as described in its [README](https://github.com/acidicoala/Koaloader/blob/master/README.md). Most importantly, set the `modules` option to point to the path of the ScreamAPI dll:
+     ```json
+    "modules": [
+        {
+          "path": "ScreamAPI.dll"
+        }
+    ]
+    ```
+</details>
+
 This completes the installation process. Now you can launch the game from Epic Game Store or using the shortcut created by EGS, and check if all DLCs have been unlocked. Sometimes you may have to accept a game's request to connect your EGS account in order to unlock DLCs, which some games require regardless of ScreamAPI.
 **Keep in mind that you have to repeat this process again if the game gets updated by the Epic Games launcher.**
 
@@ -80,6 +108,8 @@ If the game is crashing or not opening as expected after installing ScreamAPI, t
 >
 > ![Download page](https://i.ibb.co/7NqHycx/redist.webp)
 > </details>
+
+[GitHub Releases]: https://github.com/acidicoala/ScreamAPI/releases/latest
 
 ## ⚙ Configuration
 
@@ -106,9 +136,10 @@ The description of each available option is presented below:
 
 ScreamAPI makes use of the following open source projects:
 
-- [spdlog](https://github.com/gabime/spdlog)
-- [JSON for Modern C++](https://github.com/nlohmann/json)
 - [C++ Requests](https://github.com/libcpr/cpr)
+- [JSON for Modern C++](https://github.com/nlohmann/json)
+- [PolyHook 2](https://github.com/stevemk14ebr/PolyHook_2_0)
+- [spdlog](https://github.com/gabime/spdlog)
 
 ## 📄 License
 
