@@ -4,7 +4,7 @@ on: push
 jobs:
   build-project:
     name: Build ${{ matrix.config }} for ${{ matrix.arch }}-bit architecture
-    runs-on: windows-latest
+    runs-on: windows-2022
     strategy:
       matrix:
         arch: [ 32, 64 ]
@@ -52,6 +52,9 @@ jobs:
         with:
           path: ${{ env.BUILD_DIR }}
           key: build-${{ matrix.arch }}-${{ matrix.config }}-${{ hashFiles( 'CMakeLists.txt' ) }}
+
+      - name: Build the project using CMake
+        run: ./build.ps1 ${{ matrix.arch }}
 
       - name: Regenerate build files
         run: cmake -G "Visual Studio 16 2019" -A ${{ matrix.platform }} -B ${{ env.BUILD_DIR }}

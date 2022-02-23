@@ -89,6 +89,7 @@ The description of each available option is presented below:
 
 - `version`: This field may be used by ScreamAPI to identify how to parse the config file. This allows ScreamAPI to parse older config files in a backward compatible manner. Therefore, **this field must not be edited manually**! Default: `2`.
 - `logging`: Enables or disables logging into a _ScreamAPI.log_ file. Default: `false`.
+- `eos_logging`: Enables or disables interception of EOS SDK logs. Can cause issues when enabled in *hook* mode. Default: `false`.
 - `eos_logging`: Enables or disables interception of EOS SDK logs. Enabling this option can cause issues in *hook* mode. Default: `false`.
 - `block_metrics`: Blocks reporting of analytics and usage metrics by the game to Epic Online Services. Metrics sent by EOS SDK itself remain unaffected. Default: `false`.
 - `catalog_items`: Options in this object specify behaviour when games use `EOS_Ecom_QueryOwnership` function.

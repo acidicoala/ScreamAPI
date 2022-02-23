@@ -17,12 +17,11 @@ if ($config -notmatch '^(Debug|Release|RelWithDebInfo)$') {
 
 Set-Location (Get-Item $PSScriptRoot)
 
-$Env:SCREAM_API_VERSION = "2.1.0"
 $Env:BUILD_DIR = "build\$arch"
 if ($config -eq 'Debug') {
     $Env:VERSION_SUFFIX = "-debug"
 }
 
-cmake -G "Visual Studio 16 2019" -A $platform -B "$Env:BUILD_DIR"
+cmake -G "Visual Studio 17 2022" -A $platform -B "$Env:BUILD_DIR"
 
 cmake --build "$Env:BUILD_DIR" --config $config
