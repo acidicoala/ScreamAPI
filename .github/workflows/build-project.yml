@@ -56,12 +56,6 @@ jobs:
       - name: Build the project using CMake
         run: ./build.ps1 ${{ matrix.arch }} ${{ matrix.config }}
 
-      - name: Regenerate build files
-        run: cmake -G "Visual Studio 16 2019" -A ${{ matrix.platform }} -B ${{ env.BUILD_DIR }}
-
-      - name: Build the project
-        run: cmake --build ${{ env.BUILD_DIR }} --config ${{ matrix.config }}
-
       - name: Upload the binary file and debug info
         uses: actions/upload-artifact@v2
         with:
