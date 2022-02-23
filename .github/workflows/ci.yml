@@ -4,6 +4,8 @@ on: push
 jobs:
   build-and-release:
     uses: acidicoala/KoalaBox/.github/workflows/build-and-package.yml@242e86f7e40189f5526710fc32ef4de95d8e0ea8
+    permissions:
+      contents: write
     with:
       modules: >-
         ["ScreamAPI"]
