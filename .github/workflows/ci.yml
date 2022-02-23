@@ -3,7 +3,7 @@ on: push
 
 jobs:
   build-and-release:
-    uses: acidicoala/KoalaBox/.github/workflows/build-and-package.yml@3008dcf70ad9e18ecb19ddac9df783928f3f7b53
+    uses: acidicoala/KoalaBox/.github/workflows/build-and-package.yml@9d5f4fb5617cfa090e49ab6dd0b20951f0bcb1b5
     permissions:
       contents: write
     with:
