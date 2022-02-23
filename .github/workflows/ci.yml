@@ -2,8 +2,8 @@ name: Continuous Integration
 on: push
 
 jobs:
-  build-and-release:
-    uses: acidicoala/KoalaBox/.github/workflows/build-and-package.yml@3e25f0fe17e4ae2e8ee9f44a5ef31781a10a556a
+  ci:
+    uses: acidicoala/KoalaBox/.github/workflows/build-and-package.yml@264d6c5d14ed0f93beac4b4c77d51054e3df8d36
     permissions:
       contents: write
     with:
