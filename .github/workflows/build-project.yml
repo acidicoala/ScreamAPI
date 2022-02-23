@@ -54,7 +54,7 @@ jobs:
           key: build-${{ matrix.arch }}-${{ matrix.config }}-${{ hashFiles( 'CMakeLists.txt' ) }}
 
       - name: Build the project using CMake
-        run: ./build.ps1 ${{ matrix.arch }}
+        run: ./build.ps1 ${{ matrix.arch }} ${{ matrix.config }}
 
       - name: Regenerate build files
         run: cmake -G "Visual Studio 16 2019" -A ${{ matrix.platform }} -B ${{ env.BUILD_DIR }}
