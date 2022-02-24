@@ -3,4 +3,4 @@
 	url = https://github.com/microsoft/vcpkg.git
 [submodule "KoalaBox"]
 	path = KoalaBox
-	url = https://github.com/acidicoala/KoalaBox.git
+	url = https://acidicoala@github.com/acidicoala/KoalaBox.git

@@ -4,10 +4,9 @@
 
 using namespace scream_api;
 
-DLL_EXPORT(EOS_EResult) EOS_Logging_SetLogLevel(
-    EOS_ELogCategory LogCategory,
-    EOS_ELogLevel LogLevel
-) {
+DLL_EXPORT(EOS_EResult) EOS_Logging_SetLogLevel(EOS_ELogCategory LogCategory, EOS_ELogLevel LogLevel) {
+    logger->debug("{} -> Category: {}, Level: {}", __func__, (int32_t) LogCategory, (int32_t) LogLevel);
+
     GET_ORIGINAL_FUNCTION(EOS_Logging_SetLogLevel)
 
     if (config.logging && config.eos_logging) {
@@ -21,6 +20,8 @@ DLL_EXPORT(EOS_EResult) EOS_Logging_SetLogLevel(
 
 // Note: On x64 executables, this function will be hooked via EAT, hence it may cause issues
 DLL_EXPORT(EOS_EResult) EOS_Logging_SetCallback(EOS_LogMessageFunc Callback) {
+    logger->debug("{} -> Callback: {}", __func__, fmt::ptr(Callback));
+
     GET_ORIGINAL_FUNCTION(EOS_Logging_SetCallback)
 
     if (config.logging && config.eos_logging) {

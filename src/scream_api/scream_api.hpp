@@ -6,7 +6,10 @@
 
 #define GET_ORIGINAL_FUNCTION(FUNC) \
     static const auto FUNC##_o = hook::get_original_function( \
-        scream_api::is_hook_mode, scream_api::original_library, #FUNC, FUNC \
+        scream_api::is_hook_mode, \
+        scream_api::original_library, \
+        loader::get_decorated_function(scream_api::original_library, #FUNC), \
+        FUNC \
     );
 
 namespace scream_api {

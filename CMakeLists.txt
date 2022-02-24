@@ -4,7 +4,7 @@ include(KoalaBox/KoalaBox.cmake)
 
 configure_globals(KoalaBox)
 
-project(ScreamAPI VERSION 3.0.0)
+project(ScreamAPI VERSION 3.0.1)
 
 set_32_and_64(ORIGINAL_DLL EOSSDK-Win32-Shipping EOSSDK-Win64-Shipping)
 
@@ -22,6 +22,7 @@ set(
 )
 configure_exports_generator()
 configure_linker_exports(
+    true
     "${ORIGINAL_DLL}_o"
     "${DLL_INPUT}"
     "${SRC_DIR}/eos"
@@ -53,4 +54,4 @@ configure_output_name(${ORIGINAL_DLL})
 
 configure_include_directories(${CMAKE_SOURCE_DIR}/include)
 
-configure_dependencies(${CMAKE_PROJECT_NAME} spdlog nlohmann_json cpr PolyHook_2)
+configure_dependencies(${CMAKE_PROJECT_NAME} cpr nlohmann_json PolyHook_2 spdlog)

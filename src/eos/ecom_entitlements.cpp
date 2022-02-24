@@ -34,18 +34,22 @@ DLL_EXPORT(void) EOS_Ecom_QueryEntitlements(
 
     EOS_Ecom_QueryEntitlements_o(Handle, Options, new Container{ ClientData, CompletionDelegate },
         [](const EOS_Ecom_QueryEntitlementsCallbackInfo* Data) {
-            const auto container = static_cast<Container*>(Data->ClientData);
+            try {
+                const auto container = static_cast<Container*>(Data->ClientData);
 
-            // Manually inject entitlements
-            for (auto& id: config.entitlements.inject) {
-                logger->debug("Adding entitlement from config: {}", id);
-                entitlement_set.insert(id);
-            }
+                // Manually inject entitlements
+                for (auto& id: config.entitlements.inject) {
+                    logger->debug("Adding entitlement from config: {}", id);
+                    entitlement_set.insert(id);
+                }
 
-            // Automatically inject entitlements
-            if (config.entitlements.auto_inject) {
-                nlohmann::json payload = {
-                    { "query",     R"(query($namespace: String!) {
+                // Automatically inject entitlements
+                if (scream_api::namespace_id.empty()) {
+                    logger->warn("EOS_Ecom_QueryEntitlements callback: namespace_id is not set");
+                } else {
+                    if (config.entitlements.auto_inject) {
+                        nlohmann::json payload = {
+                            { "query",     R"(query($namespace: String!) {
                         Catalog {
                             catalogOffers(
                                 namespace: $namespace
@@ -61,50 +65,56 @@ DLL_EXPORT(void) EOS_Ecom_QueryEntitlements(
                             }
                         }
                     })" },
-                    { "variables", {{ "namespace", scream_api::namespace_id }}}
-                };
+                            { "variables", {{ "namespace", scream_api::namespace_id }}}
+                        };
 
-                const auto res = cpr::Post(
-                    cpr::Url{ "https://graphql.epicgames.com/graphql" },
-                    cpr::Header{{ "content-type", "application/json" }},
-                    cpr::Body{ payload.dump() }
-                );
+                        const auto res = cpr::Post(
+                            cpr::Url{ "https://graphql.epicgames.com/graphql" },
+                            cpr::Header{{ "content-type", "application/json" }},
+                            cpr::Body{ payload.dump() }
+                        );
 
-                if (res.status_code == cpr::status::HTTP_OK) {
-                    const auto json = nlohmann::json::parse(res.text);
+                        if (res.status_code == cpr::status::HTTP_OK) {
+                            const auto json = nlohmann::json::parse(res.text);
 
-                    const auto elements = json["data"]["Catalog"]["catalogOffers"]["elements"];
+                            logger->debug("Response json:\n{}", json.dump(2));
 
-                    for (const auto& element: elements) {
-                        for (const auto& items: element) {
-                            for (const auto& item: items) {
-                                String id(item["id"]);
-                                logger->debug("Adding auto-fetched entitlement: {}", id);
-                                entitlement_set.insert(id);
+                            const auto elements = json["data"]["Catalog"]["catalogOffers"]["elements"];
+
+                            for (const auto& element: elements) {
+                                for (const auto& items: element) {
+                                    for (const auto& item: items) {
+                                        String id(item["id"]);
+                                        logger->debug("Adding auto-fetched entitlement: {}", id);
+                                        entitlement_set.insert(id);
+                                    }
+                                }
                             }
+                        } else {
+                            logger->error(
+                                "Failed to automatically fetch entitlement ids. "
+                                "Status code: {}. Text: {}", res.status_code, res.text
+                            );
                         }
                     }
-                } else {
-                    logger->error(
-                        "Failed to automatically fetch entitlement ids. "
-                        "Status code: {}. Text: {}", res.status_code, res.text
-                    );
                 }
+
+                entitlements = std::vector(entitlement_set.begin(), entitlement_set.end());
+
+                logger->info("🍀 ScreamAPI prepared {} entitlements:", entitlements.size());
+                for (const auto& entitlement: entitlements) {
+                    logger->info("  ✅ {}", entitlement);
+                }
+
+                const_cast<EOS_Ecom_QueryEntitlementsCallbackInfo*>(Data)->ResultCode = EOS_EResult::EOS_Success;
+                const_cast<EOS_Ecom_QueryEntitlementsCallbackInfo*>(Data)->ClientData = container->ClientData;
+
+                container->CompletionDelegate(Data);
+
+                delete container;
+            } catch (const Exception& ex) {
+                util::panic("EOS_Ecom_QueryEntitlements callback error: {}", ex.what());
             }
-
-            entitlements = std::vector(entitlement_set.begin(), entitlement_set.end());
-
-            logger->info("🍀 ScreamAPI prepared {} entitlements:", entitlements.size());
-            for (const auto& entitlement: entitlements) {
-                logger->info("  ✅ {}", entitlement);
-            }
-
-            const_cast<EOS_Ecom_QueryEntitlementsCallbackInfo*>(Data)->ResultCode = EOS_EResult::EOS_Success;
-            const_cast<EOS_Ecom_QueryEntitlementsCallbackInfo*>(Data)->ClientData = container->ClientData;
-
-            container->CompletionDelegate(Data);
-
-            delete container;
         }
     );
 }

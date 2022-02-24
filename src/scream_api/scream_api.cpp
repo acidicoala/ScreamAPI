@@ -11,7 +11,7 @@
 #define HOOK(METHOD, FUNC) \
     hook::METHOD( \
         original_library, \
-        loader::get_undecorated_function(original_library, #FUNC), \
+        loader::get_decorated_function(original_library, #FUNC), \
         reinterpret_cast<FunctionPointer>(FUNC) \
     );
 
@@ -28,27 +28,28 @@ namespace scream_api {
     bool is_hook_mode = false;
 
     void init(HMODULE self_module) {
-        DisableThreadLibraryCalls(self_module);
+        try {
+            DisableThreadLibraryCalls(self_module);
 
-        const auto self_directory = loader::get_module_dir(self_module);
+            const auto self_directory = loader::get_module_dir(self_module);
 
-        config = config_parser::parse<Config>(self_directory / PROJECT_NAME".json");
+            config = config_parser::parse<Config>(self_directory / PROJECT_NAME".json");
 
-        if (config.logging) {
-            logger = file_logger::create(self_directory / PROJECT_NAME".log");
-        }
+            if (config.logging) {
+                logger = file_logger::create(self_directory / PROJECT_NAME".log");
+            }
 
-        logger->info("🐨 {} v{}", PROJECT_NAME, PROJECT_VERSION);
+            logger->info("🐨 {} v{}", PROJECT_NAME, PROJECT_VERSION);
 
-        is_hook_mode = hook::is_hook_mode(self_module, ORIGINAL_DLL);
+            is_hook_mode = hook::is_hook_mode(self_module, ORIGINAL_DLL);
 
-        if (is_hook_mode) {
-            logger->info("🪝 Detected hook mode"); // New hook emoji:
+            if (is_hook_mode) {
+                logger->info("🪝 Detected hook mode"); // New hook emoji:
 
-            dll_monitor::init(ORIGINAL_DLL, [](const HMODULE& library) {
-                original_library = library;
+                dll_monitor::init(ORIGINAL_DLL, [](const HMODULE& library) {
+                    original_library = library;
 
-                hook::init([]() {
+                    hook::init();
 
                     DETOUR(EOS_Ecom_CopyEntitlementByIndex)
                     DETOUR(EOS_Ecom_CopyEntitlementByNameAndIndex)
@@ -63,8 +64,11 @@ namespace scream_api {
                     DETOUR(EOS_Ecom_RedeemEntitlements)
                     DETOUR(EOS_Initialize)
                     DETOUR(EOS_Platform_Create)
-                    DETOUR(EOS_Metrics_BeginPlayerSession)
-                    DETOUR(EOS_Metrics_EndPlayerSession)
+
+                    if (config.block_metrics) {
+                        DETOUR(EOS_Metrics_BeginPlayerSession)
+                        DETOUR(EOS_Metrics_EndPlayerSession)
+                    }
 
                     if (config.logging && config.eos_logging) {
                         // Function prologue is too small to hook via detour
@@ -72,25 +76,32 @@ namespace scream_api {
                         DETOUR(EOS_Logging_SetLogLevel)
                     }
                 });
-            });
 
-        } else {
-            logger->info("🔀 Detected proxy mode");
+            } else {
+                logger->info("🔀 Detected proxy mode");
 
-            original_library = loader::load_original_library(self_directory, ORIGINAL_DLL);
+                original_library = loader::load_original_library(self_directory, ORIGINAL_DLL);
+            }
+
+            logger->info("🚀 Initialization complete");
+        } catch (const Exception& ex) {
+            util::panic(fmt::format("Initialization error: {}", ex.what()));
         }
-
-        logger->info("🚀 Initialization complete");
     }
 
     void shutdown() {
-        if (is_hook_mode) {
-            dll_monitor::shutdown();
-        } else {
-            win_util::free_library(original_library);
-        }
+        try {
 
-        logger->info("💀 Shutdown complete");
+            if (is_hook_mode) {
+                dll_monitor::shutdown();
+            } else {
+                win_util::free_library(original_library);
+            }
+
+            logger->info("💀 Shutdown complete");
+        } catch (const Exception& ex) {
+            logger->error("Shutdown error: {}", ex.what());
+        }
     }
 
 }

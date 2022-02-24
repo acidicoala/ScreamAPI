@@ -4,7 +4,7 @@ on: push
 jobs:
   ci:
     name: CI
-    uses: acidicoala/KoalaBox/.github/workflows/build-and-package.yml@501d4e2da9053919992ae8c2e7bbade016adee47
+    uses: acidicoala/KoalaBox/.github/workflows/build-and-package.yml@3fd07c5427e822e71378256056b79ae470ac81d2
     permissions:
       contents: write
     with:
@@ -15,4 +15,3 @@ jobs:
         zip -j $ZIP_NAME
         artifacts/*/*.dll
         extra/README.txt
-        res/ScreamAPI.json
