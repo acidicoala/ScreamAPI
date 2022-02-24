@@ -97,6 +97,8 @@ In **Hook** mode ScreamAPI DLL is injected into the game process and dynamically
         }
     ]
     ```
+   
+You can also find an example setup [here](https://cs.rin.ru/forum/viewtopic.php?p=2548344#p2548344)
 </details>
 
 This completes the installation process. Now you can launch the game from Epic Game Store or using the shortcut created by EGS, and check if all DLCs have been unlocked. Sometimes you may have to accept a game's request to connect your EGS account in order to unlock DLCs, which some games require regardless of ScreamAPI.
