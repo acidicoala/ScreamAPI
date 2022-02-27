@@ -6,7 +6,7 @@
 
 💬 [Official forum topic](https://cs.rin.ru/forum/viewtopic.php?p=2161197#p2161197)
 
-📊 [Compatibility spreadsheet](https://docs.google.com/spreadsheets/d/1yCm2KWSFlV283SI35QpI86v68bFnK7MwxicKBEihIJM)
+📊 ~~[Compatibility spreadsheet](https://docs.google.com/spreadsheets/d/1yCm2KWSFlV283SI35QpI86v68bFnK7MwxicKBEihIJM)~~ (Discontinued)
 
 📃 [Test result form](https://docs.google.com/forms/d/e/1FAIpQLSeEGotx8ThaHQK8ywW_UPwTJysUZWnCPIDNBJjNpvXAYLPBEg/viewform)
 
@@ -27,8 +27,6 @@ ScreamAPI is a DLC unlocker for the games that are legitimately owned in your Ep
 <summary>Which games are supported?</summary>
 
 Only the games that use Epic Online Services Software Development Kit (EOS SDK) for the DLC ownership verification are supported. So if a game's installation directory does not contain any _EOSSDK-WinXX-Shipping.dll_ files, then it's definitely not supported. Even if the game uses EOS SDK DLL, it's not guaranteed to be supported because each game might implement its own additional verification checks. Therefore, you have to first research the game's topic, to see if it supports unlocking.
-
-I have created a [Google Sheets document] which contains the information about which games are compatible with ScreamAPI. If a game is compatible then it means that it is possible to unlock all or some DLCs with ScreamAPI. The spreadsheet contains 2 main sheets: the _Official Sheet_ and the Community Sheet. The Official Sheet is hand-filled by me based on my test results and test results of other users of this forum. The _Community Sheet_ is auto-filled by a [Google Forms document], which is accessible to everybody, so feel free to submit your feedback via the form. You can submit forms anonymously and as many times as you want.
 
 Additionally, there are several points to bear in mind when it comes to ScreamAPI and Epic Games Store:
 
@@ -122,7 +120,6 @@ The description of each available option is presented below:
 - `version`: This field may be used by ScreamAPI to identify how to parse the config file. This allows ScreamAPI to parse older config files in a backward compatible manner. Therefore, **this field must not be edited manually**! Default: `2`.
 - `logging`: Enables or disables logging into a _ScreamAPI.log_ file. Default: `false`.
 - `eos_logging`: Enables or disables interception of EOS SDK logs. Can cause issues when enabled in *hook* mode. Default: `false`.
-- `eos_logging`: Enables or disables interception of EOS SDK logs. Enabling this option can cause issues in *hook* mode. Default: `false`.
 - `block_metrics`: Blocks reporting of analytics and usage metrics by the game to Epic Online Services. Metrics sent by EOS SDK itself remain unaffected. Default: `false`.
 - `catalog_items`: Options in this object specify behaviour when games use `EOS_Ecom_QueryOwnership` function.
   - `unlock_all`: Controls if all items should be automatically unlocked. Default: `true`.
