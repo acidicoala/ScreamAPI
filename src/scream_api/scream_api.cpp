@@ -6,8 +6,6 @@
 #include <sdk/eos_logging.h>
 #include <sdk/eos_init.h>
 
-#include "polyhook2/PE/IatHook.hpp"
-
 #define HOOK(METHOD, FUNC) \
     hook::METHOD( \
         original_library, \
@@ -15,8 +13,8 @@
         reinterpret_cast<FunctionPointer>(FUNC) \
     );
 
-#define DETOUR(FUNC) HOOK(detour_or_throw, FUNC)
-#define EAT_HOOK(FUNC) HOOK(eat_hook_or_throw, FUNC)
+#define DETOUR(FUNC) HOOK(detour_or_warn, FUNC)
+#define EAT_HOOK(FUNC) HOOK(eat_hook_or_warn, FUNC)
 
 namespace scream_api {
     Config config = {};
@@ -71,7 +69,7 @@ namespace scream_api {
                     }
 
                     if (config.logging && config.eos_logging) {
-                        // Function prologue is too small to hook via detour
+                        // RIP-relative data operation...
                         EAT_HOOK(EOS_Logging_SetCallback)
                         DETOUR(EOS_Logging_SetLogLevel)
                     }
@@ -85,7 +83,7 @@ namespace scream_api {
 
             logger->info("🚀 Initialization complete");
         } catch (const Exception& ex) {
-            util::panic(fmt::format("Initialization error: {}", ex.what()));
+            util::panic("Initialization error: {}", ex.what());
         }
     }
 

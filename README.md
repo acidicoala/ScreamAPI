@@ -58,7 +58,7 @@ ScreamAPI supports 2 modes of operation: **Proxy** mode, and **Hook** mode.
 
 <details><summary><b>Proxy mode</b></summary>
 
-In **Proxy** mode ScreamAPI DLL assumes the role of a proxy DLL that gets loaded by the game which thinks it has loaded the original DLL. ScreamAPI DLL in this mode will redirect most of the function calls to the original DLL. Kind of like how web proxy redirects requests to the original server. This is a classical, time-proven installation method that is stable, but has a number of shortcomings. The primary of them is that the unlocker binaries may be overwritten after a game updated, requiring re-installation of DLL. Another one is that some users don't feel like reading instructions properly, and just go ahead replacing the original DLL, instead of renaming it. Or they rename it incorrectly, for example by adding the number zero, instead of the letter `O`. Below are the instructions for the Proxy mode:
+In **Proxy** mode ScreamAPI DLL assumes the role of a proxy DLL that gets loaded by the game which thinks it has loaded the original DLL. ScreamAPI DLL in this mode will redirect most of the function calls to the original DLL. Kind of like how web proxy redirects requests to the original server. This is a classical, time-proven installation method that is stable, but has a number of shortcomings. The primary of them is that the unlocker binaries may be overwritten after a game updated, requiring re-installation of DLL. Another one is that some users don't feel like reading instructions properly, and just go ahead replacing the original DLL, instead of renaming it. Or they rename it incorrectly, for example by adding the number zero, instead of the letter `o`. Below are the instructions for the Proxy mode:
 
 1. Find a file _EOSSDK-Win64-Shipping.dll_ in your game's installation folder.
 1. Rename it by adding 2 characters: **_o** (notice that it is a letter **o** at the end, not a numeral **0**). In the end it should be named as _EOSSDK-Win64-Shipping_o.dll_.
@@ -80,21 +80,13 @@ In **Proxy** mode ScreamAPI DLL assumes the role of a proxy DLL that gets loaded
 
 <details><summary><b>Hook mode</b></summary>
 
-In **Hook** mode ScreamAPI DLL is injected into the game process and dynamically patches the functions of interest in the original DLL, leaving the rest untouched. The unlocker DLL can be loaded automatically by exploiting DLL search order, which is what project Koaloader is used for. Koaloader DLL can be disguised as a system DLL, so that it can be automatically loaded by the game. In turn, Koaloader will load the ScreamAPI DLL. This has the advantage of not modifying any binary files on the disc, hence the unlocker will remain intact after updates. It should be also easier to install for some users. The only disadvantage is that Koaloader requires per-game configuration. Below are the instructions for the Hook mode (in combination with Koaloader):
+In **Hook** mode ScreamAPI DLL is injected into the game process and dynamically patches the functions of interest in the original DLL, leaving the rest untouched. The unlocker DLL can be loaded automatically by exploiting DLL search order, which is what project Koaloader is used for. Koaloader DLL can be disguised as a system DLL, so that it can be automatically loaded by the game. In turn, Koaloader will load the ScreamAPI DLL. This has the advantage of not modifying any binary files on the disc, hence the unlocker will remain intact after updates. It should be also easier to install for some users. The only disadvantage is that Koaloader requires per-game setup. Below are the instructions for the Hook mode (in combination with Koaloader and its `auto_load` feature):
 
 1. Download the latest ScreamAPI release zip from [GitHub Releases].
-2. Open up the downloaded zip, unpack the _EOSSDK-Win64(32)-Shipping.dll_ and rename it however you like, for example to *ScreamAPI.dll*
-3. Place the ScreamAPI DLL anywhere you like, for example in game's root directory.
+2. Open up the downloaded zip, unpack the _EOSSDK-Win64(32)-Shipping.dll_ and rename it to *ScreamAPI.dll*
+3. Place the ScreamAPI DLL in game directory or any of its parent directories.
 4. Download the latest Koaloader release zip from [GitHub Releases](https://github.com/acidicoala/Koaloader/releases/latest).
 5. Pick a DLL that is supported by the target game. In this example, we will select *version-64/version.dll*. Place this DLL in the game directory where a game first attempts to find a DLL, such as the game's binary directory.
-6. Place the `Koaloder.json` config file next to the Koaloader DLL and configure Koaloader as described in its [README](https://github.com/acidicoala/Koaloader/blob/master/README.md). Most importantly, set the `modules` option to point to the path of the ScreamAPI dll:
-     ```json
-    "modules": [
-        {
-          "path": "ScreamAPI.dll"
-        }
-    ]
-    ```
    
 You can also find an example setup [here](https://cs.rin.ru/forum/viewtopic.php?p=2548344#p2548344)
 </details>
@@ -113,7 +105,7 @@ If the game is crashing or not opening as expected after installing ScreamAPI, t
 
 ## ⚙ Configuration
 
-ScreamAPI does not require any manual configuration. By default, it uses most reasonable options and tries to unlock all DLCs that it can. However, there might be circumstances in which you need more custom-tailored behaviour. In this case you can use a configuration file `ScreamAPI.json` that you can find in the release zip. To use it, just drop it alongside the ScreamAPI dll (EOSSDK-WinXX-Shipping.dll). It will be read upon each launch of a game. Configuration file itself is optional, but options within the file are not. In the absence of the config file, default value specified below will be used.
+ScreamAPI does not require any manual configuration. By default, it uses the most reasonable options and tries to unlock all DLCs that it can. However, there might be circumstances in which you need more custom-tailored behaviour. In this case you can use a configuration file `ScreamAPI.json` that you can find [here](https://github.com/acidicoala/ScreamAPI/blob/master/res/ScreamAPI.json) in this repository. To use it, just drop it alongside the ScreamAPI dll (EOSSDK-WinXX-Shipping.dll). It will be read upon each launch of a game. Configuration file itself is optional, but options within the file are not. In the absence of the config file, default value specified below will be used.
 
 The description of each available option is presented below:
 

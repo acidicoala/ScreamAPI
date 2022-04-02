@@ -10,7 +10,8 @@ set_32_and_64(ORIGINAL_DLL EOSSDK-Win32-Shipping EOSSDK-Win64-Shipping)
 
 configure_version_resource("Free DLC for everyone ʕ ᵔᴥᵔʔ")
 
-set_32_and_64(DLL_INPUT "${RES_DIR}/EOSSDK-Win32-Shipping.dll" "${RES_DIR}/EOSSDK-Win64-Shipping.dll")
+set(DLL_INPUT "${RES_DIR}/${ORIGINAL_DLL}.dll")
+
 set(
     EOS_SOURCES
     "${SRC_DIR}/eos/init.cpp"
