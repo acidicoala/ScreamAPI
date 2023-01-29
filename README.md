@@ -105,7 +105,7 @@ If the game is crashing or not opening as expected after installing ScreamAPI, t
 
 ## ⚙ Configuration
 
-ScreamAPI does not require any manual configuration. By default, it uses the most reasonable options and tries to unlock all DLCs that it can. However, there might be circumstances in which you need more custom-tailored behaviour. In this case you can use a configuration file `ScreamAPI.json` that you can find [here](https://github.com/acidicoala/ScreamAPI/blob/master/res/ScreamAPI.json) in this repository. To use it, just drop it alongside the ScreamAPI dll (EOSSDK-WinXX-Shipping.dll). It will be read upon each launch of a game. Configuration file itself is optional, but options within the file are not. In the absence of the config file, default value specified below will be used.
+ScreamAPI does not require any manual configuration. By default, it uses the most reasonable options and tries to unlock all DLCs that it can. However, there might be circumstances in which you need more custom-tailored behaviour. In this case you can use a configuration file `ScreamAPI.json` that you can find [here](https://github.com/acidicoala/ScreamAPI/blob/master/res/ScreamAPI.json) in this repository. To use it, just drop it alongside the ScreamAPI dll (EOSSDK-WinXX-Shipping.dll). It will be read upon each launch of a game. Configuration file itself is optional, but options within the file are not. In the absence of the config file, default x509 specified below will be used.
 
 The description of each available option is presented below:
 

@@ -4,6 +4,7 @@ project(ScreamAPI VERSION 4.0.0)
 
 include(KoalaBox/cmake/KoalaBox.cmake)
 
+set(KOALABOX_HTTP_SERVER ON)
 add_subdirectory(KoalaBox EXCLUDE_FROM_ALL)
 
 set_32_and_64(EOSSDK_DLL EOSSDK-Win32-Shipping EOSSDK-Win64-Shipping)
