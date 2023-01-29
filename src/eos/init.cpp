@@ -1,20 +1,22 @@
-#include "scream_api/scream_api.hpp"
+#include <scream_api/scream_api.hpp>
+#include <scream_api/config.hpp>
+#include <game_mode/game_mode.hpp>
+
+#include <koalabox/logger.hpp>
 
 #include <sdk/eos_init.h>
 #include <sdk/eos_logging.h>
-
-using namespace scream_api;
 
 DLL_EXPORT(EOS_EResult) EOS_Initialize(const EOS_InitializeOptions* Options) {
     GET_ORIGINAL_FUNCTION(EOS_Initialize)
 
     if (Options) {
-        logger->debug("EOS_Initialize -> ProductName: '{}'", Options->ProductName);
+        LOG_DEBUG("EOS_Initialize -> ProductName: '{}'", Options->ProductName)
     }
 
     auto result = EOS_Initialize_o(Options);
 
-    if (config.logging && config.eos_logging) {
+    if (scream_api::config::instance.logging && scream_api::config::instance.eos_logging) {
         EOS_Logging_SetLogLevel(
             EOS_ELogCategory::EOS_LC_ALL_CATEGORIES,
             EOS_ELogLevel::EOS_LOG_VeryVerbose
@@ -22,7 +24,7 @@ DLL_EXPORT(EOS_EResult) EOS_Initialize(const EOS_InitializeOptions* Options) {
 
         EOS_Logging_SetCallback(
             [](const EOS_LogMessage* Message) {
-                logger->debug("[{}]\t{}", Message->Category, Message->Message);
+                LOG_DEBUG("[{}]\t{}", Message->Category, Message->Message)
             }
         );
     }
@@ -34,8 +36,9 @@ DLL_EXPORT(EOS_HPlatform) EOS_Platform_Create(const EOS_Platform_Options* Option
     GET_ORIGINAL_FUNCTION(EOS_Platform_Create)
 
     if (Options) {
-        logger->info("🗃 DLC database: https://scream-db.web.app/offers/{}", Options->SandboxId);
-        scream_api::namespace_id = Options->SandboxId;
+        LOG_INFO("🗃️ DLC database: https://scream-db.web.app/offers/{}", Options->SandboxId)
+
+        scream_api::game_mode::namespace_id = Options->SandboxId;
     }
 
     return EOS_Platform_Create_o(Options);

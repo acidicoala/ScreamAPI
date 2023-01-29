@@ -1,58 +1,52 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.24)
 
-include(KoalaBox/KoalaBox.cmake)
+project(ScreamAPI VERSION 4.0.0)
 
-configure_globals(KoalaBox)
+include(KoalaBox/cmake/KoalaBox.cmake)
 
-project(ScreamAPI VERSION 3.0.1)
+add_subdirectory(KoalaBox EXCLUDE_FROM_ALL)
 
-set_32_and_64(ORIGINAL_DLL EOSSDK-Win32-Shipping EOSSDK-Win64-Shipping)
+set_32_and_64(EOSSDK_DLL EOSSDK-Win32-Shipping EOSSDK-Win64-Shipping)
 
 configure_version_resource("Free DLC for everyone ʕ ᵔᴥᵔʔ")
 
-set(DLL_INPUT "${RES_DIR}/${ORIGINAL_DLL}.dll")
-
 set(
     EOS_SOURCES
-    "${SRC_DIR}/eos/init.cpp"
-    "${SRC_DIR}/eos/logging.cpp"
-    "${SRC_DIR}/eos/metrics.cpp"
-    "${SRC_DIR}/eos/ecom_misc.cpp"
-    "${SRC_DIR}/eos/ecom_items.cpp"
-    "${SRC_DIR}/eos/ecom_entitlements.cpp"
+    src/eos/init.cpp
+    src/eos/logging.cpp
+    src/eos/metrics.cpp
+    src/eos/ecom_misc.cpp
+    src/eos/ecom_items.cpp
+    src/eos/ecom_entitlements.cpp
 )
-configure_exports_generator()
+
 configure_linker_exports(
-    true
-    "${ORIGINAL_DLL}_o"
-    "${DLL_INPUT}"
-    "${SRC_DIR}/eos"
-    ${EOS_SOURCES}
+    UNDECORATE true
+    FORWARDED_DLL "${EOSSDK_DLL}_o"
+    INPUT_SOURCES_DIR "${CMAKE_SOURCE_DIR}/src/eos"
+    INPUT_DLLS "${CMAKE_SOURCE_DIR}/res/${EOSSDK_DLL}.dll"
 )
 
 configure_build_config(extra_build_config)
 
-configure_library(
-    SHARED
-
+set(
+    SCREAM_API_SOURCES
     ${EOS_SOURCES}
-    ${SRC_DIR}/scream_api/scream_api.cpp
-    ${SRC_DIR}/main.cpp
-
-    ${KOALABOX_SRC_DIR}/koalabox/dll_monitor/dll_monitor.cpp
-    ${KOALABOX_SRC_DIR}/koalabox/hook/hook.cpp
-    ${KOALABOX_SRC_DIR}/koalabox/loader/loader.cpp
-    ${KOALABOX_SRC_DIR}/koalabox/file_logger/file_logger.cpp
-    ${KOALABOX_SRC_DIR}/koalabox/util/util.cpp
-    ${KOALABOX_SRC_DIR}/koalabox/win_util/win_util.cpp
-
-    ${LINKER_EXPORTS}
+    src/game_mode/game_mode.cpp
+    src/game_mode/game_mode.hpp
+    src/scream_api/config.cpp
+    src/scream_api/config.hpp
+    src/scream_api/scream_api.cpp
+    src/scream_api/scream_api.hpp
+    src/store_mode/store_mode.cpp
+    src/store_mode/store_mode.hpp
+    src/legacy_linker_exports.h
+    src/main.cpp
+    ${GENERATED_LINKER_EXPORTS}
 )
 
-configure_precompile_headers(${CMAKE_PROJECT_NAME} ${SRC_DIR}/pch.hpp)
-
-configure_output_name(${ORIGINAL_DLL})
+add_library(${PROJECT_NAME} SHARED ${SCREAM_API_SOURCES} ${VERSION_RESOURCE})
 
 configure_include_directories(${CMAKE_SOURCE_DIR}/include)
 
-configure_dependencies(${CMAKE_PROJECT_NAME} cpr nlohmann_json PolyHook_2 spdlog)
+target_link_libraries(${PROJECT_NAME} PRIVATE KoalaBox)

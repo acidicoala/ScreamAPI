@@ -1,4 +1,8 @@
-#include "scream_api/scream_api.hpp"
+#include <scream_api/scream_api.hpp>
+#include <scream_api/config.hpp>
+#include <game_mode/game_mode.hpp>
+
+#include <koalabox/logger.hpp>
 
 #include <sdk/eos_ecom.h>
 
@@ -9,7 +13,7 @@ using namespace koalabox;
 
 #define IMPLEMENTATION(FUNC, ...) \
     GET_ORIGINAL_FUNCTION(FUNC) \
-    logger->debug("Function called: {}", #FUNC); \
+    LOG_DEBUG("Function called: {}", #FUNC); \
     return FUNC##_o(__VA_ARGS__);
 
 DLL_EXPORT(void) EOS_Ecom_QueryOwnershipToken(

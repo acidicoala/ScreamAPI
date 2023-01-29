@@ -1,3 +1,3 @@
 #pragma once
 
-#define ORIGINAL_DLL "${ORIGINAL_DLL}"
+#define EOSSDK_DLL "${EOSSDK_DLL}"

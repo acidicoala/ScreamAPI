@@ -1,5 +1,15 @@
-#include "scream_api.hpp"
+#include <scream_api/scream_api.hpp>
+#include <scream_api/config.hpp>
+#include <store_mode/store_mode.hpp>
+#include <game_mode/game_mode.hpp>
 #include <build_config.h>
+
+#include <koalabox/cache.hpp>
+#include <koalabox/config.hpp>
+#include <koalabox/dll_monitor.hpp>
+#include <koalabox/globals.hpp>
+#include <koalabox/loader.hpp>
+#include <koalabox/win_util.hpp>
 
 #include <sdk/eos_ecom.h>
 #include <sdk/eos_metrics.h>
@@ -17,89 +27,44 @@
 #define EAT_HOOK(FUNC) HOOK(eat_hook_or_warn, FUNC)
 
 namespace scream_api {
-    Config config = {};
 
-    String namespace_id;
+    bool is_epic_games_launcher(const String& exe_name) {
+        return exe_name < equals > "EpicGamesLauncher.exe";
+    }
 
-    HMODULE original_library = nullptr;
-
-    bool is_hook_mode = false;
-
-    void init(HMODULE self_module) {
+    void init(HMODULE self_handle) {
         try {
-            DisableThreadLibraryCalls(self_module);
+            DisableThreadLibraryCalls(self_handle);
 
-            const auto self_directory = loader::get_module_dir(self_module);
+            koalabox::globals::init_globals(self_handle, PROJECT_NAME);
 
-            config = config_parser::parse<Config>(self_directory / PROJECT_NAME".json");
+            config::init();
 
-            if (config.logging) {
-                logger = file_logger::create(self_directory / PROJECT_NAME".log");
+            if (config::instance.logging) {
+                koalabox::logger::init_file_logger();
             }
 
-            logger->info("🐨 {} v{}", PROJECT_NAME, PROJECT_VERSION);
+            LOG_INFO("🐨 {} v{} | Compiled at '{}'", PROJECT_NAME, PROJECT_VERSION, __TIMESTAMP__)
 
-            is_hook_mode = hook::is_hook_mode(self_module, ORIGINAL_DLL);
+            const auto exe_path = Path(koalabox::win_util::get_module_file_name_or_throw(nullptr));
+            const auto exe_name = exe_path.filename().string();
 
-            if (is_hook_mode) {
-                logger->info("🪝 Detected hook mode"); // New hook emoji:
+            LOG_DEBUG("Process name: '{}' [{}-bit]", exe_name, BITNESS)
 
-                dll_monitor::init(ORIGINAL_DLL, [](const HMODULE& library) {
-                    original_library = library;
-
-                    hook::init();
-
-                    DETOUR(EOS_Ecom_CopyEntitlementByIndex)
-                    DETOUR(EOS_Ecom_CopyEntitlementByNameAndIndex)
-                    DETOUR(EOS_Ecom_CopyItemById)
-                    DETOUR(EOS_Ecom_Entitlement_Release)
-                    DETOUR(EOS_Ecom_GetEntitlementsByNameCount)
-                    DETOUR(EOS_Ecom_GetEntitlementsCount)
-                    DETOUR(EOS_Ecom_GetItemReleaseCount)
-                    DETOUR(EOS_Ecom_QueryEntitlements)
-                    DETOUR(EOS_Ecom_QueryOwnership)
-                    DETOUR(EOS_Ecom_QueryOwnershipToken)
-                    DETOUR(EOS_Ecom_RedeemEntitlements)
-                    DETOUR(EOS_Initialize)
-                    DETOUR(EOS_Platform_Create)
-
-                    if (config.block_metrics) {
-                        DETOUR(EOS_Metrics_BeginPlayerSession)
-                        DETOUR(EOS_Metrics_EndPlayerSession)
-                    }
-
-                    if (config.logging && config.eos_logging) {
-                        // RIP-relative data operation...
-                        EAT_HOOK(EOS_Logging_SetCallback)
-                        DETOUR(EOS_Logging_SetLogLevel)
-                    }
-                });
-
+            if (is_epic_games_launcher(exe_name)) {
+                store_mode::init_store_mode();
             } else {
-                logger->info("🔀 Detected proxy mode");
-
-                original_library = loader::load_original_library(self_directory, ORIGINAL_DLL);
+                game_mode::init_game_mode(self_handle);
             }
 
-            logger->info("🚀 Initialization complete");
+            LOG_INFO("🚀 Initialization complete")
         } catch (const Exception& ex) {
-            util::panic("Initialization error: {}", ex.what());
+            koalabox::util::panic("Initialization error: {}", ex.what());
         }
     }
 
     void shutdown() {
-        try {
-
-            if (is_hook_mode) {
-                dll_monitor::shutdown();
-            } else {
-                win_util::free_library(original_library);
-            }
-
-            logger->info("💀 Shutdown complete");
-        } catch (const Exception& ex) {
-            logger->error("Shutdown error: {}", ex.what());
-        }
+        LOG_INFO("💀 Shutdown complete")
     }
 
 }

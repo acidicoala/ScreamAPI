@@ -1,15 +1,19 @@
-#include "scream_api/scream_api.hpp"
+#include <scream_api/scream_api.hpp>
+#include <scream_api/config.hpp>
+#include <game_mode/game_mode.hpp>
+
+#include <koalabox/logger.hpp>
 
 #include <sdk/eos_logging.h>
 
 using namespace scream_api;
 
 DLL_EXPORT(EOS_EResult) EOS_Logging_SetLogLevel(EOS_ELogCategory LogCategory, EOS_ELogLevel LogLevel) {
-    logger->debug("{} -> Category: {}, Level: {}", __func__, (int32_t) LogCategory, (int32_t) LogLevel);
+    LOG_DEBUG("{} -> Category: {}, Level: {}", __func__, (int32_t) LogCategory, (int32_t) LogLevel);
 
     GET_ORIGINAL_FUNCTION(EOS_Logging_SetLogLevel)
 
-    if (config.logging && config.eos_logging) {
+    if (scream_api::config::instance.logging && scream_api::config::instance.eos_logging) {
         // Override game's preferences
         LogCategory = EOS_ELogCategory::EOS_LC_ALL_CATEGORIES;
         LogLevel = EOS_ELogLevel::EOS_LOG_VeryVerbose;
@@ -20,11 +24,11 @@ DLL_EXPORT(EOS_EResult) EOS_Logging_SetLogLevel(EOS_ELogCategory LogCategory, EO
 
 // Note: On x64 executables, this function will be hooked via EAT, hence it may cause issues
 DLL_EXPORT(EOS_EResult) EOS_Logging_SetCallback(EOS_LogMessageFunc Callback) {
-    logger->debug("{} -> Callback: {}", __func__, fmt::ptr(Callback));
+    LOG_DEBUG("{} -> Callback: {}", __func__, fmt::ptr(Callback))
 
     GET_ORIGINAL_FUNCTION(EOS_Logging_SetCallback)
 
-    if (config.logging && config.eos_logging) {
+    if (scream_api::config::instance.logging && scream_api::config::instance.eos_logging) {
         static Set<EOS_LogMessageFunc> callbacks;
 
         callbacks.insert(Callback);

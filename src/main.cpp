@@ -5,9 +5,9 @@
 
 #include <legacy_linker_exports.h>
 
-EXTERN_C BOOL WINAPI DllMain(HMODULE module, DWORD reason, LPVOID) {
+EXTERN_C BOOL WINAPI DllMain(HMODULE handle, DWORD reason, LPVOID) {
     if (reason == DLL_PROCESS_ATTACH) {
-        scream_api::init(module);
+        scream_api::init(handle);
     } else if (reason == DLL_PROCESS_DETACH) {
         scream_api::shutdown();
     }

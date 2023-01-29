@@ -1,4 +1,8 @@
-#include "scream_api/scream_api.hpp"
+#include <scream_api/scream_api.hpp>
+#include <scream_api/config.hpp>
+#include <game_mode/game_mode.hpp>
+
+#include <koalabox/logger.hpp>
 
 #include <sdk/eos_ecom.h>
 
@@ -12,9 +16,9 @@ DLL_EXPORT(void) EOS_Ecom_QueryOwnership(
 ) {
     GET_ORIGINAL_FUNCTION(EOS_Ecom_QueryOwnership)
 
-    logger->info("❓ Game requested ownership of {} items:", Options->CatalogItemIdCount);
+    LOG_INFO("❓ Game requested ownership of {} items:", Options->CatalogItemIdCount)
     for (uint32_t i = 0; i < Options->CatalogItemIdCount; i++) {
-        logger->info("  ❔ {}", Options->CatalogItemIds[i]);
+        LOG_INFO("  ❔ {}", Options->CatalogItemIds[i])
     }
 
     struct Container {
@@ -26,13 +30,13 @@ DLL_EXPORT(void) EOS_Ecom_QueryOwnership(
         [](const EOS_Ecom_QueryOwnershipCallbackInfo* Data) {
             const auto container = static_cast<Container*>(Data->ClientData);
 
-            logger->info("🍀 ScreamAPI prepared {} items:", Data->ItemOwnershipCount);
+            LOG_INFO("🍀 ScreamAPI prepared {} items:", Data->ItemOwnershipCount)
 
             for (uint32_t i = 0; i < Data->ItemOwnershipCount; i++) {
                 const auto item = Data->ItemOwnership + i;
 
-                const auto unlock_all = config.catalog_items.unlock_all;
-                const auto override = config.catalog_items.override.contains(item->Id);
+                const auto unlock_all = scream_api::config::instance.catalog_items.unlock_all;
+                const auto override = scream_api::config::instance.catalog_items.override.contains(item->Id);
                 const auto owned = unlock_all != override;  // Logical XOR
 
                 const auto status = owned
@@ -49,7 +53,7 @@ DLL_EXPORT(void) EOS_Ecom_QueryOwnership(
 
                 const_cast<EOS_Ecom_ItemOwnership*>(item)->OwnershipStatus = status;
 
-                logger->info("  {} {} ({})", ownership_icon, item->Id, ownership_status);
+                LOG_INFO("  {} {} ({})", ownership_icon, item->Id, ownership_status)
             }
 
             const_cast<EOS_Ecom_QueryOwnershipCallbackInfo*>(Data)->ClientData = container->ClientData;
