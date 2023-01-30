@@ -26,6 +26,7 @@ configure_linker_exports(
     FORWARDED_DLL "${EOSSDK_DLL}_o"
     INPUT_SOURCES_DIR "${CMAKE_SOURCE_DIR}/src/eos"
     INPUT_DLLS "${CMAKE_SOURCE_DIR}/res/${EOSSDK_DLL}.dll"
+    DEP_SOURCES ${EOS_SOURCES}
 )
 
 configure_build_config(extra_build_config)
