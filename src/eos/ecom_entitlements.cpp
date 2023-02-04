@@ -80,7 +80,7 @@ DLL_EXPORT(void) EOS_Ecom_QueryEntitlements(
                                 payload
                             );
 
-                            LOG_TRACE("Response json:\n{}", json.dump(2))
+                            LOG_DEBUG("Response json:\n{}", json.dump(2))
 
                             const auto elements = json["data"]["Catalog"]["catalogOffers"]["elements"];
 

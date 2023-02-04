@@ -13,6 +13,34 @@ namespace store_mode {
 
     const unsigned int local_port = 8081; // TODO: Parameterize
 
+    const String ecom_path = "screamapi_ecom";
+
+    void sdk_index_handler(const httplib::Request&, httplib::Response& res) {
+        try {
+            const auto ecom_url = fmt::format("https://{}/{}", egs_api_host, ecom_path);
+
+            auto json = Json::parse(res.body);
+            json["services"]["EcommerceService"]["BaseUrl"] = ecom_url;
+            // TODO: Save the original URL
+
+            res.headers.erase("Content-Length");
+            res.set_content(
+                json.dump(),
+                koalabox::http_server::CONTENT_TYPE_JSON
+            );
+        } catch (const Exception& e) {
+            LOG_ERROR("Error processing api index: {}", e.what())
+        }
+    }
+
+    void ecom_handler(const httplib::Request&, httplib::Response& res) {
+        res.headers.erase("Content-Length");
+        res.set_content(
+            R"({"message": "Hello from ScreamAPI 🐨"})",
+            koalabox::http_server::CONTENT_TYPE_JSON
+        );
+    }
+
     void init_store_mode() {
         LOG_INFO("🛍️ Detected store mode")
 
@@ -24,12 +52,8 @@ namespace store_mode {
             local_port,
             port_proxy_ip,
             {
-                { "/", [](const httplib::Request& req, httplib::Response& res) {
-                    res.set_content(
-                        R"({"message": "Hello World from C++"})",
-                        koalabox::http_server::CONTENT_TYPE_JSON
-                    );
-                }}
+                { "/sdk/v1/default",               sdk_index_handler },
+                { fmt::format("/{}.*", ecom_path), ecom_handler }
             }
         );
     }
