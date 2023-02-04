@@ -5,20 +5,24 @@
 
 namespace store_mode {
 
+    const String egs_api_host = "api.epicgames.dev";
+    const unsigned int egs_api_port = 443;
+
     const String local_host = "127.0.0.1";
-    const String server_ip = "127.65.43.21"; // TODO: Parameterize
-    const String server_host = "api.epicgames.dev";
-    const unsigned int server_port = 8081; // TODO: Parameterize
+    const String port_proxy_ip = "127.65.43.21"; // TODO: Parameterize
+
+    const unsigned int local_port = 8081; // TODO: Parameterize
 
     void init_store_mode() {
         LOG_INFO("🛍️ Detected store mode")
 
         // TODO: Implement
-        koalabox::http_server::start(
+        koalabox::http_server::start_proxy_server(
+            egs_api_host,
+            egs_api_port,
             local_host,
-            server_ip,
-            server_host,
-            server_port,
+            local_port,
+            port_proxy_ip,
             {
                 { "/", [](const httplib::Request& req, httplib::Response& res) {
                     res.set_content(
@@ -28,10 +32,6 @@ namespace store_mode {
                 }}
             }
         );
-    }
-
-    void shutdown() {
-        koalabox::http_server::shutdown(server_host);
     }
 
 }

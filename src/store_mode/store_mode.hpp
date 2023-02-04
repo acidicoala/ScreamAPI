@@ -3,6 +3,5 @@
 namespace store_mode {
 
     void init_store_mode();
-    void shutdown();
 
 }
