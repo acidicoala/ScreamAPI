@@ -57,8 +57,8 @@ namespace scream_api {
             }
 
             LOG_INFO("🚀 Initialization complete")
-        } catch (const Exception& ex) {
-            koalabox::util::panic("Initialization error: {}", ex.what());
+        } catch (const Exception& e) {
+            koalabox::util::panic("Initialization error: {}", e.what());
         }
     }
 

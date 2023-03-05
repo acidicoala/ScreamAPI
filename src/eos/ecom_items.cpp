@@ -35,9 +35,11 @@ DLL_EXPORT(void) EOS_Ecom_QueryOwnership(
             for (uint32_t i = 0; i < Data->ItemOwnershipCount; i++) {
                 const auto item = Data->ItemOwnership + i;
 
-                const auto unlock_all = scream_api::config::instance.catalog_items.unlock_all;
-                const auto override = scream_api::config::instance.catalog_items.override.contains(item->Id);
-                const auto owned = unlock_all != override;  // Logical XOR
+                const auto owned = scream_api::config::is_dlc_unlocked(
+                    scream_api::game_mode::namespace_id,
+                    item->Id,
+                    item->OwnershipStatus == EOS_EOwnershipStatus::EOS_OS_Owned
+                );
 
                 const auto status = owned
                     ? EOS_EOwnershipStatus::EOS_OS_Owned

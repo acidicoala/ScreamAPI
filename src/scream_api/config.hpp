@@ -5,44 +5,58 @@
 
 namespace scream_api::config {
 
-    struct CatalogItems {
-        bool unlock_all = true;
-        Set<String> override;
+    struct MitmProxy {
+        int listen_port = 8888;
+        String extra_args = "";
+        Map<String, String> upstream_proxies;
 
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(
-            CatalogItems,
-            unlock_all,
-            override
-        )
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(MitmProxy, listen_port, extra_args, upstream_proxies);
     };
 
-    struct Entitlements {
-        bool unlock_all = true;
-        bool auto_inject = true;
-        Set<String> inject;
+    struct Game {
+        // Key is namespace, value is item name
+        Map<String, String> entitlements;
 
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(
-            Entitlements,
-            unlock_all,
-            auto_inject,
-            inject
-        )
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(Game, entitlements);
     };
+
+    using GameEntitlementsMap = Map<String, Game>;
+
+    enum class ItemStatus {
+        UNDEFINED,
+        ORIGINAL,
+        UNLOCKED,
+        LOCKED,
+    };
+
+    NLOHMANN_JSON_SERIALIZE_ENUM(ItemStatus, {
+        { ItemStatus::UNDEFINED, nullptr },
+        { ItemStatus::ORIGINAL, "original" },
+        { ItemStatus::UNLOCKED, "unlocked" },
+        { ItemStatus::LOCKED, "locked" },
+    })
 
     struct Config {
+        int $version = 3;
         bool logging = false;
         bool eos_logging = false;
         bool block_metrics = false;
-        CatalogItems catalog_items;
-        Entitlements entitlements;
+        ItemStatus default_game_status = ItemStatus::UNLOCKED;
+        Map<String, ItemStatus> override_game_status;
+        Map<String, ItemStatus> override_dlc_status;
+        GameEntitlementsMap extra_entitlements;
+        MitmProxy mitm_proxy;
 
         NLOHMANN_DEFINE_TYPE_INTRUSIVE(
             Config,
             logging,
             eos_logging,
             block_metrics,
-            catalog_items,
-            entitlements
+            default_game_status,
+            override_game_status,
+            override_dlc_status,
+            extra_entitlements,
+            mitm_proxy
         )
     };
 
@@ -51,5 +65,7 @@ namespace scream_api::config {
     void init();
 
     DLL_EXPORT(void) ReloadConfig();
+
+    bool is_dlc_unlocked(String game_id, String dlc_id, bool original_unlocked);
 
 }

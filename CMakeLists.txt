@@ -4,9 +4,6 @@ project(ScreamAPI VERSION 4.0.0)
 
 include(KoalaBox/cmake/KoalaBox.cmake)
 
-set(KOALABOX_HTTP_SERVER ON)
-add_subdirectory(KoalaBox EXCLUDE_FROM_ALL)
-
 set_32_and_64(EOSSDK_DLL EOSSDK-Win32-Shipping EOSSDK-Win64-Shipping)
 
 configure_version_resource("Free DLC for everyone ʕ ᵔᴥᵔʔ")
@@ -26,7 +23,7 @@ configure_linker_exports(
     FORWARDED_DLL "${EOSSDK_DLL}_o"
     INPUT_SOURCES_DIR "${CMAKE_SOURCE_DIR}/src/eos"
     INPUT_DLLS "${CMAKE_SOURCE_DIR}/res/${EOSSDK_DLL}.dll"
-    DEP_SOURCES ${EOS_SOURCES}
+    DEP_SOURCES "${EOS_SOURCES}"
 )
 
 configure_build_config(extra_build_config)
@@ -36,6 +33,8 @@ set(
     ${EOS_SOURCES}
     src/game_mode/game_mode.cpp
     src/game_mode/game_mode.hpp
+    src/scream_api/api.cpp
+    src/scream_api/api.hpp
     src/scream_api/config.cpp
     src/scream_api/config.hpp
     src/scream_api/scream_api.cpp
@@ -51,4 +50,5 @@ add_library(${PROJECT_NAME} SHARED ${SCREAM_API_SOURCES} ${VERSION_RESOURCE})
 
 configure_include_directories(${CMAKE_SOURCE_DIR}/include)
 
+add_subdirectory(KoalaBox EXCLUDE_FROM_ALL)
 target_link_libraries(${PROJECT_NAME} PRIVATE KoalaBox)

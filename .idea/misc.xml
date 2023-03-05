@@ -15,4 +15,7 @@
       <file path="$PROJECT_DIR$/vcpkg" />
     </excludeRoots>
   </component>
+  <component name="PythonCompatibilityInspectionAdvertiser">
+    <option name="version" value="3" />
+  </component>
 </project>

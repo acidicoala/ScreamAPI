@@ -9,6 +9,8 @@
 * [ ] (Koalageddon) Set EOSSDK to run as admin: https://stackoverflow.com/a/2739459
 * [ ] (Koalageddon) Exclusion to data dir, version.dll, unlocker dll
 
+Example upstream proxy setup (e.g. Fiddler) (link to res/config.json)
+
 
 Admin commands:
 

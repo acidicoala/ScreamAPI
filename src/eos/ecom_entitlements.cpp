@@ -28,7 +28,13 @@ DLL_EXPORT(void) EOS_Ecom_QueryEntitlements(
         const auto id = Options->EntitlementNames[i];
         LOG_INFO("  ❔ {}", id)
 
-        if (scream_api::config::instance.entitlements.unlock_all) {
+        const auto owned = scream_api::config::is_dlc_unlocked(
+            scream_api::game_mode::namespace_id,
+            id,
+            true
+        );
+
+        if (owned) {
             entitlement_set.insert(id);
         }
     }
@@ -43,19 +49,27 @@ DLL_EXPORT(void) EOS_Ecom_QueryEntitlements(
             try {
                 const auto container = static_cast<Container*>(Data->ClientData);
 
+                const auto& namespace_id = scream_api::game_mode::namespace_id;
+
                 // Manually inject entitlements
-                for (auto& id: scream_api::config::instance.entitlements.inject) {
-                    LOG_DEBUG("Adding entitlement from config: {}", id)
-                    entitlement_set.insert(id);
+                const auto& extra = scream_api::config::instance.extra_entitlements;
+                if (extra.contains(namespace_id)) {
+                    const auto& game = extra.at(namespace_id);
+
+                    for (auto& [id, name]: game.entitlements) {
+                        LOG_DEBUG(R"(Adding entitlement from config: {} - "{}")", id, name)
+
+                        entitlement_set.insert(id);
+                    }
                 }
 
+
                 // Automatically inject entitlements
-                if (scream_api::game_mode::namespace_id.empty()) {
+                if (namespace_id.empty()) {
                     LOG_WARN("EOS_Ecom_QueryEntitlements callback: namespace_id is not set")
                 } else {
-                    if (scream_api::config::instance.entitlements.auto_inject) {
-                        nlohmann::json payload = {
-                            { "query",     R"(query($namespace: String!) {
+                    nlohmann::json payload = {
+                        { "query",     R"(query($namespace: String!) {
                         Catalog {
                             catalogOffers(
                                 namespace: $namespace
@@ -66,36 +80,46 @@ DLL_EXPORT(void) EOS_Ecom_QueryEntitlements(
                                 elements {
                                     items {
                                         id
+                                        title
+                                        name
                                     }
                                 }
                             }
                         }
                     })" },
-                            { "variables", {{ "namespace", scream_api::game_mode::namespace_id }}}
-                        };
+                        { "variables", {{ "namespace", namespace_id }}}
+                    };
 
-                        try {
-                            const auto json = koalabox::http_client::post_json(
-                                "https://graphql.epicgames.com/graphql",
-                                payload
-                            );
+                    try {
+                        const auto json = koalabox::http_client::post_json(
+                            "https://graphql.epicgames.com/graphql",
+                            payload
+                        );
 
-                            LOG_DEBUG("Response json:\n{}", json.dump(2))
+                        LOG_DEBUG("Response json:\n{}", json.dump(2))
 
-                            const auto elements = json["data"]["Catalog"]["catalogOffers"]["elements"];
+                        const auto elements = json["data"]["Catalog"]["catalogOffers"]["elements"];
 
-                            for (const auto& element: elements) {
-                                for (const auto& items: element) {
-                                    for (const auto& item: items) {
-                                        String id(item["id"]);
+                        for (const auto& element: elements) {
+                            for (const auto& items: element) {
+                                for (const auto& item: items) {
+                                    String id(item["id"]);
+
+                                    const auto owned = scream_api::config::is_dlc_unlocked(
+                                        namespace_id,
+                                        id,
+                                        true
+                                    );
+
+                                    if(owned){
                                         LOG_DEBUG("Adding auto-fetched entitlement: {}", id)
                                         entitlement_set.insert(id);
                                     }
                                 }
                             }
-                        } catch (const Exception& e) {
-                            LOG_ERROR("Error fetching entitlement ids: {}", e.what())
                         }
+                    } catch (const Exception& e) {
+                        LOG_ERROR("Error fetching entitlement ids: {}", e.what())
                     }
                 }
 
@@ -137,7 +161,8 @@ DLL_EXPORT(EOS_EResult) EOS_Ecom_CopyEntitlementByIndex(
 ) {
     const auto index = Options->EntitlementIndex;
     if (index >= entitlements.size()) {
-        LOG_WARN("Game requested invalid entitlement index: {}. Max size: {}", index, entitlements.size())
+        LOG_WARN("Game requested invalid entitlement index: {}. Max size: {}", index,
+            entitlements.size())
 
         return EOS_EResult::EOS_NotFound;
     }
