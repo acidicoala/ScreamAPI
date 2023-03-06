@@ -26,8 +26,6 @@ configure_linker_exports(
     DEP_SOURCES "${EOS_SOURCES}"
 )
 
-configure_build_config(extra_build_config)
-
 set(
     SCREAM_API_SOURCES
     ${EOS_SOURCES}
@@ -52,3 +50,10 @@ configure_include_directories(${CMAKE_SOURCE_DIR}/include)
 
 add_subdirectory(KoalaBox EXCLUDE_FROM_ALL)
 target_link_libraries(${PROJECT_NAME} PRIVATE KoalaBox)
+
+# Embed addon script
+file(READ src/store_mode/mitmproxy/egs_addon.py EGS_ADDON_UTF8 ENCODING UTF-8)
+string(HEX "${EGS_ADDON_UTF8}" EGS_ADDON_HEX)
+string(REGEX REPLACE "([0-9a-f][0-9a-f])" "0x\\1," EGS_ADDON_HEX ${EGS_ADDON_HEX})
+
+configure_build_config(extra_build_config)

@@ -10,6 +10,7 @@
     </libraryRoots>
     <excludeRoots>
       <file path="$PROJECT_DIR$/build" />
+      <file path="$PROJECT_DIR$/src/store_mode/mitmproxy/venv" />
     </excludeRoots>
   </component>
   <component name="PythonCompatibilityInspectionAdvertiser">

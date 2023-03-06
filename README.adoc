@@ -1,21 +1,14 @@
 === The plan
 
-* [ ] Update to the latest Koalabox
-* [ ] Implement webserver in Koalabox
-* [ ] Implement proxy server in ScreamAPI
-* [ ] Update to the latest EOS SDK
-* [ ] Update license
-* [ ] Update README (release name changed to ScreamAPI)
-* [ ] (Koalageddon) Set EOSSDK to run as admin: https://stackoverflow.com/a/2739459
-* [ ] (Koalageddon) Exclusion to data dir, version.dll, unlocker dll
-
 Example upstream proxy setup (e.g. Fiddler) (link to res/config.json)
 
 
-Admin commands:
+== 👋 Acknowledgements
 
-* `netsh interface portproxy show v4tov4`
+ScreamAPI makes use of the following open source projects:
 
-* `netsh interface portproxy add v4tov4 listenport=443 listenaddress=127.65.43.21 connectport=8081 connectaddress=127.0.0.1`
-
-* `netsh interface portproxy delete v4tov4 listenport=443 listenaddress=127.65.43.21`
+* https://github.com/libcpr/cpr[C++ Requests]
+* https://github.com/nlohmann/json[nlohmann JSON]
+* https://github.com/stevemk14ebr/PolyHook_2_0[PolyHook 2]
+* https://github.com/gabime/spdlog[spdlog]
+* https://github.com/Sygmei/11Zip[11Zip]
