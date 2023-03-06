@@ -6,7 +6,7 @@
 namespace scream_api::config {
 
     struct MitmProxy {
-        int listen_port = 8888;
+        int listen_port = 9999;
         String extra_args = "";
         Map<String, String> upstream_proxies;
 
@@ -45,7 +45,7 @@ namespace scream_api::config {
         Map<String, ItemStatus> override_game_status;
         Map<String, ItemStatus> override_dlc_status;
         GameEntitlementsMap extra_entitlements;
-        MitmProxy mitm_proxy;
+        MitmProxy mitmproxy;
 
         NLOHMANN_DEFINE_TYPE_INTRUSIVE(
             Config,
@@ -56,7 +56,7 @@ namespace scream_api::config {
             override_game_status,
             override_dlc_status,
             extra_entitlements,
-            mitm_proxy
+            mitmproxy
         )
     };
 

@@ -1,18 +1,132 @@
+from __future__ import annotations
+
 import http
+import inspect
 import json
 import re
 import urllib
-from urllib import request
-from typing import TypedDict
-from urllib.parse import urlparse
+from enum import StrEnum
 from http import client
+from logging import *
+from pathlib import Path
+from typing import TypedDict
+from urllib import request
+from urllib.parse import urlparse
 
 from mitmproxy import ctx
 from mitmproxy.http import HTTPFlow
 
-from config import ScreamApiConfigV3
-from logger import log, init_file_logger
-from paths import get_config_path, get_log_path
+log = getLogger('EpicAddon')
+
+
+# TODO: Convert to TypedDict
+class ScreamApiConfigV3:
+    class Game(TypedDict):
+        entitlements: dict[str, str]  # dlc_id => name
+
+    class ItemStatus(StrEnum):
+        ORIGINAL = "original",
+        UNLOCKED = "unlocked",
+        LOCKED = "locked",
+
+    class MitmProxy:
+        listen_port: int = 9999
+        extra_args: str = ""
+        upstream_proxies: dict = {}
+
+    logging: bool = False
+    eos_logging: bool = False
+    default_game_status: ItemStatus = ItemStatus.UNLOCKED
+    override_game_status: dict[str, ItemStatus] = {}
+    override_dlc_status: dict[str, ItemStatus] = {}
+    extra_entitlements: dict[str, Game] = {}
+    mitmproxy: MitmProxy = MitmProxy()
+
+    def is_dlc_unlocked(self, game_id: str, dlc_id: str, original_unlocked: bool):
+        status = self.default_game_status
+
+        if game_id.lower() in self.override_game_status:
+            status = self.override_game_status[game_id]
+
+        if dlc_id.lower() in self.override_dlc_status:
+            status = self.override_dlc_status[dlc_id]
+
+        match status:
+            case ScreamApiConfigV3.ItemStatus.UNLOCKED:
+                is_unlocked = True
+            case ScreamApiConfigV3.ItemStatus.LOCKED:
+                is_unlocked = False
+            case _:
+                is_unlocked = original_unlocked
+
+        # log.debug(f"Game ID: {game_id}, DLC ID: {dlc_id}, Status: {status}, "
+        #           f"Original: {original_unlocked}, Unlocked: {is_unlocked}")
+
+        return is_unlocked
+
+    def __str__(self):
+        d = {}
+        for key, value in inspect.getmembers(self):
+            if not callable(value) and not key.startswith("_"):
+                d[key] = value
+
+        return str(d)
+
+    @staticmethod
+    def parse(config_path: Path) -> ScreamApiConfigV3:
+        instance = ScreamApiConfigV3()
+
+        try:
+            with open(config_path) as file:
+                raw_json: dict = json.load(file)
+
+                instance.logging = raw_json["logging"]
+                instance.eos_logging = raw_json["eos_logging"]
+                instance.default_game_status = raw_json["default_game_status"]
+                instance.override_game_status = raw_json["override_game_status"]
+                instance.override_dlc_status = raw_json["override_dlc_status"]
+                instance.extra_entitlements = raw_json["extra_entitlements"]
+                instance.mitmproxy.__dict__.update(raw_json["mitmproxy"])
+
+        finally:
+            return instance
+
+
+class FileLogger:
+    @staticmethod
+    def init(log_path: Path):
+        formatter = Formatter(
+            '%(levelname)s│ %(asctime)s.%(msecs)03d │ %(lineno)3d:%(filename)-24s ┃ %(message)s'
+        )
+
+        formatter.datefmt = '%H:%M:%S'
+        addLevelName(DEBUG, '⬛')
+        addLevelName(INFO, '🟩')
+        addLevelName(WARN, '🟨')
+        addLevelName(ERROR, '🟥')
+        addLevelName(CRITICAL, '💥')
+
+        # Open with append mode since we want the ScreamAPI to manage log reset
+        file_handler = FileHandler(filename=log_path.absolute(), mode='a', encoding='utf-8')
+        file_handler.setFormatter(formatter)
+        file_handler.setLevel(DEBUG)
+
+        log.setLevel(DEBUG)
+        log.addHandler(file_handler)
+
+
+class Paths:
+    @staticmethod
+    def get_self_path() -> Path:
+        return Path(__file__).parent
+
+    @staticmethod
+    def get_config_path() -> Path:
+        return Paths.get_self_path() / "ScreamAPI.config.json"
+
+    @staticmethod
+    def get_log_path() -> Path:
+        return Paths.get_self_path() / "ScreamAPI.log.log"
 
 
 class Item(TypedDict):
@@ -35,30 +149,29 @@ class Entitlement(TypedDict):
     useCount: int
 
 
-api_host = r"api\.epicgames\.dev"
-ecom_host = r"ecommerceintegration.*\.epicgames\.com"
-
-ownership_suffix = r"platforms/EPIC/identities/\w+/ownership"
-modern_ownership_path = rf"^/epic/ecom/v1/{ownership_suffix}$"
-legacy_ownership_path = rf"^/ecommerceintegration/api/public/{ownership_suffix}$"
-
-modern_entitlement_path = r"^/epic/ecom/v1/identities/\w+/entitlements"
-legacy_entitlement_path = r"^/ecommerceintegration/api/public/v2/identities/\w+/entitlements$"
-
-
 class EgsAddon:
     config = ScreamApiConfigV3()
     api_cache: dict[str, dict] = {}
+
+    api_host = r"api\.epicgames\.dev"
+    ecom_host = r"ecommerceintegration.*\.epicgames\.com"
+
+    ownership_suffix = r"platforms/EPIC/identities/\w+/ownership"
+    modern_ownership_path = rf"^/epic/ecom/v1/{ownership_suffix}$"
+    legacy_ownership_path = rf"^/ecommerceintegration/api/public/{ownership_suffix}$"
+
+    modern_entitlement_path = r"^/epic/ecom/v1/identities/\w+/entitlements"
+    legacy_entitlement_path = r"^/ecommerceintegration/api/public/v2/identities/\w+/entitlements$"
 
     def __init__(self) -> None:
         self.__update_config()
 
         if self.config.logging:
-            init_file_logger(get_log_path())
+            FileLogger.init(Paths.get_log_path())
         else:
             log.handlers.clear()
 
-        ctx.options.set(f'allow_hosts={api_host}', f'allow_hosts={ecom_host}')
+        ctx.options.set(f'allow_hosts={self.api_host}', f'allow_hosts={self.ecom_host}')
 
         log.info(f"EGS addon for mitmproxy initialized with config: {self.config}")
 
@@ -73,7 +186,7 @@ class EgsAddon:
             log.exception(e)
 
     def __update_config(self):
-        self.config = ScreamApiConfigV3.parse(get_config_path())
+        self.config = ScreamApiConfigV3.parse(Paths.get_config_path())
 
     @staticmethod
     def __is_response_ok(flow: HTTPFlow):
@@ -83,7 +196,7 @@ class EgsAddon:
         if res.status_code == 200:
             return True
 
-        log.warn(
+        log.warning(
             f'Original response error. '
             f'URL: {req.url}. '
             f'Status code: ${res.status_code}. '
@@ -93,8 +206,8 @@ class EgsAddon:
         return False
 
     def __intercept_ownership(self, flow: HTTPFlow):
-        if not self.__host_and_path_match(flow, api_host, modern_ownership_path) and \
-                not self.__host_and_path_match(flow, ecom_host, legacy_ownership_path):
+        if not self.__host_and_path_match(flow, self.api_host, self.modern_ownership_path) and \
+                not self.__host_and_path_match(flow, self.ecom_host, self.legacy_ownership_path):
             return
 
         if not self.__is_response_ok(flow):
@@ -117,8 +230,8 @@ class EgsAddon:
         log.info(f"Modified ownership response:\n{self.get_pretty_response(flow)}")
 
     def __intercept_entitlements(self, flow: HTTPFlow):
-        if not self.__host_and_path_match(flow, api_host, modern_entitlement_path) and \
-                not self.__host_and_path_match(flow, ecom_host, legacy_entitlement_path):
+        if not self.__host_and_path_match(flow, self.api_host, self.modern_entitlement_path) and \
+                not self.__host_and_path_match(flow, self.ecom_host, self.legacy_entitlement_path):
             return
 
         if not self.__is_response_ok(flow):
@@ -132,7 +245,7 @@ class EgsAddon:
         entitlements: list[Entitlement] = []
 
         if (game_id := flow.request.query.get('sandboxId')) is None:
-            log.warn(f"Missing sandboxId in query params: {flow.request.query}")
+            log.warning(f"Missing sandboxId in query params: {flow.request.query}")
             return
 
         entitlement_names: list[str]
