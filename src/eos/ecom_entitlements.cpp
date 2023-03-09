@@ -52,7 +52,7 @@ DLL_EXPORT(void) EOS_Ecom_QueryEntitlements(
                 const auto& namespace_id = scream_api::game_mode::namespace_id;
 
                 // Manually inject entitlements
-                const auto& extra = scream_api::config::instance.extra_entitlements;
+                const auto& extra = CONFIG.extra_entitlements;
                 if (extra.contains(namespace_id)) {
                     const auto& game = extra.at(namespace_id);
 

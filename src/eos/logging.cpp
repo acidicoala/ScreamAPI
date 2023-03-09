@@ -13,7 +13,7 @@ DLL_EXPORT(EOS_EResult) EOS_Logging_SetLogLevel(EOS_ELogCategory LogCategory, EO
 
     GET_ORIGINAL_FUNCTION(EOS_Logging_SetLogLevel)
 
-    if (scream_api::config::instance.logging && scream_api::config::instance.eos_logging) {
+    if (CONFIG.logging && CONFIG.eos_logging) {
         // Override game's preferences
         LogCategory = EOS_ELogCategory::EOS_LC_ALL_CATEGORIES;
         LogLevel = EOS_ELogLevel::EOS_LOG_VeryVerbose;
@@ -28,7 +28,7 @@ DLL_EXPORT(EOS_EResult) EOS_Logging_SetCallback(EOS_LogMessageFunc Callback) {
 
     GET_ORIGINAL_FUNCTION(EOS_Logging_SetCallback)
 
-    if (scream_api::config::instance.logging && scream_api::config::instance.eos_logging) {
+    if (CONFIG.logging && CONFIG.eos_logging) {
         static Set<EOS_LogMessageFunc> callbacks;
 
         callbacks.insert(Callback);

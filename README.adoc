@@ -2,6 +2,12 @@
 
 Example upstream proxy setup (e.g. Fiddler) (link to res/config.json)
 
+== Dev commands
+(Requires admin)
+
+Check proxy: `netsh winhttp show proxy`
+Enable proxy: `netsh winhttp set proxy 127.0.0.1:9999`
+Disable proxy: `netsh winhttp reset`
 
 == 👋 Acknowledgements
 

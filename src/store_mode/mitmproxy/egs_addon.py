@@ -4,6 +4,7 @@ import http
 import inspect
 import json
 import re
+from threading import Thread
 import urllib
 from enum import StrEnum
 from http import client
@@ -13,6 +14,7 @@ from typing import TypedDict
 from urllib import request
 from urllib.parse import urlparse
 
+from flask import Flask
 from mitmproxy import ctx
 from mitmproxy.http import HTTPFlow
 
@@ -152,6 +154,7 @@ class Entitlement(TypedDict):
 class EgsAddon:
     config = ScreamApiConfigV3()
     api_cache: dict[str, dict] = {}
+    # flask_thread: Thread
 
     api_host = r"api\.epicgames\.dev"
     ecom_host = r"ecommerceintegration.*\.epicgames\.com"
@@ -172,6 +175,8 @@ class EgsAddon:
             log.handlers.clear()
 
         ctx.options.set(f'allow_hosts={self.api_host}', f'allow_hosts={self.ecom_host}')
+
+        # self.__setup_proxy_config_server()
 
         log.info(f"EGS addon for mitmproxy initialized with config: {self.config}")
 
@@ -390,6 +395,46 @@ class EgsAddon:
         req_path = urlparse(flow.request.url).path
 
         return bool(re.match(host, req_host)) and bool(re.match(path, req_path))
+
+    def __setup_proxy_config_server(self):
+        try:
+            app = Flask("Proxy auto config")
+
+            port = 9990  # T0D0: Parameterize
+
+            script = f"""
+                function FindProxyForURL(url, host) {{
+                  /*if (
+                      shExpMatch(host, "api.epicgames.dev") || 
+                      shExpMatch(host, "ecommerceintegration.*.epicgames.com")
+                  ){{
+                    return "PROXY 127.0.0.1:{self.config.mitmproxy.listen_port}";
+                  }}
+                
+                  return "DIRECT";*/
+                  return "PROXY 127.0.0.1:{self.config.mitmproxy.listen_port}";
+            }}
+            """
+
+            @app.route('/')
+            def index():
+                return script
+
+            self.flask_thread = Thread(
+                target=lambda: app.run(
+                    host='127.0.0.1',
+                    port=port,
+                    debug=False,
+                    use_reloader=False
+                )
+            )
+            self.flask_thread.daemon = True
+            self.flask_thread.start()
+
+            log.info("Launched proxy auto config server")
+        except Exception as e:
+            log.error("Error starting proxy auto config server")
+            log.exception(e)
 
 
 addons = [EgsAddon()]

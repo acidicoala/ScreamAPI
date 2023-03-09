@@ -1,23 +1,31 @@
 #pragma once
 
-#include <koalabox/core.hpp>
 #include <scream_api/scream_api.hpp>
+
+#define CONFIG scream_api::config::instance
 
 namespace scream_api::config {
 
     struct MitmProxy {
         int listen_port = 9999;
+        bool show_window = false;
         String extra_args = "";
         Map<String, String> upstream_proxies;
 
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(MitmProxy, listen_port, extra_args, upstream_proxies);
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
+            MitmProxy,
+            listen_port,
+            show_window,
+            extra_args,
+            upstream_proxies
+        );
     };
 
     struct Game {
         // Key is namespace, value is item name
         Map<String, String> entitlements;
 
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(Game, entitlements);
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Game, entitlements);
     };
 
     using GameEntitlementsMap = Map<String, Game>;
@@ -47,7 +55,7 @@ namespace scream_api::config {
         GameEntitlementsMap extra_entitlements;
         MitmProxy mitmproxy;
 
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
             Config,
             logging,
             eos_logging,

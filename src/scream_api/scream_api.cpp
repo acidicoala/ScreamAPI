@@ -16,17 +16,10 @@
 #include <sdk/eos_logging.h>
 #include <sdk/eos_init.h>
 
-#define HOOK(METHOD, FUNC) \
-    hook::METHOD( \
-        original_library, \
-        loader::get_decorated_function(original_library, #FUNC), \
-        reinterpret_cast<FunctionPointer>(FUNC) \
-    );
-
-#define DETOUR(FUNC) HOOK(detour_or_warn, FUNC)
-#define EAT_HOOK(FUNC) HOOK(eat_hook_or_warn, FUNC)
-
 namespace scream_api {
+
+    bool is_store_mode = false;
+
     bool is_epic_games_launcher(const String& exe_name) {
         return exe_name < equals > "EpicGamesLauncher.exe";
     }
@@ -51,6 +44,7 @@ namespace scream_api {
             LOG_DEBUG("Process name: '{}' [{}-bit]", exe_name, BITNESS)
 
             if (is_epic_games_launcher(exe_name)) {
+                is_store_mode = true;
                 store_mode::init_store_mode();
             } else {
                 game_mode::init_game_mode(self_handle);
@@ -64,6 +58,10 @@ namespace scream_api {
 
     void shutdown() {
         LOG_INFO("💀 Shutdown complete")
+
+        if(is_store_mode){
+            store_mode::shutdown_store_mode();
+        }
     }
 
 }

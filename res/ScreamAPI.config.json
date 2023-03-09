@@ -27,6 +27,7 @@
   },
   "mitmproxy": {
     "listen_port": 9999,
+    "show_window": true,
     "extra_args": "--mode upstream:127.0.0.1:8888 --ssl-insecure",
     "upstream_proxies": {
       "http": "http://127.0.0.1:8888",

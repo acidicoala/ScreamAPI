@@ -16,7 +16,7 @@ DLL_EXPORT(EOS_EResult) EOS_Initialize(const EOS_InitializeOptions* Options) {
 
     auto result = EOS_Initialize_o(Options);
 
-    if (scream_api::config::instance.logging && scream_api::config::instance.eos_logging) {
+    if (CONFIG.logging && CONFIG.eos_logging) {
         EOS_Logging_SetLogLevel(
             EOS_ELogCategory::EOS_LC_ALL_CATEGORIES,
             EOS_ELogLevel::EOS_LOG_VeryVerbose

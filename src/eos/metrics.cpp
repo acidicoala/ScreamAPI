@@ -14,7 +14,7 @@ DLL_EXPORT(EOS_EResult) EOS_Metrics_BeginPlayerSession(
 ) {
     GET_ORIGINAL_FUNCTION(EOS_Metrics_BeginPlayerSession)
 
-    if (scream_api::config::instance.block_metrics) {
+    if (CONFIG.block_metrics) {
         LOG_DEBUG("⛔ Blocking EOS_Metrics_BeginPlayerSession")
 
         return EOS_EResult::EOS_Success;
@@ -29,7 +29,7 @@ DLL_EXPORT(EOS_EResult) EOS_Metrics_EndPlayerSession(
 ) {
     GET_ORIGINAL_FUNCTION(EOS_Metrics_EndPlayerSession)
 
-    if (scream_api::config::instance.block_metrics) {
+    if (CONFIG.block_metrics) {
         LOG_DEBUG("⛔ Blocking EOS_Metrics_EndPlayerSession")
 
         return EOS_EResult::EOS_Success;
