@@ -2,6 +2,8 @@
 
 Example upstream proxy setup (e.g. Fiddler) (link to res/config.json)
 
+== Config
+
 == Dev commands
 (Requires admin)
 
@@ -9,12 +11,10 @@ Check proxy: `netsh winhttp show proxy`
 Enable proxy: `netsh winhttp set proxy 127.0.0.1:9999`
 Disable proxy: `netsh winhttp reset`
 
-== 👋 Acknowledgements
+== 📚 Open-Source libraries
 
-ScreamAPI makes use of the following open source projects:
+This project makes use of the open source projects specified in https://github.com/acidicoala/KoalaBox[KoalaBox Readme]
 
-* https://github.com/libcpr/cpr[C++ Requests]
-* https://github.com/nlohmann/json[nlohmann JSON]
-* https://github.com/stevemk14ebr/PolyHook_2_0[PolyHook 2]
-* https://github.com/gabime/spdlog[spdlog]
-* https://github.com/Sygmei/11Zip[11Zip]
+== 📄 License
+
+This software is licensed under the https://unlicense.org/[Unlicense], terms of which are available in link:UNLICENSE.txt[UNLICENSE.txt]

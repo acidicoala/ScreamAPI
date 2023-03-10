@@ -11,6 +11,8 @@
 #include <koalabox/http_client.hpp>
 #include <koalabox/win_util.hpp>
 
+#include <WinReg.hpp>
+
 #include <fstream>
 #include <WinSock2.h>
 #include <ShlObj_core.h>
@@ -125,7 +127,7 @@ namespace store_mode {
         return exe_path;
     }
 
-    void run_mitmproxy(const Path& exe_path) {
+    void run_mitmproxy(const Path& mitmproxy_path) {
         const auto port = CONFIG.mitmproxy.listen_port;
 
         if (koalabox::io::is_local_port_in_use(port)) {
@@ -150,7 +152,7 @@ namespace store_mode {
         }
 
         const auto mitmproxy_info = koalabox::win_util::create_process(
-            exe_path.string(),
+            mitmproxy_path.string(),
             fmt::format("-s '{}' --listen-port {}", addon_path.string(), port),
             koalabox::paths::get_self_path(),
             CONFIG.mitmproxy.show_window
@@ -181,15 +183,66 @@ namespace store_mode {
         }
     }
 
-    void configure_proxy() {
+    void configure_proxy(const Path& egl_path) {
         const auto install_certificate = []() {
             // TODO: Install mitmproxy cert in root store
         };
 
-        const auto setup_system_proxy = []() {
+        const auto setup_system_proxy = [&]() {
             const auto port = std::to_string(CONFIG.mitmproxy.listen_port);
             std::wstring proxy = WSTR(fmt::format("{}:{}", localhost_ip, port));
             std::wstring bypass = L"<-loopback>;<local>";
+
+            const auto show_task_dialog = [&](
+                const String& cache_key,
+                const String& header,
+                const String& message,
+                int common_buttons,
+                const Function<void(int button)>& callback
+            ) {
+                const auto show_prompt = koalabox::cache::get(cache_key, true);
+
+                if (not show_prompt) {
+                    return;
+                }
+
+                const auto window_title = WSTR(dialog_title);
+                const auto w_header = WSTR(header);
+                const auto w_message = WSTR(message);
+
+                DECLARE_STRUCT(TASKDIALOGCONFIG, dialog_config);
+
+                dialog_config.cbSize = sizeof(TASKDIALOGCONFIG);
+                dialog_config.dwCommonButtons = common_buttons;
+                dialog_config.pszWindowTitle = window_title.c_str();
+                dialog_config.pszMainIcon = TD_SHIELD_ICON;
+                dialog_config.pszMainInstruction = w_header.c_str();
+                dialog_config.pszContent = w_message.c_str();
+                dialog_config.pszVerificationText = L"Do not show this message again.";
+                dialog_config.dwFlags = TDF_ALLOW_DIALOG_CANCELLATION;
+
+                LOG_DEBUG("Launching task dialog: {}", header)
+
+                BOOL flag_checked = FALSE;
+                int chosen_button = -1;
+                if (SUCCEEDED(TaskDialogIndirect(
+                    &dialog_config,
+                    &chosen_button,
+                    nullptr,
+                    &flag_checked
+                ))) {
+                    if (flag_checked) {
+                        koalabox::cache::put(cache_key, false);
+                    }
+
+                    try {
+                        LOG_DEBUG("Task dialog callback button: {}", chosen_button)
+                        callback(chosen_button);
+                    } catch (const Exception& e) {
+                        LOG_ERROR("Task Dialog callback error: {}", e.what())
+                    }
+                }
+            };
 
             if (IsUserAnAdmin()) {
                 WINHTTP_PROXY_INFO info = {
@@ -204,48 +257,55 @@ namespace store_mode {
                     );
                 }
 
-                // TODO: Prompt to set always run as admin via registry key
-            } else {
-                const auto show_prompt_key = "show_proxy_config_prompt";
-                const auto show_prompt = koalabox::cache::get(show_prompt_key, true);
+                winreg::RegKey exe_flags_key{
+                    HKEY_CURRENT_USER,
+                    L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers"
+                };
 
-                if (not show_prompt) {
+                const auto run_as_admin = "RUNASADMIN";
+
+                const auto flags_exp = exe_flags_key.TryGetStringValue(egl_path.wstring());
+                const auto flags = flags_exp ? STR(flags_exp.GetValue()) : "";
+                if (flags < contains > run_as_admin) {
                     return;
                 }
 
-                const auto header = L"Missing admin rights";
-                const auto message = WSTR(fmt::format(
-                    "ScreamAPI could not automatically configure system proxy "
-                    "because the Epic Games Store is not running as administrator. "
-                    "Please restart the Epic Games Store as administrator to enable "
-                    "automatic proxy configuration or configure the system proxy manually "
-                    "with the following parameters:\n\n"
-                    "Address: {}\nPort: {}\nBypass: {}",
-                    localhost_ip, port, STR(bypass)
-                ));
-
-                DECLARE_STRUCT(TASKDIALOGCONFIG, dialog_config);
-
-                dialog_config.cbSize = sizeof(TASKDIALOGCONFIG);
-                dialog_config.dwCommonButtons = TDCBF_CLOSE_BUTTON;
-                dialog_config.pszWindowTitle = WSTR(dialog_title).c_str();
-                dialog_config.pszMainIcon = TD_SHIELD_ICON;
-                dialog_config.pszMainInstruction = header;
-                dialog_config.pszContent = message.c_str();
-                dialog_config.pszVerificationText = L"Do not show this message again.";
-                dialog_config.dwFlags = TDF_ALLOW_DIALOG_CANCELLATION;
-
-                BOOL flag_checked = FALSE;
-                if (SUCCEEDED(TaskDialogIndirect(
-                    &dialog_config,
-                    nullptr,
-                    nullptr,
-                    &flag_checked
-                ))) {
-                    if (flag_checked) {
-                        koalabox::cache::put(show_prompt_key, false);
+                show_task_dialog(
+                    "show_admin_setup_prompt",
+                    "Set to always run as administrator?",
+                    "Epic Games Launcher is detected to be running as administrator only "
+                    "for the current session. Would you like to configure the Epic Game Store to "
+                    "always run as administrator? (You can disable it later in the Compatibility tab "
+                    "of the Properties window)",
+                    TDCBF_YES_BUTTON | TDCBF_NO_BUTTON,
+                    [&](int chosen_button) {
+                        switch (chosen_button) {
+                            case IDYES: {
+                                const auto new_flags = fmt::format("{} {}", flags, run_as_admin);
+                                exe_flags_key.SetStringValue(egl_path.wstring(), WSTR(new_flags));
+                                break;
+                            }
+                            default:
+                                break;
+                        }
                     }
-                }
+                );
+            } else {
+                show_task_dialog(
+                    "show_proxy_config_prompt",
+                    "Missing admin rights",
+                    fmt::format(
+                        "ScreamAPI could not automatically configure system proxy "
+                        "because the Epic Games Launcher is not running as administrator. "
+                        "Please restart the Epic Games Launcher as administrator to enable "
+                        "automatic proxy configuration or configure the system proxy manually "
+                        "with the following parameters:\n\n"
+                        "Address: {}\nPort: {}\nBypass: {}",
+                        localhost_ip, port, STR(bypass)
+                    ),
+                    TDCBF_CLOSE_BUTTON,
+                    [](int _) {}
+                );
             }
         };
 
@@ -253,14 +313,14 @@ namespace store_mode {
         setup_system_proxy();
     }
 
-    void init_store_mode() {
+    void init_store_mode(const Path& egl_path) {
         NEW_THREAD({
             try {
                 LOG_INFO("🛍️ Detected store mode")
 
-                const auto exe_path = setup_mitmproxy();
-                run_mitmproxy(exe_path);
-                configure_proxy();
+                const auto mitmproxy_path = setup_mitmproxy();
+                run_mitmproxy(mitmproxy_path);
+                configure_proxy(egl_path);
             } catch (const Exception& e) {
                 LOG_ERROR("Store mode init error: {}", e.what())
             }

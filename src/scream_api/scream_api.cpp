@@ -45,7 +45,7 @@ namespace scream_api {
 
             if (is_epic_games_launcher(exe_name)) {
                 is_store_mode = true;
-                store_mode::init_store_mode();
+                store_mode::init_store_mode(exe_path);
             } else {
                 game_mode::init_game_mode(self_handle);
             }

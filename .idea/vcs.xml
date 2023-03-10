@@ -5,6 +5,7 @@
     <mapping directory="$PROJECT_DIR$/KoalaBox" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/KoalaBox/dependencies/11Zip" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/KoalaBox/dependencies/PolyHook_2_0" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/KoalaBox/dependencies/WinReg" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/KoalaBox/dependencies/cpp-httplib" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/KoalaBox/dependencies/cpr" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/KoalaBox/dependencies/json" vcs="Git" />
