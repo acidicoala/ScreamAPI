@@ -43,7 +43,7 @@
 
 /**
  * Notify the platform instance to do work. This function must be called frequently in order for the services provided by the SDK to properly
- * function. For tick-based applications, it is usually desireable to call this once per-tick.
+ * function. For tick-based applications, it is usually desirable to call this once per-tick.
  */
 EOS_DECLARE_FUNC(void) EOS_Platform_Tick(EOS_HPlatform Handle);
 
@@ -403,3 +403,60 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Platform_SetOverrideLocaleCode(EOS_HPlatform H
  * EOS_UnexpectedError is returned if the LauncherCheck module failed to initialize, or the module tried and failed to restart the app.
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_Platform_CheckForLauncherAndRestart(EOS_HPlatform Handle);
+
+/**
+ * Windows only.
+ * Checks that the application is ready to use desktop crossplay functionality, with the necessary prerequisites having been met.
+ *
+ * This function verifies that the application was launched through the Bootstrapper application,
+ * the redistributable service has been installed and is running in the background,
+ * and that the overlay has been loaded successfully.
+ *
+ * On Windows, the desktop crossplay functionality is required to use Epic accounts login
+ * with applications that are distributed outside the Epic Games Store.
+ *
+ * @param Options input structure that specifies the API version.
+ * @param OutDesktopCrossplayStatusInfo output structure to receive the desktop crossplay status information.
+ *
+ * @return An EOS_EResult is returned to indicate success or an error.
+ *		   EOS_NotImplemented is returned on non-Windows platforms.
+ */
+EOS_DECLARE_FUNC(EOS_EResult) EOS_Platform_GetDesktopCrossplayStatus(EOS_HPlatform Handle, const EOS_Platform_GetDesktopCrossplayStatusOptions* Options, EOS_Platform_GetDesktopCrossplayStatusInfo* OutDesktopCrossplayStatusInfo);
+
+/**
+ * Notify a change in application state.
+ *
+ * @note Calling SetApplicationStatus must happen before Tick when foregrounding for the cases where we won't get the background notification.
+ *
+ * @param NewStatus The new status for the application.
+ *
+ * @return An EOS_EResult that indicates whether we changed the application status successfully.
+ *         EOS_Success if the application was changed successfully.
+ *         EOS_InvalidParameters if the value of NewStatus is invalid.
+ */
+EOS_DECLARE_FUNC(EOS_EResult) EOS_Platform_SetApplicationStatus(EOS_HPlatform Handle, const EOS_EApplicationStatus NewStatus);
+
+/**
+ * Retrieves the current application state as told to the SDK by the application.
+ *
+ * @return The current application status.
+ */
+EOS_DECLARE_FUNC(EOS_EApplicationStatus) EOS_Platform_GetApplicationStatus(EOS_HPlatform Handle);
+
+/**
+ * Notify a change in network state.
+ *
+ * @param NewStatus The new network status.
+ *
+ * @return An EOS_EResult that indicates whether we changed the network status successfully.
+ *         EOS_Success if the network was changed successfully.
+ *         EOS_InvalidParameters if the value of NewStatus is invalid.
+ */
+EOS_DECLARE_FUNC(EOS_EResult) EOS_Platform_SetNetworkStatus(EOS_HPlatform Handle, const EOS_ENetworkStatus NewStatus);
+
+/**
+ * Retrieves the current network state as told to the SDK by the application.
+ *
+ * @return The current network status.
+ */
+EOS_DECLARE_FUNC(EOS_ENetworkStatus) EOS_Platform_GetNetworkStatus(EOS_HPlatform Handle);

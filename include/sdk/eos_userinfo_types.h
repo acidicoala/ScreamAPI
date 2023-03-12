@@ -12,7 +12,7 @@ EXTERN_C typedef struct EOS_UserInfoHandle* EOS_HUserInfo;
  * The following types are used to work with the API.
  */
 
- /** The most recent version of the EOS_UserInfo_QueryUserInfo API. */
+/** The most recent version of the EOS_UserInfo_QueryUserInfo API. */
 #define EOS_USERINFO_QUERYUSERINFO_API_LATEST 1
 
 /**
@@ -53,7 +53,7 @@ EOS_DECLARE_CALLBACK(EOS_UserInfo_OnQueryUserInfoCallback, const EOS_UserInfo_Qu
  * The following types are used to work with the API.
  */
 
- /** The most recent version of the EOS_UserInfo_QueryUserInfoByDisplayName API. */
+/** The most recent version of the EOS_UserInfo_QueryUserInfoByDisplayName API. */
 #define EOS_USERINFO_QUERYUSERINFOBYDISPLAYNAME_API_LATEST 1
 
 /**
@@ -64,7 +64,7 @@ EOS_STRUCT(EOS_UserInfo_QueryUserInfoByDisplayNameOptions, (
 	int32_t ApiVersion;
 	/** The Epic Account ID of the local player requesting the information */
 	EOS_EpicAccountId LocalUserId;
-	/** Display name of the player being queried */
+	/** Raw display name (un-sanitized) of the player being queried */
 	const char* DisplayName;
 ));
 
@@ -80,7 +80,7 @@ EOS_STRUCT(EOS_UserInfo_QueryUserInfoByDisplayNameCallbackInfo, (
 	EOS_EpicAccountId LocalUserId;
 	/** The Epic Account ID of the player whose information is being retrieved */
 	EOS_EpicAccountId TargetUserId;
-	/** Display name of the player being queried. This memory is only valid during the scope of the callback. */
+	/** Display name (un-sanitized) of the player being queried. This memory is only valid during the scope of the callback. */
 	const char* DisplayName;
 ));
 
@@ -97,7 +97,7 @@ EOS_DECLARE_CALLBACK(EOS_UserInfo_OnQueryUserInfoByDisplayNameCallback, const EO
  * The following types are used to work with the API.
  */
 
- /** The most recent version of the EOS_UserInfo_QueryUserInfoByExternalAccount API. */
+/** The most recent version of the EOS_UserInfo_QueryUserInfoByExternalAccount API. */
 #define EOS_USERINFO_QUERYUSERINFOBYEXTERNALACCOUNT_API_LATEST 1
 
 /**
@@ -133,7 +133,7 @@ EOS_STRUCT(EOS_UserInfo_QueryUserInfoByExternalAccountCallbackInfo, (
 ));
 
 /**
- * Function prototype definition for callbacks passed to EOS_UserInfo_QueryUserInfo
+ * Function prototype definition for callbacks passed to EOS_UserInfo_QueryUserInfoByExternalAccount
  * @param Data A EOS_UserInfo_QueryUserInfoByExternalAccountCallbackInfo containing the output information and result
  */
 EOS_DECLARE_CALLBACK(EOS_UserInfo_OnQueryUserInfoByExternalAccountCallback, const EOS_UserInfo_QueryUserInfoByExternalAccountCallbackInfo* Data);
@@ -150,8 +150,8 @@ EOS_DECLARE_CALLBACK(EOS_UserInfo_OnQueryUserInfoByExternalAccountCallback, cons
 /** The maximum length of display names when encoded as UTF-8 as returned by EOS_UserInfo_CopyUserInfo. This length does not include the null terminator. */
 #define EOS_USERINFO_MAX_DISPLAYNAME_UTF8_LENGTH 64
 
- /** The most recent version of the EOS_UserInfo_CopyUserInfo API. */
-#define EOS_USERINFO_COPYUSERINFO_API_LATEST 2
+/** The most recent version of the EOS_UserInfo_CopyUserInfo API. */
+#define EOS_USERINFO_COPYUSERINFO_API_LATEST 3
 
 /** A structure that contains the user information. These structures are created by EOS_UserInfo_CopyUserInfo and must be passed to EOS_UserInfo_Release. */
 EOS_STRUCT(EOS_UserInfo, (
@@ -161,12 +161,14 @@ EOS_STRUCT(EOS_UserInfo, (
 	EOS_EpicAccountId UserId;
 	/** The name of the owner's country. This may be null */
 	const char* Country;
-	/** The display name. This may be null */
+	/** The display name (un-sanitized). This may be null */
 	const char* DisplayName;
 	/** The ISO 639 language code for the user's preferred language. This may be null */
 	const char* PreferredLanguage;
 	/** A nickname/alias for the target user assigned by the local user. This may be null */
 	const char* Nickname;
+	/** The raw display name (sanitized). This may be null */
+	const char* DisplayNameSanitized;
 ));
 
 /**
@@ -191,7 +193,7 @@ EOS_STRUCT(EOS_UserInfo_CopyUserInfoOptions, (
 EOS_DECLARE_FUNC(void) EOS_UserInfo_Release(EOS_UserInfo* UserInfo);
 
 /** The most recent version of the EOS_UserInfo_ExternalUserInfo struct. */
-#define EOS_USERINFO_EXTERNALUSERINFO_API_LATEST 1
+#define EOS_USERINFO_EXTERNALUSERINFO_API_LATEST 2
 
 /**
  * Contains information about a single external user info.
@@ -203,8 +205,10 @@ EOS_STRUCT(EOS_UserInfo_ExternalUserInfo, (
 	EOS_EExternalAccountType AccountType;
 	/** The ID of the external account. Can be null */
 	const char* AccountId;
-	/** The display name of the external account. Can be null */
+	/** The display name of the external account (un-sanitized). Can be null */
 	const char* DisplayName;
+	/** The display name of the external account (sanitized). Can be null */
+	const char* DisplayNameSanitized;
 ));
 
 /** The most recent version of the EOS_Achievements_GetAchievementDefinitionCount API. */

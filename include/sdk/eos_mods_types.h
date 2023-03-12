@@ -56,7 +56,7 @@ EOS_STRUCT(EOS_Mods_InstallModOptions, (
  * Output parameters for the EOS_Mods_InstallMod Function. These parameters are received through the callback provided to EOS_Mods_InstallMod
  */
 EOS_STRUCT(EOS_Mods_InstallModCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned if the installation was successfull, otherwise one of the error codes is returned. */
+	/** Result code for the operation. EOS_Success is returned if the installation was successful, otherwise one of the error codes is returned. */
 	EOS_EResult ResultCode;
 	/** The Epic Account ID of the user for which mod installation was requested */
 	EOS_EpicAccountId LocalUserId;
@@ -98,7 +98,7 @@ EOS_STRUCT(EOS_Mods_UninstallModOptions, (
  * Output parameters for the EOS_Mods_UninstallMod Function. These parameters are received through the callback provided to EOS_Mods_UninstallMod
  */
 EOS_STRUCT(EOS_Mods_UninstallModCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned if the uninstallation was successfull, otherwise one of the error codes is returned. */
+	/** Result code for the operation. EOS_Success is returned if the uninstallation was successful, otherwise one of the error codes is returned. */
 	EOS_EResult ResultCode;
 	/** The Epic Account ID of the user for which mod uninstallation was requested */
 	EOS_EpicAccountId LocalUserId;
@@ -129,7 +129,7 @@ EOS_ENUM(EOS_EModEnumerationType,
 	EOS_MET_ALL_AVAILABLE
 );
 
- /** The most recent version of the EOS_Mods_EnumerateModsOptions API. */
+/** The most recent version of the EOS_Mods_EnumerateModsOptions API. */
 #define EOS_MODS_ENUMERATEMODS_API_LATEST 1
 
 /**
@@ -228,7 +228,7 @@ EOS_STRUCT(EOS_Mods_UpdateModOptions, (
  * Output parameters for the EOS_Mods_UpdateMod Function. These parameters are received through the callback provided to EOS_Mods_UpdateMod
  */
 EOS_STRUCT(EOS_Mods_UpdateModCallbackInfo, (
-	/** Result code for the operation. EOS_Success is returned if the request to update was successfull, otherwise one of the error codes is returned. */
+	/** Result code for the operation. EOS_Success is returned if the request to update was successful, otherwise one of the error codes is returned. */
 	EOS_EResult ResultCode;
 	/** The Epic Account ID of the user for which mod update was requested */
 	EOS_EpicAccountId LocalUserId;

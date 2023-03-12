@@ -6,7 +6,7 @@
 
 #pragma pack(push, 8)
 
-/** 
+/**
   * Arbitrary data that is a unique local identifier for
   * a single remote client or peer.
   *
@@ -477,6 +477,9 @@ EOS_STRUCT(EOS_AntiCheatCommon_LogPlayerTakeDamageOptions, (
 	 * the way. For some situations like melee or hitscan weapons this is trivially
 	 * true, for others like projectiles with simulated physics it may not be e.g. a player
 	 * could fire a slow moving projectile and then move behind cover before it strikes.
+	 * 
+	 * This can be an estimate, or can simply be always set to true if it is not feasible
+	 * to compute in your game.
 	 */
 	EOS_Bool bHasLineOfSight;
 	/** True if this was a critical hit that causes extra damage (e.g. headshot) */
@@ -495,7 +498,7 @@ EOS_STRUCT(EOS_AntiCheatCommon_LogPlayerTakeDamageOptions, (
 	EOS_EAntiCheatCommonPlayerTakeDamageResult DamageResult;
 	/** PlayerUseWeaponData associated with this damage event if available, otherwise NULL */
 	EOS_AntiCheatCommon_LogPlayerUseWeaponData* PlayerUseWeaponData;
-	/** Time in milliseconds since the PlayerUseWeaponData event occurred if available, otherwise 0 */
+	/** Time in milliseconds since the associated PlayerUseWeaponData event occurred if available, otherwise 0 */
 	uint32_t TimeSincePlayerUseWeaponMs;
 	/** World position where damage hit the victim as a 3D vector if available, otherwise NULL */
 	EOS_AntiCheatCommon_Vec3f* DamagePosition;

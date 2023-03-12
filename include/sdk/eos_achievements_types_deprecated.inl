@@ -10,7 +10,7 @@
 
 #pragma pack(push, 8)
 
- /** The most recent version of the EOS_Achievements_Definition struct. */
+/** The most recent version of the EOS_Achievements_Definition struct. */
 #define EOS_ACHIEVEMENTS_DEFINITION_API_LATEST 1
 
 /**

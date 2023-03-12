@@ -114,6 +114,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_AntiCheatServer_UnregisterClient(EOS_HAntiChea
  *
  * @return EOS_Success - If the message was processed successfully
  *         EOS_InvalidParameters - If input data was invalid
+ *         EOS_InvalidRequest - If message contents were corrupt and could not be processed
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_AntiCheatServer_ReceiveMessageFromClient(EOS_HAntiCheatServer Handle, const EOS_AntiCheatServer_ReceiveMessageFromClientOptions* Options);
 

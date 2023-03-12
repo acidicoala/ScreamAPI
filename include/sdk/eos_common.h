@@ -54,7 +54,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_ByteArray_ToString(const uint8_t* ByteArray, c
  */
 typedef struct EOS_EpicAccountIdDetails* EOS_EpicAccountId;
 
-/** 
+/**
  * Check whether or not the given Epic Account ID is considered valid
  * NOTE: This will return true for any EOS_EpicAccountId created with EOS_EpicAccountId_FromString as there is no validation
  * 
@@ -65,16 +65,16 @@ EOS_DECLARE_FUNC(EOS_Bool) EOS_EpicAccountId_IsValid(EOS_EpicAccountId AccountId
 
 /**
  * Retrieve a null-terminated stringified Epic Account ID from an EOS_EpicAccountId. This is useful for replication of Epic Account IDs in multiplayer games.
- * This string will be no larger than EOS_EPICACCOUNTID_MAX_LENGTH + 1 and will only contain UTF8-encoded printable characters (excluding the null-terminator).
+ * This string will be no larger than EOS_EPICACCOUNTID_MAX_LENGTH + 1 and will only contain UTF8-encoded printable characters as well as a null-terminator.
  *
  * @param AccountId The Epic Account ID for which to retrieve the stringified version.
  * @param OutBuffer The buffer into which the character data should be written
  * @param InOutBufferLength The size of the OutBuffer in characters.
  *                          The input buffer should include enough space to be null-terminated.
- *                          When the function returns, this parameter will be filled with the length of the string copied into OutBuffer including the null termination character.
+ *                          When the function returns, this parameter will be filled with the length of the string copied into OutBuffer including the null-termination character.
  *
  * @return An EOS_EResult that indicates whether the Epic Account ID string was copied into the OutBuffer.
- *         EOS_Success - The OutBuffer was filled, and InOutBufferLength contains the number of characters copied into OutBuffer including the null terminator.
+ *         EOS_Success - The OutBuffer was filled, and InOutBufferLength contains the number of characters copied into OutBuffer including the null-terminator.
  *         EOS_InvalidParameters - Either OutBuffer or InOutBufferLength were passed as NULL parameters.
  *         EOS_InvalidUser - The AccountId is invalid and cannot be stringified.
  *         EOS_LimitExceeded - The OutBuffer is not large enough to receive the Epic Account ID string. InOutBufferLength contains the required minimum length to perform the operation successfully.
@@ -90,13 +90,13 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_EpicAccountId_ToString(EOS_EpicAccountId Accou
  */
 EOS_DECLARE_FUNC(EOS_EpicAccountId) EOS_EpicAccountId_FromString(const char* AccountIdString);
 
-/** 
+/**
  * A character buffer of this size is large enough to fit a successful output of EOS_EpicAccountId_ToString. This length does not include the null-terminator.
  * The EpicAccountId data structure is opaque in nature and no assumptions of its structure should be inferred
  */
 #define EOS_EPICACCOUNTID_MAX_LENGTH 32
 
-/** 
+/**
  * A handle to a user's Product User ID (game services related ecosystem)
  * This ID is associated with any of the external account providers (of which Epic Account Services is one)
  * 
@@ -116,16 +116,16 @@ EOS_DECLARE_FUNC(EOS_Bool) EOS_ProductUserId_IsValid(EOS_ProductUserId AccountId
 
 /**
  * Retrieve a null-terminated stringified Product User ID from an EOS_ProductUserId. This is useful for replication of Product User IDs in multiplayer games.
- * This string will be no larger than EOS_PRODUCTUSERID_MAX_LENGTH + 1 and will only contain UTF8-encoded printable characters (excluding the null-terminator).
+ * This string will be no larger than EOS_PRODUCTUSERID_MAX_LENGTH + 1 and will only contain UTF8-encoded printable characters as well as the null-terminator.
  *
  * @param AccountId The Product User ID for which to retrieve the stringified version.
  * @param OutBuffer The buffer into which the character data should be written
  * @param InOutBufferLength The size of the OutBuffer in characters.
  *                          The input buffer should include enough space to be null-terminated.
- *                          When the function returns, this parameter will be filled with the length of the string copied into OutBuffer including the null termination character.
+ *                          When the function returns, this parameter will be filled with the length of the string copied into OutBuffer including the null-termination character.
  *
  * @return An EOS_EResult that indicates whether the Product User ID string was copied into the OutBuffer.
- *         EOS_Success - The OutBuffer was filled, and InOutBufferLength contains the number of characters copied into OutBuffer including the null terminator.
+ *         EOS_Success - The OutBuffer was filled, and InOutBufferLength contains the number of characters copied into OutBuffer including the null-terminator.
  *         EOS_InvalidParameters - Either OutBuffer or InOutBufferLength were passed as NULL parameters.
  *         EOS_InvalidUser - The AccountId is invalid and cannot be stringified.
  *         EOS_LimitExceeded - The OutBuffer is not large enough to receive the Product User ID string. InOutBufferLength contains the required minimum length to perform the operation successfully.
@@ -157,16 +157,16 @@ typedef struct EOS_ContinuanceTokenDetails* EOS_ContinuanceToken;
  * Retrieve a null-terminated stringified continuance token from an EOS_ContinuanceToken.
  *
  * To get the required buffer size, call once with OutBuffer set to NULL, InOutBufferLength will contain the buffer size needed.
- * Call again with valid params to get the stringified continuance token which will only contain UTF8-encoded printable characters (excluding the null-terminator).
+ * Call again with valid params to get the stringified continuance token which will only contain UTF8-encoded printable characters as well as the null-terminator.
  *
  * @param ContinuanceToken The continuance token for which to retrieve the stringified version.
  * @param OutBuffer The buffer into which the character data should be written
  * @param InOutBufferLength The size of the OutBuffer in characters.
  *                          The input buffer should include enough space to be null-terminated.
- *                          When the function returns, this parameter will be filled with the length of the string copied into OutBuffer including the null termination character.
+ *                          When the function returns, this parameter will be filled with the length of the string copied into OutBuffer including the null-termination character.
  *
  * @return An EOS_EResult that indicates whether the continuance token string was copied into the OutBuffer.
- *         EOS_Success - The OutBuffer was filled, and InOutBufferLength contains the number of characters copied into OutBuffer including the null terminator.
+ *         EOS_Success - The OutBuffer was filled, and InOutBufferLength contains the number of characters copied into OutBuffer including the null-terminator.
  *         EOS_InvalidParameters - Either OutBuffer or InOutBufferLength were passed as NULL parameters.
  *         EOS_InvalidUser - The AccountId is invalid and cannot be stringified.
  *         EOS_LimitExceeded - The OutBuffer is not large enough to receive the continuance token string. InOutBufferLength contains the required minimum length to perform the operation successfully.
@@ -354,10 +354,10 @@ EOS_ENUM(EOS_EExternalCredentialType,
 	 * Generated using the ISteamUser::RequestEncryptedAppTicket API of Steamworks SDK.
 	 * For ticket generation parameters, use pDataToInclude(NULL) and cbDataToInclude(0).
 	 *
-	 * The retrieved App Ticket byte buffer needs to be converted into a hex-encoded UTF-8 string (e.g. "FA87097A..") before passing it to the EOS_Auth_Login or EOS_Connect_Login APIs.
+	 * The retrieved App Ticket byte buffer needs to be converted into a hex-encoded UTF-8 string (e.g. "FA87097A..") before passing it to the EOS_Connect_Login API.
 	 * EOS_ByteArray_ToString can be used for this conversion.
 	 *
-	 * Supported with EOS_Auth_Login, EOS_Connect_Login.
+	 * Supported with EOS_Connect_Login.
 	 */
 	EOS_ECT_STEAM_APP_TICKET = 1,
 	/**
@@ -509,7 +509,26 @@ EOS_ENUM(EOS_EExternalCredentialType,
 	 *
 	 * Supported with EOS_Connect_Login.
 	 */
-	EOS_ECT_AMAZON_ACCESS_TOKEN = 17
+	EOS_ECT_AMAZON_ACCESS_TOKEN = 17,
+	/**
+	 * Steam Auth Session Ticket
+	 *
+	 * Generated using the ISteamUser::GetAuthSessionTicket API of Steamworks SDK.
+	 *
+	 * The retrieved Auth Session Ticket byte buffer needs to be converted into a hex-encoded UTF-8 string (e.g. "FA87097A..") before passing it to the EOS_Auth_Login or EOS_Connect_Login APIs.
+	 * EOS_ByteArray_ToString can be used for this conversion.
+	 *
+	 * Supported with EOS_Auth_Login, EOS_Connect_Login.
+	 */
+	EOS_ECT_STEAM_SESSION_TICKET = 18
 );
+
+/**
+ * This type is used to distinguish between different supported integrated platforms.
+ * Integrated platforms which are common across multiple host platforms will be defined here.
+ */
+EXTERN_C typedef const char* EOS_IntegratedPlatformType;
+/** A macro to identify an unknown integrated platform. */
+#define EOS_IPT_Unknown (const char*)NULL
 
 #pragma pack(pop)

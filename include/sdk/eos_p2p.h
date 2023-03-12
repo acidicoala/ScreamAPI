@@ -18,6 +18,7 @@
  * @return EOS_EResult::EOS_Success           - If packet was queued to be sent successfully
  *         EOS_EResult::EOS_InvalidParameters - If input was invalid
  *         EOS_EResult::EOS_LimitExceeded     - If amount of data being sent is too large, or the outgoing packet queue was full
+ *         EOS_EResult::EOS_NoConnection      - If bDisableAutoAcceptConnection was set to EOS_TRUE and the connection was not currently accepted (call EOS_P2P_AcceptConnection first, or set bDisableAutoAcceptConnection to EOS_FALSE)
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_P2P_SendPacket(EOS_HP2P Handle, const EOS_P2P_SendPacketOptions* Options);
 
@@ -45,6 +46,8 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_P2P_GetNextReceivedPacketSize(EOS_HP2P Handle,
  * @return EOS_EResult::EOS_Success - If the packet was received successfully
  *         EOS_EResult::EOS_InvalidParameters - If input was invalid
  *         EOS_EResult::EOS_NotFound - If there are no packets available for the requesting user
+ *
+ * @see EOS_P2P_GetNextReceivedPacketSize
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_P2P_ReceivePacket(EOS_HP2P Handle, const EOS_P2P_ReceivePacketOptions* Options, EOS_ProductUserId* OutPeerId, EOS_P2P_SocketId* OutSocketId, uint8_t* OutChannel, void* OutData, uint32_t* OutBytesWritten);
 
@@ -56,6 +59,8 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_P2P_ReceivePacket(EOS_HP2P Handle, const EOS_P
  * @param ClientData This value is returned to the caller when ConnectionRequestHandler is invoked
  * @param ConnectionRequestHandler The callback to be fired when we receive a connection request
  * @return A valid notification ID if successfully bound, or EOS_INVALID_NOTIFICATIONID otherwise
+ *
+ * @see EOS_P2P_RemoveNotifyPeerConnectionRequest
  */
 EOS_DECLARE_FUNC(EOS_NotificationId) EOS_P2P_AddNotifyPeerConnectionRequest(EOS_HP2P Handle, const EOS_P2P_AddNotifyPeerConnectionRequestOptions* Options, void* ClientData, EOS_P2P_OnIncomingConnectionRequestCallback ConnectionRequestHandler);
 
@@ -63,8 +68,61 @@ EOS_DECLARE_FUNC(EOS_NotificationId) EOS_P2P_AddNotifyPeerConnectionRequest(EOS_
  * Stop listening for connection requests on a previously bound handler.
  *
  * @param NotificationId The previously bound notification ID
+ *
+ * @see EOS_P2P_AddNotifyPeerConnectionRequest
  */
 EOS_DECLARE_FUNC(void) EOS_P2P_RemoveNotifyPeerConnectionRequest(EOS_HP2P Handle, EOS_NotificationId NotificationId);
+
+/**
+ * Listen for when a connection is established. This is fired when we first connect to a peer, when we reconnect to a peer after a connection interruption,
+ * and when our underlying network connection type changes (for example, from a direct connection to relay, or vice versa). Network Connection Type changes
+ * will always be broadcast with a EOS_CET_Reconnection connection type, even if the connection was not interrupted.
+ *
+ * @param Options Information about who would like notifications about established connections, and for which socket
+ * @param ClientData This value is returned to the caller when ConnectionEstablishedHandler is invoked
+ * @param ConnectionEstablishedHandler The callback to be fired when a connection has been established
+ * @return A valid notification ID if successfully bound, or EOS_INVALID_NOTIFICATIONID otherwise
+ *
+ * @see EOS_P2P_AddNotifyPeerConnectionInterrupted
+ * @see EOS_P2P_AddNotifyPeerConnectionClosed
+ * @see EOS_P2P_RemoveNotifyPeerConnectionEstablished
+ */
+EOS_DECLARE_FUNC(EOS_NotificationId) EOS_P2P_AddNotifyPeerConnectionEstablished(EOS_HP2P Handle, const EOS_P2P_AddNotifyPeerConnectionEstablishedOptions* Options, void* ClientData, EOS_P2P_OnPeerConnectionEstablishedCallback ConnectionEstablishedHandler);
+
+/**
+ * Stop notifications for connections being established on a previously bound handler.
+ *
+ * @param NotificationId The previously bound notification ID
+ *
+ * @see EOS_P2P_AddNotifyPeerConnectionEstablished
+ */
+EOS_DECLARE_FUNC(void) EOS_P2P_RemoveNotifyPeerConnectionEstablished(EOS_HP2P Handle, EOS_NotificationId NotificationId);
+
+/**
+ * Listen for when a previously opened connection is interrupted. The connection will automatically attempt to reestablish, but it may not be successful.
+ *
+ * If a connection reconnects, it will trigger the P2P PeerConnectionEstablished notification with the EOS_CET_Reconnection connection type.
+ * If a connection fails to reconnect, it will trigger the P2P PeerConnectionClosed notification.
+ *
+ * @param Options Information about who would like notifications about interrupted connections, and for which socket
+ * @param ClientData This value is returned to the caller when ConnectionInterruptedHandler is invoked
+ * @param ConnectionInterruptedHandler The callback to be fired when an open connection has been interrupted
+ * @return A valid notification ID if successfully bound, or EOS_INVALID_NOTIFICATIONID otherwise
+ *
+ * @see EOS_P2P_AddNotifyPeerConnectionEstablished
+ * @see EOS_P2P_AddNotifyPeerConnectionClosed
+ * @see EOS_P2P_RemoveNotifyPeerConnectionInterrupted
+ */
+EOS_DECLARE_FUNC(EOS_NotificationId) EOS_P2P_AddNotifyPeerConnectionInterrupted(EOS_HP2P Handle, const EOS_P2P_AddNotifyPeerConnectionInterruptedOptions* Options, void* ClientData, EOS_P2P_OnPeerConnectionInterruptedCallback ConnectionInterruptedHandler);
+
+/**
+ * Stop notifications for connections being interrupted on a previously bound handler.
+ *
+ * @param NotificationId The previously bound notification ID
+ *
+ * @see EOS_P2P_AddNotifyPeerConnectionInterrupted
+ */
+EOS_DECLARE_FUNC(void) EOS_P2P_RemoveNotifyPeerConnectionInterrupted(EOS_HP2P Handle, EOS_NotificationId NotificationId);
 
 /**
  * Listen for when a previously opened connection is closed.
@@ -73,6 +131,10 @@ EOS_DECLARE_FUNC(void) EOS_P2P_RemoveNotifyPeerConnectionRequest(EOS_HP2P Handle
  * @param ClientData This value is returned to the caller when ConnectionClosedHandler is invoked
  * @param ConnectionClosedHandler The callback to be fired when an open connection has been closed
  * @return A valid notification ID if successfully bound, or EOS_INVALID_NOTIFICATIONID otherwise
+ *
+ * @see EOS_P2P_AddNotifyPeerConnectionEstablished
+ * @see EOS_P2P_AddNotifyPeerConnectionInterrupted
+ * @see EOS_P2P_RemoveNotifyPeerConnectionClosed
  */
 EOS_DECLARE_FUNC(EOS_NotificationId) EOS_P2P_AddNotifyPeerConnectionClosed(EOS_HP2P Handle, const EOS_P2P_AddNotifyPeerConnectionClosedOptions* Options, void* ClientData, EOS_P2P_OnRemoteConnectionClosedCallback ConnectionClosedHandler);
 
@@ -80,28 +142,24 @@ EOS_DECLARE_FUNC(EOS_NotificationId) EOS_P2P_AddNotifyPeerConnectionClosed(EOS_H
  * Stop notifications for connections being closed on a previously bound handler.
  *
  * @param NotificationId The previously bound notification ID
+ *
+ * @see EOS_P2P_AddNotifyPeerConnectionClosed
  */
 EOS_DECLARE_FUNC(void) EOS_P2P_RemoveNotifyPeerConnectionClosed(EOS_HP2P Handle, EOS_NotificationId NotificationId);
 
 /**
- * Listen for when a connection is established.
+ * Accept or Request a connection with a specific peer on a specific Socket ID.
  *
- * @param Options Information about who would like notifications about established connections, and for which socket
- * @param ClientData This value is returned to the caller when ConnectionEstablishedHandler is invoked
- * @param ConnectionEstablishedHandler The callback to be fired when a connection has been established
- * @return A valid notification ID if successfully bound, or EOS_INVALID_NOTIFICATIONID otherwise
- */
-EOS_DECLARE_FUNC(EOS_NotificationId) EOS_P2P_AddNotifyPeerConnectionEstablished(EOS_HP2P Handle, const EOS_P2P_AddNotifyPeerConnectionEstablishedOptions* Options, void* ClientData, EOS_P2P_OnPeerConnectionEstablishedCallback ConnectionEstablishedHandler);
-
-/**
- * Stop notifications for connections being established on a previously bound handler.
+ * If this connection was not already locally accepted, we will securely message the peer, and trigger a PeerConnectionRequest notification notifying
+ * them of the connection request. If the PeerConnectionRequest notification is not bound for all Socket IDs or for the requested Socket ID in particular,
+ * the request will be silently ignored.
  *
- * @param NotificationId The previously bound notification ID
- */
-EOS_DECLARE_FUNC(void) EOS_P2P_RemoveNotifyPeerConnectionEstablished(EOS_HP2P Handle, EOS_NotificationId NotificationId);
-
-/**
- * Accept connections from a specific peer. If this peer has not attempted to connect yet, when they do, they will automatically be accepted.
+ * If the remote peer accepts the connection, a notification will be broadcast to the EOS_P2P_AddNotifyPeerConnectionEstablished when the connection is
+ * ready to send packets.
+ *
+ * If multiple Socket IDs are accepted with one peer, they will share one physical socket.
+ *
+ * Even if a connection is already locally accepted, EOS_EResult::EOS_Success will still be returned if the input was valid.
  *
  * @param Options Information about who would like to accept a connection, and which connection
  * @return EOS_EResult::EOS_Success - if the provided data is valid
@@ -110,7 +168,11 @@ EOS_DECLARE_FUNC(void) EOS_P2P_RemoveNotifyPeerConnectionEstablished(EOS_HP2P Ha
 EOS_DECLARE_FUNC(EOS_EResult) EOS_P2P_AcceptConnection(EOS_HP2P Handle, const EOS_P2P_AcceptConnectionOptions* Options);
 
 /**
- * Stop accepting new connections from a specific peer and close any open connections.
+ * For all (or optionally one specific) Socket ID(s) with a specific peer: stop receiving packets, drop any locally queued packets, and if no other
+ * Socket ID is using the connection with the peer, close the underlying connection.
+ *
+ * If your application wants to migrate an existing connection with a peer it already connected to, it is recommended to call EOS_P2P_AcceptConnection
+ * with the new Socket ID first before calling EOS_P2P_CloseConnection, to prevent the shared physical socket from being torn down prematurely.
  *
  * @param Options Information about who would like to close a connection, and which connection.
  * @return EOS_EResult::EOS_Success - if the provided data is valid
@@ -153,6 +215,8 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_P2P_GetNATType(EOS_HP2P Handle, const EOS_P2P_
  * @param Options Information about relay server config options
  * @return EOS_EResult::EOS_Success - if the options were set successfully
  *         EOS_EResult::EOS_InvalidParameters - if the options are invalid in some way
+ *
+ * @see EOS_ERelayControl
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_P2P_SetRelayControl(EOS_HP2P Handle, const EOS_P2P_SetRelayControlOptions* Options);
 
@@ -234,7 +298,7 @@ EOS_DECLARE_FUNC(void) EOS_P2P_RemoveNotifyIncomingPacketQueueFull(EOS_HP2P Hand
  * @param Options Information about which queues should be cleared
  * @return EOS_EResult::EOS_Success - if the input options were valid (even if queues were empty and no packets where cleared)
  *         EOS_EResult::EOS_IncompatibleVersion - if wrong API version
- *         EOS_EResult::EOS_InvalidUser - if wrong local and/or remote user
+ *         EOS_EResult::EOS_InvalidUser - if an invalid/remote user was used
  *         EOS_EResult::EOS_InvalidParameters - if input was invalid in other way
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_P2P_ClearPacketQueue(EOS_HP2P Handle, const EOS_P2P_ClearPacketQueueOptions* Options);

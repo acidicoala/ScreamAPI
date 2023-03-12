@@ -51,7 +51,7 @@ EOS_DECLARE_CALLBACK(EOS_Friends_OnQueryFriendsCallback, const EOS_Friends_Query
  * The following types are used to work with the API.
  */
 
- /** The most recent version of the EOS_Friends_SendInvite API. */
+/** The most recent version of the EOS_Friends_SendInvite API. */
 #define EOS_FRIENDS_SENDINVITE_API_LATEST 1
 
 /**
@@ -177,7 +177,7 @@ EOS_DECLARE_CALLBACK(EOS_Friends_OnRejectInviteCallback, const EOS_Friends_Rejec
  * The following types are used to work with the API.
  */
 
- /** The most recent version of the EOS_Friends_DeleteFriend API. */
+/** The most recent version of the EOS_Friends_DeleteFriend API. */
 #define EOS_FRIENDS_DELETEFRIEND_API_LATEST 1
 
 /**
@@ -219,7 +219,7 @@ EOS_DECLARE_CALLBACK(EOS_Friends_OnDeleteFriendCallback, const EOS_Friends_Delet
  * The following types are used to work with the API.
  */
 
- /** The most recent version of the EOS_Friends_GetFriendsCount API. */
+/** The most recent version of the EOS_Friends_GetFriendsCount API. */
 #define EOS_FRIENDS_GETFRIENDSCOUNT_API_LATEST 1
 
 
@@ -239,7 +239,7 @@ EOS_STRUCT(EOS_Friends_GetFriendsCountOptions, (
  * The following types are used to work with the API.
  */
 
- /** The most recent version of the EOS_Friends_GetFriendAtIndex API. */
+/** The most recent version of the EOS_Friends_GetFriendAtIndex API. */
 #define EOS_FRIENDS_GETFRIENDATINDEX_API_LATEST 1
 
 /**
@@ -261,7 +261,7 @@ EOS_STRUCT(EOS_Friends_GetFriendAtIndexOptions, (
  * The following types are used to work with the API.
  */
 
- /** The most recent version of the EOS_Friends_GetStatus API. */
+/** The most recent version of the EOS_Friends_GetStatus API. */
 #define EOS_FRIENDS_GETSTATUS_API_LATEST 1
 
 /**

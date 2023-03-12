@@ -39,7 +39,7 @@ EOS_STRUCT(EOS_KWS_PermissionStatus, (
 
 EOS_DECLARE_FUNC(void) EOS_KWS_PermissionStatus_Release(EOS_KWS_PermissionStatus* PermissionStatus);
 
- /** The most recent version of the EOS_KWS_QueryAgeGate API. */
+/** The most recent version of the EOS_KWS_QueryAgeGate API. */
 #define EOS_KWS_QUERYAGEGATE_API_LATEST 1
 
 /**
@@ -110,7 +110,7 @@ EOS_STRUCT(EOS_KWS_CreateUserCallbackInfo, (
  */
 EOS_DECLARE_CALLBACK(EOS_KWS_OnCreateUserCallback, const EOS_KWS_CreateUserCallbackInfo* Data);
 
- /** The most recent version of the EOS_KWS_QueryPermissions API. */
+/** The most recent version of the EOS_KWS_QueryPermissions API. */
 #define EOS_KWS_QUERYPERMISSIONS_API_LATEST 1
 
 /**
@@ -119,7 +119,7 @@ EOS_DECLARE_CALLBACK(EOS_KWS_OnCreateUserCallback, const EOS_KWS_CreateUserCallb
 EOS_STRUCT(EOS_KWS_QueryPermissionsOptions, (
 	/** API Version: Set this to EOS_KWS_QUERYPERMISSIONS_API_LATEST. */
 	int32_t ApiVersion;
-	/** Local user querying their permisssions */
+	/** Local user querying their permissions */
 	EOS_ProductUserId LocalUserId;
 ));
 
@@ -131,7 +131,7 @@ EOS_STRUCT(EOS_KWS_QueryPermissionsCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_KWS_QueryPermissions */
 	void* ClientData;
-	/** Local user querying their permisssions */
+	/** Local user querying their permissions */
 	EOS_ProductUserId LocalUserId;
 	/** KWS UserId created */
 	const char* KWSUserId;
@@ -147,7 +147,7 @@ EOS_STRUCT(EOS_KWS_QueryPermissionsCallbackInfo, (
  */
 EOS_DECLARE_CALLBACK(EOS_KWS_OnQueryPermissionsCallback, const EOS_KWS_QueryPermissionsCallbackInfo* Data);
 
- /** The most recent version of the EOS_KWS_UpdateParentEmail API. */
+/** The most recent version of the EOS_KWS_UpdateParentEmail API. */
 #define EOS_KWS_UPDATEPARENTEMAIL_API_LATEST 1
 
 /**
@@ -180,7 +180,7 @@ EOS_STRUCT(EOS_KWS_UpdateParentEmailCallbackInfo, (
  */
 EOS_DECLARE_CALLBACK(EOS_KWS_OnUpdateParentEmailCallback, const EOS_KWS_UpdateParentEmailCallbackInfo* Data);
 
- /** The most recent version of the EOS_KWS_RequestPermissions API. */
+/** The most recent version of the EOS_KWS_RequestPermissions API. */
 #define EOS_KWS_REQUESTPERMISSIONS_API_LATEST 1
 
 /**
@@ -189,7 +189,7 @@ EOS_DECLARE_CALLBACK(EOS_KWS_OnUpdateParentEmailCallback, const EOS_KWS_UpdatePa
 EOS_STRUCT(EOS_KWS_RequestPermissionsOptions, (
 	/** API Version: Set this to EOS_KWS_REQUESTPERMISSIONS_API_LATEST. */
 	int32_t ApiVersion;
-	/** Local user requesting new permisssions */
+	/** Local user requesting new permissions */
 	EOS_ProductUserId LocalUserId;
 	/** The number of permissions to request, may not exceed EOS_KWS_MAX_PERMISSIONS. Only new permissions need be included. */
 	uint32_t PermissionKeyCount;
@@ -205,7 +205,7 @@ EOS_STRUCT(EOS_KWS_RequestPermissionsCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_KWS_RequestPermissions */
 	void* ClientData;
-	/** Local user requesting new permisssions */
+	/** Local user requesting new permissions */
 	EOS_ProductUserId LocalUserId;
 ));
 

@@ -70,6 +70,16 @@ EOS_STRUCT(EOS_AntiCheatClient_OnMessageToServerCallbackInfo, (
 	uint32_t MessageDataSizeBytes;
 ));
 
+/** Structure containing details about integrity violation related to the local client */
+EOS_STRUCT(EOS_AntiCheatClient_OnClientIntegrityViolatedCallbackInfo, (
+	/** Caller-specified context data */
+	void* ClientData;
+	/** Code describing the violation that occurred */
+	EOS_EAntiCheatClientViolationType ViolationType;
+	/** String describing the violation which should be displayed to the user */
+	const char* ViolationMessage;
+));
+
 /**
  * Callback issued when a new message must be dispatched to the game server.
  *
@@ -80,6 +90,15 @@ EOS_STRUCT(EOS_AntiCheatClient_OnMessageToServerCallbackInfo, (
  * This callback is always issued from within EOS_Platform_Tick on its calling thread.
  */
 EOS_DECLARE_CALLBACK(EOS_AntiCheatClient_OnMessageToServerCallback, const EOS_AntiCheatClient_OnMessageToServerCallbackInfo* Data);
+
+/**
+ * Callback issued when the local client triggers an integrity violation.
+ *
+ * The message contains descriptive string of up to 256 characters and must be displayed to the player.
+ *
+ * This callback is always issued from within EOS_Platform_Tick on its calling thread.
+ */
+EOS_DECLARE_CALLBACK(EOS_AntiCheatClient_OnClientIntegrityViolatedCallback, const EOS_AntiCheatClient_OnClientIntegrityViolatedCallbackInfo* Data);
 
 /**
  * Callback issued when a new message must be dispatched to a connected peer.
@@ -128,6 +147,12 @@ EOS_STRUCT(EOS_AntiCheatClient_AddNotifyPeerAuthStatusChangedOptions, (
 	int32_t ApiVersion;
 ));
 
+#define EOS_ANTICHEATCLIENT_ADDNOTIFYCLIENTINTEGRITYVIOLATED_API_LATEST 1
+EOS_STRUCT(EOS_AntiCheatClient_AddNotifyClientIntegrityViolatedOptions, (
+	/** API Version: Set this to EOS_ANTICHEATCLIENT_ADDNOTIFYPEERAUTHSTATUSCHANGED_API_LATEST. */
+	int32_t ApiVersion;
+));
+
 #define EOS_ANTICHEATCLIENT_BEGINSESSION_API_LATEST 3
 EOS_STRUCT(EOS_AntiCheatClient_BeginSessionOptions, (
 	/** API Version: Set this to EOS_ANTICHEATCLIENT_BEGINSESSION_API_LATEST. */
@@ -142,14 +167,6 @@ EOS_STRUCT(EOS_AntiCheatClient_BeginSessionOptions, (
 EOS_STRUCT(EOS_AntiCheatClient_EndSessionOptions, (
 	/** API Version: Set this to EOS_ANTICHEATCLIENT_ENDSESSION_API_LATEST. */
 	int32_t ApiVersion;
-));
-
-#define EOS_ANTICHEATCLIENT_POLLSTATUS_API_LATEST 1
-EOS_STRUCT(EOS_AntiCheatClient_PollStatusOptions, (
-	/** API Version: Set this to EOS_ANTICHEATCLIENT_POLLSTATUS_API_LATEST. */
-	int32_t ApiVersion;
-	/** The size of OutMessage in bytes. Recommended size is 256 bytes. */
-	uint32_t OutMessageLength;
 ));
 
 #define EOS_ANTICHEATCLIENT_ADDEXTERNALINTEGRITYCATALOG_API_LATEST 1
@@ -210,7 +227,10 @@ EOS_STRUCT(EOS_AntiCheatClient_UnprotectMessageOptions, (
  */
 #define EOS_ANTICHEATCLIENT_PEER_SELF (EOS_AntiCheatCommon_ClientHandle)(-1)
 
-#define EOS_ANTICHEATCLIENT_REGISTERPEER_API_LATEST 1
+/** Limits on RegisterTimeoutSeconds parameter */
+#define EOS_ANTICHEATCLIENT_REGISTERPEER_MIN_AUTHENTICATIONTIMEOUT 40
+#define EOS_ANTICHEATCLIENT_REGISTERPEER_MAX_AUTHENTICATIONTIMEOUT 120
+#define EOS_ANTICHEATCLIENT_REGISTERPEER_API_LATEST 3
 EOS_STRUCT(EOS_AntiCheatClient_RegisterPeerOptions, (
 	/** API Version: Set this to EOS_ANTICHEATCLIENT_REGISTERPEER_API_LATEST. */
 	int32_t ApiVersion;
@@ -220,19 +240,21 @@ EOS_STRUCT(EOS_AntiCheatClient_RegisterPeerOptions, (
 	EOS_EAntiCheatCommonClientType ClientType;
 	/** Remote user's platform, if known */
 	EOS_EAntiCheatCommonClientPlatform ClientPlatform;
-	/** 
-	 * Identifier for the remote user. This is typically a string representation of an
-	 * account ID, but it can be any string which is both unique (two different users will never
-	 * have the same string) and consistent (if the same user connects to this game session
-	 * twice, the same string will be used) in the scope of a single protected game session.
+	/**
+	 * Time in seconds to allow newly registered peers to send the initial message containing their token.
+	 * Recommended value: 60
 	 */
-	const char* AccountId;
-	/** 
+	uint32_t AuthenticationTimeout;
+	/** Deprecated - use PeerProductUserId instead */
+	const char* AccountId_DEPRECATED;
+	/**
 	 * Optional IP address for the remote user. May be null if not available.
 	 * IPv4 format: "0.0.0.0"
 	 * IPv6 format: "0:0:0:0:0:0:0:0"
 	 */
 	const char* IpAddress;
+	/** EOS_ProductUserId Identifier for the remote user */
+	EOS_ProductUserId PeerProductUserId;
 ));
 
 #define EOS_ANTICHEATCLIENT_UNREGISTERPEER_API_LATEST 1
@@ -256,3 +278,5 @@ EOS_STRUCT(EOS_AntiCheatClient_ReceiveMessageFromPeerOptions, (
 ));
 
 #pragma pack(pop)
+
+#include "eos_anticheatclient_types_deprecated.inl"

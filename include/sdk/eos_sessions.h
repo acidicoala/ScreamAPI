@@ -50,6 +50,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Sessions_UpdateSessionModification(EOS_HSessio
  *         EOS_InvalidParameters if any of the options are incorrect
  *         EOS_Sessions_OutOfSync if the session is out of sync and will be updated on the next connection with the backend
  *         EOS_NotFound if a session to be updated does not exist
+ *         EOS_LimitExceeded if a new session cannot be created because doing so would exceed the maximum allowed concurrent session count
  */
 EOS_DECLARE_FUNC(void) EOS_Sessions_UpdateSession(EOS_HSessions Handle, const EOS_Sessions_UpdateSessionOptions* Options, void* ClientData, const EOS_Sessions_OnUpdateSessionCallback CompletionDelegate);
 
@@ -120,6 +121,8 @@ EOS_DECLARE_FUNC(void) EOS_Sessions_EndSession(EOS_HSessions Handle, const EOS_S
  *         EOS_InvalidParameters if any of the options are incorrect
  *         EOS_Sessions_OutOfSync if the session is out of sync and will be updated on the next connection with the backend
  *         EOS_NotFound if a session to register players does not exist
+ *         EOS_LimitExceeded if registering the requested players would drive the total number of registered players beyond EOS_SESSIONS_MAXREGISTEREDPLAYERS (API Version <= 2)
+ *         EOS_Sessions_TooManyPlayers if registering the requested players would drive the total number of registered players beyond EOS_SESSIONS_MAXREGISTEREDPLAYERS (API Version > 2)
  */
 EOS_DECLARE_FUNC(void) EOS_Sessions_RegisterPlayers(EOS_HSessions Handle, const EOS_Sessions_RegisterPlayersOptions* Options, void* ClientData, const EOS_Sessions_OnRegisterPlayersCallback CompletionDelegate);
 

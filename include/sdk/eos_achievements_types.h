@@ -218,12 +218,12 @@ EOS_STRUCT(EOS_Achievements_PlayerAchievement, (
 	int32_t StatInfoCount;
 	/** Array of EOS_Achievements_PlayerStatInfo structures containing information about stat thresholds used to unlock the achievement and the player's current values for those stats. */
 	const EOS_Achievements_PlayerStatInfo* StatInfo;
-	/** 
+	/**
 	 * Localized display name for the achievement based on this specific player's current progress on the achievement. 
 	 * @note The current progress is updated when EOS_Achievements_QueryPlayerAchievements succeeds and when an achievement is unlocked.
 	 */
 	const char* DisplayName;
-	/** 
+	/**
 	 * Localized description for the achievement based on this specific player's current progress on the achievement.
 	 * @note The current progress is updated when EOS_Achievements_QueryPlayerAchievements succeeds and when an achievement is unlocked.
 	 */
@@ -308,7 +308,7 @@ EOS_STRUCT(EOS_Achievements_OnQueryPlayerAchievementsCompleteCallbackInfo, (
 	EOS_ProductUserId UserId;
 ));
 
- /**
+/**
   * Function prototype definition for callbacks passed to EOS_Achievements_QueryPlayerAchievements
   *
   * @param Data An EOS_Achievements_OnQueryPlayerAchievementsCompleteCallbackInfo containing the output information and result

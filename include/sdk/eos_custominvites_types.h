@@ -23,7 +23,7 @@ EOS_STRUCT(EOS_CustomInvites_SetCustomInviteOptions, (
 	const char* Payload;
 ));
 
- /** The most recent version of the EOS_CustomInvites_SendCustomInvite API. */
+/** The most recent version of the EOS_CustomInvites_SendCustomInvite API. */
 #define EOS_CUSTOMINVITES_SENDCUSTOMINVITE_API_LATEST 1
 
 /**
@@ -125,6 +125,37 @@ EOS_STRUCT(EOS_CustomInvites_OnCustomInviteAcceptedCallbackInfo, (
  * @param Data A EOS_CustomInvites_OnCustomInviteAcceptedCallbackInfo containing the output information and result
  */
 EOS_DECLARE_CALLBACK(EOS_CustomInvites_OnCustomInviteAcceptedCallback, const EOS_CustomInvites_OnCustomInviteAcceptedCallbackInfo* Data);
+
+/** The most recent version of the EOS_CustomInvites_AddNotifyCustomInviteRejected API. */
+#define EOS_CUSTOMINVITES_ADDNOTIFYCUSTOMINVITEREJECTED_API_LATEST 1
+
+EOS_STRUCT(EOS_CustomInvites_AddNotifyCustomInviteRejectedOptions, (
+	/** API Version: Set this to EOS_CUSTOMINVITES_ADDNOTIFYCUSTOMINVITEREJECTED_API_LATEST. */
+	int32_t ApiVersion;
+));
+
+/**
+ * Output parameters for the EOS_CustomInvites_OnCustomInviteRejectedCallback Function.
+ */
+EOS_STRUCT(EOS_CustomInvites_CustomInviteRejectedCallbackInfo, (
+	/** Context that was passed into EOS_CustomInvites_AddNotifyCustomInviteRejected */
+	void* ClientData;
+	/** User that sent the custom invite */
+	EOS_ProductUserId TargetUserId;
+	/** Recipient Local user id */
+	EOS_ProductUserId LocalUserId;
+	/** Id of the rejected Custom Invite */
+	const char* CustomInviteId;
+	/** Payload of the rejected Custom Invite */
+	const char* Payload;
+));
+
+/**
+ * Function prototype definition for notifications that comes from EOS_CustomInvites_AddNotifyCustomInviteRejected
+ *
+ * @param Data A EOS_CustomInvites_CustomInviteRejectedCallbackInfo containing the output information and result
+ */
+EOS_DECLARE_CALLBACK(EOS_CustomInvites_OnCustomInviteRejectedCallback, const EOS_CustomInvites_CustomInviteRejectedCallbackInfo* Data);
 
 /** The most recent version of the EOS_CustomInvites_FinalizeInvite API. */
 #define EOS_CUSTOMINVITES_FINALIZEINVITE_API_LATEST 1

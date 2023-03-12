@@ -34,7 +34,7 @@ EXTERN_C typedef void* (EOS_MEMORY_CALL * EOS_ReallocateMemoryFunc)(void* Pointe
 EXTERN_C typedef void (EOS_MEMORY_CALL * EOS_ReleaseMemoryFunc)(void* Pointer);
 
 /** The most recent version of the EOS_Initialize_ThreadAffinity API. */
-#define EOS_INITIALIZE_THREADAFFINITY_API_LATEST 1
+#define EOS_INITIALIZE_THREADAFFINITY_API_LATEST 2
 
 /**
  * Options for initializing defining thread affinity for use by Epic Online Services SDK.
@@ -49,10 +49,12 @@ EOS_STRUCT(EOS_Initialize_ThreadAffinity, (
 	uint64_t StorageIo;
 	/** Any thread that will generate web socket IO. */
 	uint64_t WebSocketIo;
-	/** Any thread that will generate IO related to P2P traffic and mangement. */
+	/** Any thread that will generate IO related to P2P traffic and management. */
 	uint64_t P2PIo;
 	/** Any thread that will generate http request IO. */
 	uint64_t HttpRequestIo;
+	/** Any thread that will generate IO related to RTC traffic and management. */
+	uint64_t RTCIo;
 ));
 
 /** The most recent version of the EOS_Initialize API. */

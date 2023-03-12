@@ -400,7 +400,6 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_Connect_CopyIdToken(EOS_HConnect Handle, const
 
 /**
  * Verify a given ID token for authenticity and validity.
- * @note Can only be called by dedicated servers.
  *
  * @param Options structure containing information about the ID token to verify.
  * @param ClientData arbitrary data that is passed back to you in the callback.

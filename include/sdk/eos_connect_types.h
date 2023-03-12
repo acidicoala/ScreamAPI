@@ -20,7 +20,7 @@ EXTERN_C typedef struct EOS_ConnectHandle* EOS_HConnect;
  *
  * @see EOS_EExternalCredentialType
  * @see EOS_Connect_Login
- */ 
+ */
 EOS_STRUCT(EOS_Connect_Credentials, (
 	/** API Version: Set this to EOS_CONNECT_CREDENTIALS_API_LATEST. */
 	int32_t ApiVersion;
@@ -53,7 +53,6 @@ EOS_STRUCT(EOS_Connect_UserLoginInfo, (
 	const char* DisplayName;
 ));
 
-
 /** The most recent version of the EOS_Connect_Login API. */
 #define EOS_CONNECT_LOGIN_API_LATEST 2
 
@@ -82,9 +81,9 @@ EOS_STRUCT(EOS_Connect_LoginCallbackInfo, (
 	EOS_EResult ResultCode;
 	/** Context that was passed into EOS_Connect_Login. */
 	void* ClientData;
-	/** If login was succesful, this is the Product User ID of the local player that logged in. */
+	/** If login was successful, this is the Product User ID of the local player that logged in. */
 	EOS_ProductUserId LocalUserId;
-	/** 
+	/**
 	 * If the user was not found with credentials passed into EOS_Connect_Login, 
 	 * this continuance token can be passed to either EOS_Connect_CreateUser 
 	 * or EOS_Connect_LinkAccount to continue the flow.

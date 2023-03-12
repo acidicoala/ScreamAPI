@@ -15,7 +15,7 @@
  * To use this add the EOS_BUILD_PLATFORM_NAME define when building platforms
  * which need to include a `<Platform>/eos_<Platform>_base.h`. The value of
  * EOS_BUILD_PLATFORM_NAME will be placed in the `<Platform>` spot.  Not all
- * platforms need one of these base header files. Blank files are sitll provided
+ * platforms need one of these base header files. Blank files are still provided
  * for the platforms that do not require it.
  *
  * Alternatives to this header are to have the necessary file explicitly

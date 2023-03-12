@@ -57,8 +57,9 @@ EOS_DECLARE_FUNC(void) EOS_RTC_LeaveRoom(EOS_HRTC Handle, const EOS_RTC_LeaveRoo
  * @return EOS_Success if the operation succeeded
  *         EOS_InvalidParameters if any of the parameters are incorrect
  *         EOS_NotFound if either the local user or specified participant are not in the specified room
+ *         EOS_RTC_UserIsInBlocklist The user is in one of the platform's applicable block lists and thus an RTC unblock is not allowed.
  */
-EOS_DECLARE_FUNC(void) EOS_RTC_BlockParticipant(EOS_HRTC Handle, EOS_RTC_BlockParticipantOptions* Options, void* ClientData, const EOS_RTC_OnBlockParticipantCallback CompletionDelegate);
+EOS_DECLARE_FUNC(void) EOS_RTC_BlockParticipant(EOS_HRTC Handle, const EOS_RTC_BlockParticipantOptions* Options, void* ClientData, const EOS_RTC_OnBlockParticipantCallback CompletionDelegate);
 
 /**
  * Register to receive notifications when disconnected from the room. If the returned NotificationId is valid, you must call
@@ -74,7 +75,7 @@ EOS_DECLARE_FUNC(void) EOS_RTC_BlockParticipant(EOS_HRTC Handle, EOS_RTC_BlockPa
  * @see EOS_INVALID_NOTIFICATIONID
  * @see EOS_RTC_RemoveNotifyDisconnected
  */
-EOS_DECLARE_FUNC(EOS_NotificationId) EOS_RTC_AddNotifyDisconnected(EOS_HRTC Handle, EOS_RTC_AddNotifyDisconnectedOptions* Options, void* ClientData, const EOS_RTC_OnDisconnectedCallback CompletionDelegate);
+EOS_DECLARE_FUNC(EOS_NotificationId) EOS_RTC_AddNotifyDisconnected(EOS_HRTC Handle, const EOS_RTC_AddNotifyDisconnectedOptions* Options, void* ClientData, const EOS_RTC_OnDisconnectedCallback CompletionDelegate);
 
 /**
  * Unregister a previously bound notification handler from receiving room disconnection notifications
@@ -84,8 +85,9 @@ EOS_DECLARE_FUNC(EOS_NotificationId) EOS_RTC_AddNotifyDisconnected(EOS_HRTC Hand
 EOS_DECLARE_FUNC(void) EOS_RTC_RemoveNotifyDisconnected(EOS_HRTC Handle, EOS_NotificationId NotificationId);
 
 /**
- * Register to receive notifications when a participant's status changes (e.g: join or leave the room). If the returned NotificationId is valid, you must call
- * EOS_RTC_RemoveNotifyParticipantStatusChanged when you no longer wish to have your CompletionDelegate called.
+ * Register to receive notifications when a participant's status changes (e.g: join or leave the room), or when the participant is added or removed
+ * from an applicable block list (e.g: Epic block list and/or current platform's block list).
+ * If the returned NotificationId is valid, you must call EOS_RTC_RemoveNotifyParticipantStatusChanged when you no longer wish to have your CompletionDelegate called.
  *
  * If you register to this notification before joining a room, you will receive a notification for every member already in the room when you join said room.
  * This allows you to know who is already in the room when you join.
@@ -93,6 +95,12 @@ EOS_DECLARE_FUNC(void) EOS_RTC_RemoveNotifyDisconnected(EOS_HRTC Handle, EOS_Not
  * To be used effectively with a Lobby-managed RTC room, this should be registered during the EOS_Lobby_CreateLobby or EOS_Lobby_JoinLobby completion
  * callbacks when the ResultCode is EOS_Success. If this notification is registered after that point, it is possible to miss notifications for
  * already-existing room participants.
+ *
+ * You can use this notification to detect internal automatic RTC blocks due to block lists.
+ * When a participant joins a room and while the system resolves the block list status of said participant, the participant is set to blocked and you'll receive
+ * a notification with ParticipantStatus set to EOS_RTCPS_Joined and bParticipantInBlocklist set to true.
+ * Once the block list status is resolved, if the player is not in any applicable block list(s), it is then unblocked a new notification is sent with
+ * ParticipantStatus set to EOS_RTCPS_Joined and bParticipantInBlocklist set to false.
  *
  * @param ClientData Arbitrary data that is passed back in the CompletionDelegate
  * @param CompletionDelegate The callback to be fired when a presence change occurs
@@ -103,7 +111,7 @@ EOS_DECLARE_FUNC(void) EOS_RTC_RemoveNotifyDisconnected(EOS_HRTC Handle, EOS_Not
  * @see EOS_INVALID_NOTIFICATIONID
  * @see EOS_RTC_RemoveNotifyParticipantStatusChanged
  */
-EOS_DECLARE_FUNC(EOS_NotificationId) EOS_RTC_AddNotifyParticipantStatusChanged(EOS_HRTC Handle, EOS_RTC_AddNotifyParticipantStatusChangedOptions* Options, void* ClientData, const EOS_RTC_OnParticipantStatusChangedCallback CompletionDelegate);
+EOS_DECLARE_FUNC(EOS_NotificationId) EOS_RTC_AddNotifyParticipantStatusChanged(EOS_HRTC Handle, const EOS_RTC_AddNotifyParticipantStatusChangedOptions* Options, void* ClientData, const EOS_RTC_OnParticipantStatusChangedCallback CompletionDelegate);
 
 /**
  * Unregister a previously bound notification handler from receiving participant status change notifications

@@ -62,6 +62,21 @@ EOS_DECLARE_FUNC(void) EOS_Lobby_DestroyLobby(EOS_HLobby Handle, const EOS_Lobby
 EOS_DECLARE_FUNC(void) EOS_Lobby_JoinLobby(EOS_HLobby Handle, const EOS_Lobby_JoinLobbyOptions* Options, void* ClientData, const EOS_Lobby_OnJoinLobbyCallback CompletionDelegate);
 
 /**
+ * This is a special case of EOS_Lobby_JoinLobby.  It should only be used if the lobby has had Join-by-ID enabled.
+ * Additionally, Join-by-ID should only be enabled to support native invites on an integrated platform.
+ *
+ * @param Options Structure containing information about the lobby to be joined
+ * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate
+ * @param CompletionDelegate A callback that is fired when the join operation completes, either successfully or in error
+ *
+ * @return EOS_Success if the destroy completes successfully
+ *         EOS_InvalidParameters if any of the options are incorrect
+ *
+ * @see EOS_Lobby_JoinLobby
+ */
+EOS_DECLARE_FUNC(void) EOS_Lobby_JoinLobbyById(EOS_HLobby Handle, const EOS_Lobby_JoinLobbyByIdOptions* Options, void* ClientData, const EOS_Lobby_OnJoinLobbyByIdCallback CompletionDelegate);
+
+/**
  * Leave a lobby given a lobby ID
  *
  * If the lobby you are leaving had an RTC Room enabled, leaving the lobby will also automatically leave the RTC room.
@@ -133,6 +148,26 @@ EOS_DECLARE_FUNC(void) EOS_Lobby_PromoteMember(EOS_HLobby Handle, const EOS_Lobb
  *         EOS_NotFound if a lobby of interest does not exist
  */
 EOS_DECLARE_FUNC(void) EOS_Lobby_KickMember(EOS_HLobby Handle, const EOS_Lobby_KickMemberOptions* Options, void* ClientData, const EOS_Lobby_OnKickMemberCallback CompletionDelegate);
+
+/**
+ * Hard mute an existing member in the lobby, can't speak but can hear other members of the lobby
+ *
+ * @param Options Structure containing information about the lobby and member to be hard muted
+ * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate
+ * @param CompletionDelegate A callback that is fired when the hard mute operation completes, either successfully or in error
+ *
+ * @return EOS_Success if the hard mute completes successfully
+ *         EOS_IncompatibleVersion if the API version passed in is incorrect
+ *         EOS_InvalidParameters if any of the options are incorrect
+ *         EOS_Invalid_ProductUserID if a target user is incorrect
+ *         EOS_NotFound if lobby or target user cannot be found
+ *         EOS_Lobby_VoiceNotEnabled if lobby has no voice enabled
+ *         EOS_Lobby_NotOwner if the calling user is not the owner of the lobby
+ *         EOS_NotFound if a lobby of interest does not exist
+ *         EOS_AlreadyPending if the user is already marked for hard mute
+ *         EOS_TooManyRequests if there are too many requests
+ */
+EOS_DECLARE_FUNC(void) EOS_Lobby_HardMuteMember(EOS_HLobby Handle, const EOS_Lobby_HardMuteMemberOptions* Options, void* ClientData, const EOS_Lobby_OnHardMuteMemberCallback CompletionDelegate);
 
 /**
  * Register to receive notifications when a lobby owner updates the attributes associated with the lobby.
@@ -304,7 +339,26 @@ EOS_DECLARE_FUNC(EOS_NotificationId) EOS_Lobby_AddNotifyLobbyInviteAccepted(EOS_
 EOS_DECLARE_FUNC(void) EOS_Lobby_RemoveNotifyLobbyInviteAccepted(EOS_HLobby Handle, EOS_NotificationId InId);
 
 /**
- * Register to receive notifications about lobby join game accepted by local user via the overlay.
+ * Register to receive notifications about lobby invites rejected by local user via the overlay.
+ * @note must call RemoveNotifyLobbyInviteRejected to remove the notification
+ *
+ * @param Options Structure containing information about the request.
+ * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate.
+ * @param NotificationFn A callback that is fired when a a notification is received.
+ *
+ * @return handle representing the registered callback
+ */
+EOS_DECLARE_FUNC(EOS_NotificationId) EOS_Lobby_AddNotifyLobbyInviteRejected(EOS_HLobby Handle, const EOS_Lobby_AddNotifyLobbyInviteRejectedOptions* Options, void* ClientData, const EOS_Lobby_OnLobbyInviteRejectedCallback NotificationFn);
+
+/**
+ * Unregister from receiving notifications when a user rejects a lobby invitation via the overlay.
+ *
+ * @param InId Handle representing the registered callback
+ */
+EOS_DECLARE_FUNC(void) EOS_Lobby_RemoveNotifyLobbyInviteRejected(EOS_HLobby Handle, EOS_NotificationId InId);
+
+/**
+ * Register to receive notifications about lobby "JOIN" performed by local user (when no invite) via the overlay.
  * @note must call EOS_Lobby_RemoveNotifyJoinLobbyAccepted to remove the notification
  *
  * @param Options Structure containing information about the request.
@@ -321,6 +375,33 @@ EOS_DECLARE_FUNC(EOS_NotificationId) EOS_Lobby_AddNotifyJoinLobbyAccepted(EOS_HL
  * @param InId Handle representing the registered callback
  */
 EOS_DECLARE_FUNC(void) EOS_Lobby_RemoveNotifyJoinLobbyAccepted(EOS_HLobby Handle, EOS_NotificationId InId);
+
+/**
+ * Register to receive notifications about a lobby "INVITE" performed by a local user via the overlay.
+ * This is only needed when a configured integrated platform has EOS_IPMF_DisableSDKManagedSessions set.  The EOS SDK will
+ * then use the state of EOS_IPMF_PreferEOSIdentity and EOS_IPMF_PreferIntegratedIdentity to determine when the NotificationFn is
+ * called.
+ *
+ * @note must call EOS_Lobby_RemoveNotifySendLobbyNativeInviteRequested to remove the notification.
+ *
+ * @param Options Structure containing information about the request.
+ * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate.
+ * @param NotificationFn A callback that is fired when a notification is received.
+ *
+ * @return handle representing the registered callback
+ *
+ * @see EOS_IPMF_DisableSDKManagedSessions
+ * @see EOS_IPMF_PreferEOSIdentity
+ * @see EOS_IPMF_PreferIntegratedIdentity
+ */
+EOS_DECLARE_FUNC(EOS_NotificationId) EOS_Lobby_AddNotifySendLobbyNativeInviteRequested(EOS_HLobby Handle, const EOS_Lobby_AddNotifySendLobbyNativeInviteRequestedOptions* Options, void* ClientData, const EOS_Lobby_OnSendLobbyNativeInviteRequestedCallback NotificationFn);
+
+/**
+ * Unregister from receiving notifications when a user requests a send invite via the overlay.
+ *
+ * @param InId Handle representing the registered callback
+ */
+EOS_DECLARE_FUNC(void) EOS_Lobby_RemoveNotifySendLobbyNativeInviteRequested(EOS_HLobby Handle, EOS_NotificationId InId);
 
 /**
  * EOS_Lobby_CopyLobbyDetailsHandleByInviteId is used to immediately retrieve a handle to the lobby information from after notification of an invite

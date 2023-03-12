@@ -83,6 +83,10 @@ EOS_RESULT_VALUE(EOS_CacheDirectoryInvalid, 37)
 EOS_RESULT_VALUE(EOS_InvalidState, 38)
 /** Request is in progress */
 EOS_RESULT_VALUE(EOS_RequestInProgress, 39)
+/** Application is suspended */
+EOS_RESULT_VALUE(EOS_ApplicationSuspended, 40)
+/** Network is disconnected */
+EOS_RESULT_VALUE(EOS_NetworkDisconnected, 41)
 
 /** Account locked due to login failures */
 EOS_RESULT_VALUE(EOS_Auth_AccountLocked, 1001)
@@ -118,6 +122,10 @@ EOS_RESULT_VALUE(EOS_Auth_ApplicationNotFound, 1015)
 EOS_RESULT_VALUE(EOS_Auth_ScopeNotFound, 1016)
 /** This account has been denied access to login */
 EOS_RESULT_VALUE(EOS_Auth_AccountFeatureRestricted, 1017)
+/** The overlay failed to load the Account Portal. This can range from general overlay failure, to overlay failed to connect to the web server, to overlay failed to render the web page. */
+EOS_RESULT_VALUE(EOS_Auth_AccountPortalLoadError, 1018)
+/** An attempted login has failed due to the user needing to take corrective action on their account. */
+EOS_RESULT_VALUE(EOS_Auth_CorrectiveActionRequired, 1019)
 
 /** Pin grant code initiated */
 EOS_RESULT_VALUE(EOS_Auth_PinGrantCode, 1020)
@@ -147,7 +155,7 @@ EOS_RESULT_VALUE(EOS_Auth_ExchangeCodeNotFound, 1040)
 EOS_RESULT_VALUE(EOS_Auth_OriginatingExchangeCodeSessionExpired, 1041)
 
 /** The account has been disabled and cannot be used for authentication */
-EOS_RESULT_VALUE(EOS_Auth_PersistentAuth_AccountNotActive, 1050)
+EOS_RESULT_VALUE(EOS_Auth_AccountNotActive, 1050)
 
 /** MFA challenge required */
 EOS_RESULT_VALUE(EOS_Auth_MFARequired, 1060)
@@ -337,6 +345,8 @@ EOS_RESULT_VALUE(EOS_Lobby_NotAllowed, 9016)
 EOS_RESULT_VALUE(EOS_Lobby_MemberUpdateOnly, 9017)
 /** Presence lobby already exists for the client */
 EOS_RESULT_VALUE(EOS_Lobby_PresenceLobbyExists, 9018)
+/** Operation requires lobby with voice enabled */
+EOS_RESULT_VALUE(EOS_Lobby_VoiceNotEnabled, 9019)
 
 /** User callback that receives data from storage returned error. */
 EOS_RESULT_VALUE(EOS_TitleStorage_UserErrorFromDataCallback, 10000)
@@ -419,6 +429,10 @@ EOS_RESULT_VALUE(EOS_RTC_UserBanned, 13003)
 EOS_RESULT_VALUE(EOS_RTC_RoomWasLeft, 13004)
 /** Connection dropped due to long timeout */
 EOS_RESULT_VALUE(EOS_RTC_ReconnectionTimegateExpired, 13005)
+/** EOS RTC room was left due to platform release */
+EOS_RESULT_VALUE(EOS_RTC_ShutdownInvoked, 13006)
+/** EOS RTC operation failed because the user is in the local user's block list */
+EOS_RESULT_VALUE(EOS_RTC_UserIsInBlocklist, 13007)
 
 /** The number of available Snapshot IDs have all been exhausted. */
 EOS_RESULT_VALUE(EOS_ProgressionSnapshot_SnapshotIdUnavailable, 14000)
@@ -430,6 +444,30 @@ EOS_RESULT_VALUE(EOS_KWS_UserGraduated, 15001)
 
 /** EOS Android VM not stored */
 EOS_RESULT_VALUE(EOS_Android_JavaVMNotStored, 17000)
+
+/** Patch required before the user can use the privilege */
+EOS_RESULT_VALUE(EOS_Permission_RequiredPatchAvailable, 18000)
+/** System update required before the user can use the privilege */
+EOS_RESULT_VALUE(EOS_Permission_RequiredSystemUpdate, 18001)
+/** Parental control failure usually */
+EOS_RESULT_VALUE(EOS_Permission_AgeRestrictionFailure, 18002)
+/** Premium Account Subscription required but not available */
+EOS_RESULT_VALUE(EOS_Permission_AccountTypeFailure, 18003)
+/** User restricted from chat */
+EOS_RESULT_VALUE(EOS_Permission_ChatRestriction, 18004)
+/** User restricted from User Generated Content */
+EOS_RESULT_VALUE(EOS_Permission_UGCRestriction, 18005)
+/** Online play is restricted */
+EOS_RESULT_VALUE(EOS_Permission_OnlinePlayRestricted, 18006)
+
+/** The application was not launched through the Bootstrapper. Desktop crossplay functionality is unavailable. */
+EOS_RESULT_VALUE(EOS_DesktopCrossplay_ApplicationNotBootstrapped, 19000)
+/** The redistributable service is not installed. */
+EOS_RESULT_VALUE(EOS_DesktopCrossplay_ServiceNotInstalled, 19001)
+/** The desktop crossplay service failed to start. */
+EOS_RESULT_VALUE(EOS_DesktopCrossplay_ServiceStartFailed, 19002)
+/** The desktop crossplay service is no longer running for an unknown reason. */
+EOS_RESULT_VALUE(EOS_DesktopCrossplay_ServiceNotRunning, 19003)
 
 /** An unexpected error that we cannot identify has occurred. */
 EOS_RESULT_VALUE_LAST(EOS_UnexpectedError, 0x7FFFFFFF)

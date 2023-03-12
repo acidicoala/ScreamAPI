@@ -131,7 +131,7 @@ EOS_STRUCT(EOS_Sessions_CreateSessionModificationOptions, (
 	uint32_t MaxPlayers;
 	/** The Product User ID of the local user associated with the session */
 	EOS_ProductUserId LocalUserId;
-	/** 
+	/**
 	 * If true, this session will be associated with presence. Only one session at a time can have this flag true.
 	 * This affects the ability of the Social Overlay to show game related actions to take in the user's social graph.
 	 * 
@@ -384,7 +384,7 @@ EOS_STRUCT(EOS_Sessions_JoinSessionOptions, (
 	EOS_HSessionDetails SessionHandle;
 	/** The Product User ID of the local user who is joining the session */
 	EOS_ProductUserId LocalUserId;
-	/** 
+	/**
 	 * If true, this session will be associated with presence. Only one session at a time can have this flag true.
 	 * This affects the ability of the Social Overlay to show game related actions to take in the user's social graph.
 	 *
@@ -470,7 +470,7 @@ EOS_STRUCT(EOS_Sessions_EndSessionCallbackInfo, (
 EOS_DECLARE_CALLBACK(EOS_Sessions_OnEndSessionCallback, const EOS_Sessions_EndSessionCallbackInfo* Data);
 
 /** The most recent version of the EOS_Sessions_RegisterPlayers API. */
-#define EOS_SESSIONS_REGISTERPLAYERS_API_LATEST 2
+#define EOS_SESSIONS_REGISTERPLAYERS_API_LATEST 3
 
 /**
  * Input parameters for the EOS_Sessions_RegisterPlayers function.
@@ -586,7 +586,7 @@ EOS_ENUM(EOS_EOnlineSessionPermissionLevel,
 EOS_STRUCT(EOS_SessionModification_SetPermissionLevelOptions, (
 	/** API Version: Set this to EOS_SESSIONMODIFICATION_SETPERMISSIONLEVEL_API_LATEST. */
 	int32_t ApiVersion;
-	/** Permission level to set on the sesion */
+	/** Permission level to set on the session */
 	EOS_EOnlineSessionPermissionLevel PermissionLevel;
 ));
 
@@ -786,7 +786,7 @@ EOS_STRUCT(EOS_SessionSearch_SetMaxResultsOptions, (
  * Input parameters for the EOS_SessionSearch_Find function.
  */
 EOS_STRUCT(EOS_SessionSearch_FindOptions, (
-	/** API Version: Set this to EOS_SESSIONDETAILS_SETTINGS_API_LATEST. */
+	/** API Version: Set this to EOS_SESSIONSEARCH_FIND_API_LATEST. */
 	int32_t ApiVersion;
 	/** The Product User ID of the local user who is searching */
 	EOS_ProductUserId LocalUserId;
@@ -815,7 +815,7 @@ EOS_STRUCT(EOS_SessionSearch_GetSearchResultCountOptions, (
 	/** API Version: Set this to EOS_SESSIONDETAILS_SETTINGS_API_LATEST. */
 	int32_t ApiVersion;
 ));
-		
+
 /** The most recent version of the EOS_SessionSearch_CopySearchResultByIndex API. */
 #define EOS_SESSIONSEARCH_COPYSEARCHRESULTBYINDEX_API_LATEST 1
 
@@ -825,7 +825,7 @@ EOS_STRUCT(EOS_SessionSearch_GetSearchResultCountOptions, (
 EOS_STRUCT(EOS_SessionSearch_CopySearchResultByIndexOptions, (
 	/** API Version: Set this to EOS_SESSIONDETAILS_SETTINGS_API_LATEST. */
 	int32_t ApiVersion;
-	/** 
+	/**
 	 * The index of the session to retrieve within the completed search query
 	 * @see EOS_SessionSearch_GetSearchResultCount
 	 */
@@ -901,7 +901,7 @@ EOS_STRUCT(EOS_SessionSearch_RemoveParameterOptions, (
 EOS_STRUCT(EOS_SessionDetails_Settings, (
 	/** API Version: Set this to EOS_SESSIONDETAILS_SETTINGS_API_LATEST. */
 	int32_t ApiVersion;
-	/** The main indexed parameter for this session, can be any string (ie "Region:GameMode") */
+	/** The main indexed parameter for this session, can be any string (i.e. "Region:GameMode") */
 	const char* BucketId;
 	/** Number of total players allowed in the session */
 	uint32_t NumPublicConnections;
@@ -965,7 +965,7 @@ EOS_STRUCT(EOS_SessionDetails_GetSessionAttributeCountOptions, (
 EOS_STRUCT(EOS_SessionDetails_CopySessionAttributeByIndexOptions, (
 	/** API Version: Set this to EOS_SESSIONDETAILS_COPYSESSIONATTRIBUTEBYINDEX_API_LATEST. */
 	int32_t ApiVersion;
-	/** 
+	/**
 	 * The index of the attribute to retrieve
 	 * @see EOS_SessionDetails_GetSessionAttributeCount
 	 */
@@ -1119,7 +1119,7 @@ EOS_STRUCT(EOS_Sessions_JoinSessionAcceptedCallbackInfo, (
 	void* ClientData;
 	/** The Product User ID for the user who initialized the game */
 	EOS_ProductUserId LocalUserId;
-	/** 
+	/**
 	 * The UI Event associated with this Join Game event.
 	 * This should be used with EOS_Sessions_CopySessionHandleByUiEventId to get a handle to be used
 	 * when calling EOS_Sessions_JoinSession.

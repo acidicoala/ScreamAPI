@@ -26,21 +26,23 @@ EOS_ENUM(EOS_ELoginCredentialType,
 	 * @details Typically retrieved via command-line parameters provided by a launcher that generated the exchange code for this application.
 	 * When started, the application is expected to consume the exchange code by using the EOS_Auth_Login API as soon as possible.
 	 * This is needed in order to authenticate the local user before the exchange code would expire.
-	 * Attempting to consume an already expired exchange code will return EOS_EResult::AuthExchangeCodeNotFound error by the EOS_Auth_Login API.
+	 * Attempting to consume an already expired exchange code will return EOS_EResult::EOS_Auth_ExchangeCodeNotFound error by the EOS_Auth_Login API.
 	 */
 	EOS_LCT_ExchangeCode = 1,
 	/**
 	 * Desktop and Mobile only; deprecated on Console platforms in favor of EOS_LCT_ExternalAuth login method.
+	 * Used by standalone applications distributed outside the supported game platforms such as Epic Games Store or Steam.
 	 *
-	 * Long-lived access token that is stored on the local device to allow persisting a user login session over multiple runs of the application.
-	 * When using this login type, if an existing access token is not found or it is invalid or otherwise expired, the error result EOS_EResult::EOS_InvalidAuth is returned.
+	 * Persistent Auth is used in conjuction with the EOS_LCT_AccountPortal login method for automatic login of the local user across multiple runs of the application.
 	 *
-	 * @note On Desktop and Mobile platforms, the persistent access token is automatically managed by the SDK that stores it in the keychain of the currently logged in user of the local device.
-	 * On Console platforms, after a successful login using the EOS_LCT_DeviceCode login type,
-	 * the persistent access token is retrieved using the EOS_Auth_CopyUserAuthToken API and
-	 * stored by the application for the currently logged in user of the local device.
+	 * Standalone applications implement the login sequence as follows:
+	 * 1. Application calls EOS_Auth_Login with EOS_LCT_PersistentAuth to attempt automatic login.
+	 * 2. If automatic login fails, the application calls EOS_Auth_Login with EOS_LCT_AccountPortal to prompt the user for manual login.
 	 *
-	 * @see EOS_LCT_ExternalAuth
+	 * @note On Desktop and Mobile platforms, the persistent refresh token is automatically managed by the SDK that stores it in the keychain of the currently logged in user of the local device.
+	 * On Console platforms, after a successful login the refresh token must be retrieved using the EOS_Auth_CopyUserAuthToken API and stored by the application for the currently logged in user of the local device.
+	 *
+	 * @see EOS_LCT_AccountPortal
 	 */
 	EOS_LCT_PersistentAuth = 2,
 	/**
@@ -82,7 +84,7 @@ EOS_ENUM(EOS_ELoginCredentialType,
 	EOS_LCT_Developer = 4,
 	/**
 	 * Refresh token that was retrieved from a previous call to EOS_Auth_Login API in another local process context.
-	 * Mainly used in conjunction with custom launcher applications.
+	 * Mainly used in conjunction with custom desktop launcher applications.
 	 *
 	 * @details Can be used for example when launching the game from Epic Games Launcher and having an intermediate process
 	 * in-between that requires authenticating the user before eventually starting the actual game client application.
@@ -94,15 +96,20 @@ EOS_ENUM(EOS_ELoginCredentialType,
 	EOS_LCT_RefreshToken = 5,
 	/**
 	 * Desktop and Mobile only.
+	 * Used by standalone applications distributed outside the supported game platforms such as Epic Games Store or Steam.
 	 *
-	 * Initiate a login through the Epic account portal.
+	 * Login using the built-in user onboarding experience provided by the SDK, which will automatically store a persistent
+	 * refresh token to enable automatic user login for consecutive application runs on the local device. Applications are
+	 * expected to attempt automatic login using the EOS_LCT_PersistentAuth login method, and fall back to EOS_LCT_AccountPortal
+	 * to prompt users for manual login.
 	 *
-	 * @details Can be used in scenarios where seamless user login via other means is not available,
-	 * for example when starting the application through a proprietary ecosystem launcher or otherwise.
+	 * @note On Windows, using this login method requires applications to be started through the EOS Bootstrapper application
+	 * and to have the local Epic Online Services redistributable installed on the local system. See EOS_Platform_GetDesktopCrossplayStatus
+	 * for adding a readiness check prior to calling EOS_Auth_Login.
 	 */
 	EOS_LCT_AccountPortal = 6,
 	/**
-	 * Login using external account provider credentials, such as Steam, PlayStation(TM)Network, Xbox Live, or Nintendo.
+	 * Login using external account provider credentials, such as PlayStation(TM)Network, Steam, and Xbox Live.
 	 *
 	 * This is the intended login method on Console. On Desktop and Mobile, used when launched through any of the commonly supported platform clients.
 	 *
@@ -135,6 +142,10 @@ EOS_ENUM(EOS_ELoginCredentialType,
 	 *    - In the meantime, EOS SDK will internally keep polling the backend for a completion status of the login flow.
 	 * 5. Once user completes the login, cancels it or if the login flow times out, EOS_Auth_LinkAccount invokes the completion callback to the caller.
 	 *    - If the user was logged in successfully, EOS_EResult::EOS_Success is returned in the EOS_Auth_LoginCallbackInfo. Otherwise, an error result code is returned accordingly.
+	 *
+	 * @note On Windows, using this login method requires applications to be started through the EOS Bootstrapper application
+	 * and to have the local Epic Online Services redistributable installed on the local system. See EOS_Platform_GetDesktopCrossplayStatus
+	 * for adding a readiness check prior to calling EOS_Auth_Login.
 	 */
 	EOS_LCT_ExternalAuth = 7
 );
@@ -219,7 +230,7 @@ EOS_DECLARE_FUNC(void) EOS_Auth_Token_Release(EOS_Auth_Token* AuthToken);
  * @see EOS_ELoginCredentialType
  * @see EOS_Auth_Login
  * @see EOS_Auth_DeletePersistentAuthOptions
- */ 
+ */
 EOS_STRUCT(EOS_Auth_Credentials, (
 	/** API Version: Set this to EOS_AUTH_CREDENTIALS_API_LATEST. */
 	int32_t ApiVersion;
@@ -229,7 +240,7 @@ EOS_STRUCT(EOS_Auth_Credentials, (
 	const char* Token;
 	/** Type of login. Needed to identify the auth method to use */
 	EOS_ELoginCredentialType Type;
-	/** 
+	/**
 	 * This field is for system specific options, if any.
 	 *
 	 * If provided, the structure will be located in (System)/eos_(system).h.
@@ -281,7 +292,7 @@ EOS_STRUCT(EOS_Auth_AccountFeatureRestrictedInfo, (
 /* Flags that describe user permissions */
 EOS_ENUM(EOS_EAuthScopeFlags,
 	EOS_AS_NoFlags = 0x0,
-	/** Permissions to see your account ID, display name, language and country */
+	/** Permissions to see your account ID, display name, and language */
 	EOS_AS_BasicProfile = 0x1,
 	/** Permissions to see a list of your friends who use this application */
 	EOS_AS_FriendsList = 0x2,
@@ -290,7 +301,9 @@ EOS_ENUM(EOS_EAuthScopeFlags,
 	/** Permissions to manage the Epic friends list. This scope is restricted to Epic first party products, and attempting to use it will result in authentication failures. */
 	EOS_AS_FriendsManagement = 0x8,
 	/** Permissions to see email in the response when fetching information for a user. This scope is restricted to Epic first party products, and attempting to use it will result in authentication failures. */
-	EOS_AS_Email = 0x10
+	EOS_AS_Email = 0x10,
+	/** Permissions to see your country */
+	EOS_AS_Country = 0x20
 );
 
 EOS_ENUM_BOOLEAN_OPERATORS(EOS_EAuthScopeFlags)
@@ -326,7 +339,7 @@ EOS_STRUCT(EOS_Auth_LoginCallbackInfo, (
 	EOS_ContinuanceToken ContinuanceToken;
 	/** If the user trying to login is restricted from doing so, the ResultCode of this structure will be EOS_Auth_AccountFeatureRestricted, and AccountFeatureRestrictedInfo will be populated with the data needed to get past the restriction */
 	const EOS_Auth_AccountFeatureRestrictedInfo* AccountFeatureRestrictedInfo;
-	/** 
+	/**
 	 * The Epic Account ID that has been previously selected to be used for the current application.
 	 * Applications should use this ID to authenticate with online backend services that store game-scoped data for users.
 	 *
@@ -408,7 +421,7 @@ EOS_STRUCT(EOS_Auth_LinkAccountOptions, (
 	 * Combination of the enumeration flags to specify how the account linking operation will be performed.
 	 */
 	EOS_ELinkAccountFlags LinkAccountFlags;
-	/** 
+	/**
 	 * Continuance token received from a previous call to the EOS_Auth_Login API.
 	 *
 	 * A continuance token is received in the case when the external account used for login was not found to be linked

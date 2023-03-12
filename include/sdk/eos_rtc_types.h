@@ -251,13 +251,21 @@ EOS_STRUCT(EOS_RTC_ParticipantStatusChangedCallbackInfo, (
 	/** What status change occurred */
 	EOS_ERTCParticipantStatus ParticipantStatus;
 	/** The participant metadata items count.
-	 * This is only set if ParticipantStatus is EOS_RTCPS_Joined
+	 * This is only set for the first notification where ParticipantStatus is EOS_RTCPS_Joined. Subsequent notifications
+	 * such as when bParticipantInBlocklist changes will not contain any metadata.
 	 */
 	uint32_t ParticipantMetadataCount;
 	/** The participant metadata items.
-	 * This is only set if ParticipantStatus is EOS_RTCPS_Joined
+	 * This is only set for the first notification where ParticipantStatus is EOS_RTCPS_Joined. Subsequent notifications
+	 * such as when bParticipantInBlocklist changes will not contain any metadata.
 	 */
 	const EOS_RTC_ParticipantMetadata* ParticipantMetadata;
+	/** The participant's block list status, if ParticipantStatus is EOS_RTCPS_Joined.
+	* This is set to true if the participant is in any of the local user's applicable block lists,
+	* such Epic block list or any of the current platform's block lists.
+	* It can be used to detect when an internal automatic RTC block is applied because of trust and safety restrictions.
+	*/
+	EOS_Bool bParticipantInBlocklist;
 ));
 
 EOS_DECLARE_CALLBACK(EOS_RTC_OnParticipantStatusChangedCallback, const EOS_RTC_ParticipantStatusChangedCallbackInfo* Data);

@@ -141,13 +141,14 @@ EOS_STRUCT(EOS_RTCAudio_AudioInputDeviceInfo, (
 	int32_t ApiVersion;
 	/** True if this is the default audio input device in the system. */
 	EOS_Bool bDefaultDevice;
-	/** 
-	 *  The persistent unique id of the device.
+	/**
+	 * The persistent unique id of the device.
+	 * The value can be cached - invalidated only when the audio device pool is changed.
+	 *
+	 * @see EOS_RTCAudio_AddNotifyAudioDevicesChanged
 	 */
 	const char* DeviceId;
-	/**
-	 * The name of the device
-	 */
+	/** Human-readable name of the device */
 	const char* DeviceName;
 ));
 
@@ -186,13 +187,14 @@ EOS_STRUCT(EOS_RTCAudio_AudioOutputDeviceInfo, (
 	int32_t ApiVersion;
 	/** True if this is the default audio output device in the system. */
 	EOS_Bool bDefaultDevice;
-	/** 
-	 *  The persistent unique id of the device.
+	/**
+	 * The persistent unique id of the device.
+	 * The value can be cached - invalidated only when the audio device pool is changed.
+	 * 
+	 * @see EOS_RTCAudio_AddNotifyAudioDevicesChanged
 	 */
 	const char* DeviceId;
-	/**
-	 * The name of the device
-	 */
+	/** The human readable name of the device */
 	const char* DeviceName;
 ));
 
@@ -207,9 +209,21 @@ EOS_STRUCT(EOS_RTCAudio_SetAudioInputSettingsOptions, (
 	int32_t ApiVersion;
 	/** The Product User ID of the user trying to request this operation. */
 	EOS_ProductUserId LocalUserId;
-	/** The device Id to be used for this user. Pass NULL or empty string to use default input device. */
+	/** 
+	 * The device Id to be used for this user. Pass NULL or empty string to use default input device.
+	 * 
+	 * If the device ID is invalid, the default device will be used instead.
+	 * Despite this fact, that device ID will be stored and the library will try to move on it when an audio device pool is being changed.
+	 * 
+	 * The actual hardware audio device usage depends on the current payload and optimized not to use it
+	 * when generated audio frames cannot be processed by someone else based on a scope of rules (For instance, when a client is alone in a room).
+	 * 
+	 * @see EOS_RTCAudio_AddNotifyAudioDevicesChanged
+	 */
 	const char* DeviceId;
-	/** The volume to be configured for this device (range 0.0 to 100.0).
+	/**
+	 * The volume to be used for all rooms of this user (range 0.0 to 100.0).
+	 * 
 	 * At the moment, the only value that produce any effect is 0.0 (silence). Any other value is ignored and causes no change to the volume.
 	 */
 	float Volume;
@@ -228,10 +242,23 @@ EOS_STRUCT(EOS_RTCAudio_SetAudioOutputSettingsOptions, (
 	int32_t ApiVersion;
 	/** The Product User ID of the user who initiated this request. */
 	EOS_ProductUserId LocalUserId;
-	/** The device Id to be used for this user. Pass NULL or empty string to use default output device. */
+	/** 
+	 * The device Id to be used for this user. Pass NULL or empty string to use default output device.
+	 * 
+	 * If the device ID is invalid, the default device will be used instead.
+	 * Despite of this fact, that device ID will be stored and the library will try to move on it when a device pool is being changed.
+	 * 
+	 * The actual hardware audio device usage depends on the current payload and optimized not to use it
+	 * when generated audio frames cannot be processed by someone else based on a scope of rules (For instance, when a client is alone in a room).
+	 * 
+	 * @see EOS_RTCAudio_AddNotifyAudioDevicesChanged
+	 * 
+	 */
 	const char* DeviceId;
-	/** The volume to be configured for this device (range 0.0 to 100.0). Volume 50 means that the audio volume is not modified
-	 * and stays in its source value.
+	/**
+	 * The volume to be used for all rooms of this user (range 0.0 to 100.0).
+	 *
+	 * Volume 50.0 means that the audio volume is not modified and stays in its source value.
 	 */
 	float Volume;
 ));
@@ -472,7 +499,7 @@ EOS_STRUCT(EOS_RTCAudio_UpdateSendingOptions, (
  */
 EOS_STRUCT(EOS_RTCAudio_UpdateSendingCallbackInfo, (
 	/** This returns:
-	 * EOS_Success if the channel was successfully blocked.
+	 * EOS_Success if sending of channels of the local user was successfully enabled/disabled.
 	 * EOS_UnexpectedError otherwise.
 	 */
 	EOS_EResult ResultCode;
@@ -515,7 +542,8 @@ EOS_STRUCT(EOS_RTCAudio_UpdateReceivingOptions, (
  */
 EOS_STRUCT(EOS_RTCAudio_UpdateReceivingCallbackInfo, (
 	/** This returns:
-	 * EOS_Success if the users were successfully unblocked.
+	 * EOS_Success if receiving of channels of remote users was successfully enabled/disabled.
+     * EOS_NotFound if the participant isn't found by ParticipantId.
 	 * EOS_UnexpectedError otherwise.
 	 */
 	EOS_EResult ResultCode;
@@ -535,5 +563,136 @@ EOS_STRUCT(EOS_RTCAudio_UpdateReceivingCallbackInfo, (
  * Callback for completion of update receiving request
  */
 EOS_DECLARE_CALLBACK(EOS_RTCAudio_OnUpdateReceivingCallback, const EOS_RTCAudio_UpdateReceivingCallbackInfo* Data);
+
+/** The most recent version of the EOS_RTCAudio_UpdateSendingVolume API. */
+#define EOS_RTCAUDIO_UPDATESENDINGVOLUME_API_LATEST 1
+
+/**
+ * This struct is passed in with a call to EOS_RTCAudio_UpdateSendingVolume
+ */
+EOS_STRUCT(EOS_RTCAudio_UpdateSendingVolumeOptions, (
+	/** API Version: Set this to EOS_RTCAUDIO_UPDATESENDINGVOLUME_API_LATEST. */
+	int32_t ApiVersion;
+	/** The Product User ID of the user trying to request this operation. */
+	EOS_ProductUserId LocalUserId;
+	/** The room this settings should be applied on. */
+	const char* RoomName;
+	/** The volume to be set for sent audio (range 0.0 to 100.0). Volume 50 means that the audio volume is not modified
+	 * and stays in its source value. */
+	float Volume;
+));
+
+/**
+ * This struct is passed in with a call to EOS_RTCAudio_OnUpdateSendingVolumeCallback.
+ */
+EOS_STRUCT(EOS_RTCAudio_UpdateSendingVolumeCallbackInfo, (
+	/** This returns:
+	 * EOS_Success if sending volume of channels of the local user was successfully changed.
+	 * EOS_UnexpectedError otherwise.
+	 */
+	EOS_EResult ResultCode;
+	/** Client-specified data passed into EOS_RTCAudio_UpdateSendingVolume. */
+	void* ClientData;
+	/** The Product User ID of the user who initiated this request. */
+	EOS_ProductUserId LocalUserId;
+	/** The room this settings should be applied on. */
+	const char* RoomName;
+	/** The volume that was set for sent audio (range 0.0 to 100.0). */
+	float Volume;
+));
+
+/**
+ * Callback for completion of update sending volume request.
+ */
+EOS_DECLARE_CALLBACK(EOS_RTCAudio_OnUpdateSendingVolumeCallback, const EOS_RTCAudio_UpdateSendingVolumeCallbackInfo* Data);
+
+/** The most recent version of the EOS_RTCAudio_UpdateReceivingVolume API. */
+#define EOS_RTCAUDIO_UPDATERECEIVINGVOLUME_API_LATEST 1
+
+/**
+ * This struct is passed in with a call to EOS_RTCAudio_UpdateReceivingVolume
+ */
+EOS_STRUCT(EOS_RTCAudio_UpdateReceivingVolumeOptions, (
+	/** API Version: Set this to EOS_RTCAUDIO_UPDATERECEIVINGVOLUME_API_LATEST. */
+	int32_t ApiVersion;
+	/** The Product User ID of the user trying to request this operation. */
+	EOS_ProductUserId LocalUserId;
+	/** The room this settings should be applied on. */
+	const char* RoomName;
+	/** The volume to be set for received audio (range 0.0 to 100.0). Volume 50 means that the audio volume is not modified
+	 * and stays in its source value. */
+	float Volume;
+));
+
+/**
+ * This struct is passed in with a call to EOS_RTCAudio_OnUpdateReceivingVolumeCallback.
+ */
+EOS_STRUCT(EOS_RTCAudio_UpdateReceivingVolumeCallbackInfo, (
+	/** This returns:
+	 * EOS_Success if receiving volume of channels of the local user was successfully changed.
+	 * EOS_UnexpectedError otherwise.
+	 */
+	EOS_EResult ResultCode;
+	/** Client-specified data passed into EOS_RTCAudio_UpdateReceivingVolume. */
+	void* ClientData;
+	/** The Product User ID of the user who initiated this request. */
+	EOS_ProductUserId LocalUserId;
+	/** The room this settings should be applied on. */
+	const char* RoomName;
+	/** The volume that was set for received audio (range 0.0 to 100.0). */
+	float Volume;
+));
+
+/**
+ * Callback for completion of update receiving volume request.
+ */
+EOS_DECLARE_CALLBACK(EOS_RTCAudio_OnUpdateReceivingVolumeCallback, const EOS_RTCAudio_UpdateReceivingVolumeCallbackInfo* Data);
+
+
+/** The most recent version of the EOS_RTCAudio_UpdateParticipantVolume API. */
+#define EOS_RTCAUDIO_UPDATEPARTICIPANTVOLUME_API_LATEST 1
+
+/**
+ * This struct is passed in with a call to EOS_RTCAudio_UpdateParticipantVolume
+ */
+EOS_STRUCT(EOS_RTCAudio_UpdateParticipantVolumeOptions, (
+	/** API Version: Set this to EOS_RTCAUDIO_UPDATEPARTICIPANTVOLUME_API_LATEST. */
+	int32_t ApiVersion;
+	/** The Product User ID of the user trying to request this operation. */
+	EOS_ProductUserId LocalUserId;
+	/** The room this settings should be applied on. */
+	const char* RoomName;
+	/** The participant to modify or null to update the global configuration */
+	EOS_ProductUserId ParticipantId;
+	/** The volume to be set for received audio (range 0.0 to 100.0). Volume 50 means that the audio volume is not modified
+	 * and stays in its source value. */
+	float Volume;
+));
+
+/**
+ * This struct is passed in with a call to EOS_RTCAudio_OnUpdateParticipantVolumeCallback.
+ */
+EOS_STRUCT(EOS_RTCAudio_UpdateParticipantVolumeCallbackInfo, (
+	/** This returns:
+	 * EOS_Success if volume of remote participant audio was successfully changed.
+	 * EOS_UnexpectedError otherwise.
+	 */
+	EOS_EResult ResultCode;
+	/** Client-specified data passed into EOS_RTCAudio_UpdateParticipantVolume. */
+	void* ClientData;
+	/** The Product User ID of the user who initiated this request. */
+	EOS_ProductUserId LocalUserId;
+	/** The room this settings should be applied on. */
+	const char* RoomName;
+	/** The participant to modify or null to update the global configuration */
+	EOS_ProductUserId ParticipantId;
+	/** The volume that was set for received audio (range 0.0 to 100.0). */
+	float Volume;
+));
+
+/**
+ * Callback for completion of update participant volume request.
+ */
+EOS_DECLARE_CALLBACK(EOS_RTCAudio_OnUpdateParticipantVolumeCallback, const EOS_RTCAudio_UpdateParticipantVolumeCallbackInfo* Data);
 
 #pragma pack(pop)

@@ -36,6 +36,9 @@ EOS_ENUM(EOS_ENATType,
 /** The most recent version of the EOS_P2P_SocketId structure. */
 #define EOS_P2P_SOCKETID_API_LATEST 1
 
+/** The total buffer size of a EOS_P2P_SocketId SocketName, including space for the null-terminator */
+#define EOS_P2P_SOCKETID_SOCKETNAME_SIZE 33
+
 /**
  * P2P Socket ID
  *
@@ -49,8 +52,8 @@ EOS_ENUM(EOS_ENATType,
 EOS_STRUCT(EOS_P2P_SocketId, (
 	/** API Version: Set this to EOS_P2P_SOCKETID_API_LATEST. */
 	int32_t ApiVersion;
-	/** A name for the connection. Must be a NULL-terminated string of between 1-32 alpha-numeric characters (A-Z, a-z, 0-9) */
-	char SocketName[33];
+	/** A name for the connection. Must be a NULL-terminated string of between 1-32 alpha-numeric characters (A-Z, a-z, 0-9, '-', '_', ' ', '+', '=', '.') */
+	char SocketName[EOS_P2P_SOCKETID_SOCKETNAME_SIZE];
 ));
 
 /**
@@ -69,7 +72,7 @@ EOS_ENUM(EOS_EPacketReliability,
 );
 
 /** The most recent version of the EOS_P2P_SendPacket API. */
-#define EOS_P2P_SENDPACKET_API_LATEST 2
+#define EOS_P2P_SENDPACKET_API_LATEST 3
 
 /**
  * Structure containing information about the data being sent and to which player
@@ -93,6 +96,12 @@ EOS_STRUCT(EOS_P2P_SendPacketOptions, (
 	EOS_Bool bAllowDelayedDelivery;
 	/** Setting to control the delivery reliability of this packet */
 	EOS_EPacketReliability Reliability;
+	/**
+	 * If set to EOS_TRUE, EOS_P2P_SendPacket will not automatically establish a connection with the RemoteUserId and will require explicit calls to
+	 * EOS_P2P_AcceptConnection first whenever the connection is closed. If set to EOS_FALSE, EOS_P2P_SendPacket will automatically accept and start
+	 * the connection any time it is called and the connection is not already open.
+	 */
+	EOS_Bool bDisableAutoAcceptConnection;
 ));
 
 /** The most recent version of the EOS_P2P_GetNextReceivedPacketSize API. */
@@ -162,6 +171,102 @@ EOS_STRUCT(EOS_P2P_OnIncomingConnectionRequestInfo, (
  */
 EOS_DECLARE_CALLBACK(EOS_P2P_OnIncomingConnectionRequestCallback, const EOS_P2P_OnIncomingConnectionRequestInfo* Data);
 
+/** The most recent version of the EOS_P2P_AddNotifyPeerConnectionEstablished API. */
+#define EOS_P2P_ADDNOTIFYPEERCONNECTIONESTABLISHED_API_LATEST 1
+
+/**
+ * Structure containing information about which connections should be notified
+ */
+EOS_STRUCT(EOS_P2P_AddNotifyPeerConnectionEstablishedOptions, (
+	/** API Version: Set this to EOS_P2P_ADDNOTIFYPEERCONNECTIONESTABLISHED_API_LATEST. */
+	int32_t ApiVersion;
+	/** The Product User ID of the local user who would like to receive notifications */
+	EOS_ProductUserId LocalUserId;
+	/** The optional socket ID, used as a filter for established connections. If NULL, this function handler will be called for all sockets */
+	const EOS_P2P_SocketId* SocketId;
+));
+
+/**
+ * Type of established connection
+ */
+EOS_ENUM(EOS_EConnectionEstablishedType,
+	/** The connection is brand new */
+	EOS_CET_NewConnection = 0,
+	/** The connection is reestablished (reconnection) */
+	EOS_CET_Reconnection = 1
+);
+
+/**
+ * Types of network connections.
+ */
+EOS_ENUM(EOS_ENetworkConnectionType,
+	/** There is no established connection */
+	EOS_NCT_NoConnection = 0,
+	/** A direct connection to the peer over the Internet or Local Network */
+	EOS_NCT_DirectConnection = 1,
+	/** A relayed connection using Epic-provided servers to the peer over the Internet */
+	EOS_NCT_RelayedConnection = 2
+);
+
+/**
+ * Structure containing information about a connection being established
+ */
+EOS_STRUCT(EOS_P2P_OnPeerConnectionEstablishedInfo, (
+	/** Client-specified data passed into EOS_P2P_AddNotifyPeerConnectionEstablished */
+	void* ClientData;
+	/** The Product User ID of the local user who is being notified of a connection being established */
+	EOS_ProductUserId LocalUserId;
+	/** The Product User ID of the remote user who this connection was with */
+	EOS_ProductUserId RemoteUserId;
+	/** The socket ID of the connection being established */
+	const EOS_P2P_SocketId* SocketId;
+	/** Information if this is a new connection or reconnection */
+	EOS_EConnectionEstablishedType ConnectionType;
+	/** What type of network connection is being used for this connection */
+	EOS_ENetworkConnectionType NetworkType;
+));
+
+/**
+ * Callback for information related to new connections being established
+ */
+EOS_DECLARE_CALLBACK(EOS_P2P_OnPeerConnectionEstablishedCallback, const EOS_P2P_OnPeerConnectionEstablishedInfo* Data);
+
+
+/** The most recent version of the EOS_P2P_AddNotifyPeerConnectionInterrupted API. */
+#define EOS_P2P_ADDNOTIFYPEERCONNECTIONINTERRUPTED_API_LATEST 1
+
+/**
+ * Structure containing information about who would like notifications about interrupted connections, and for which socket.
+ */
+EOS_STRUCT(EOS_P2P_AddNotifyPeerConnectionInterruptedOptions, (
+	/** API Version: Set this to EOS_P2P_ADDNOTIFYPEERCONNECTIONINTERRUPTED_API_LATEST. */
+	int32_t ApiVersion;
+	/** The Product User ID of the local user who would like notifications */
+	EOS_ProductUserId LocalUserId;
+	/** An optional socket ID to filter interrupted connections on. If NULL, this function handler will be called for all interrupted connections */
+	const EOS_P2P_SocketId* SocketId;
+));
+
+/**
+ * Structure containing information about an connection request that is that was interrupted.
+ */
+EOS_STRUCT(EOS_P2P_OnPeerConnectionInterruptedInfo, (
+	/** Client-specified data passed into EOS_Presence_AddNotifyOnPresenceChanged */
+	void* ClientData;
+	/** The local user who is being notified of a connection that was interrupted */
+	EOS_ProductUserId LocalUserId;
+	/** The Product User ID of the remote user who this connection was with */
+	EOS_ProductUserId RemoteUserId;
+	/** The socket ID of the connection that was interrupted */
+	const EOS_P2P_SocketId* SocketId;
+));
+
+
+/**
+ * Callback for information related to open connections that are interrupted.
+ */
+EOS_DECLARE_CALLBACK(EOS_P2P_OnPeerConnectionInterruptedCallback, const EOS_P2P_OnPeerConnectionInterruptedInfo* Data);
+
 /** The most recent version of the EOS_P2P_AddNotifyPeerConnectionClosed API. */
 #define EOS_P2P_ADDNOTIFYPEERCONNECTIONCLOSED_API_LATEST 1
 
@@ -173,7 +278,7 @@ EOS_STRUCT(EOS_P2P_AddNotifyPeerConnectionClosedOptions, (
 	int32_t ApiVersion;
 	/** The Product User ID of the local user who would like notifications */
 	EOS_ProductUserId LocalUserId;
-	/** The optional socket ID to listen for to be closed. If NULL, this handler will be called for all closed connections */
+	/** The optional socket ID to listen for to be closed. If NULL, this function handler will be called for all closed connections */
 	const EOS_P2P_SocketId* SocketId;
 ));
 
@@ -181,27 +286,27 @@ EOS_STRUCT(EOS_P2P_AddNotifyPeerConnectionClosedOptions, (
  * Reasons why a P2P connection was closed
  */
 EOS_ENUM(EOS_EConnectionClosedReason,
-	/** The connection was closed for unknown reasons */
+	/** The connection was closed for unknown reasons. This most notably happens during application shutdown. */
 	EOS_CCR_Unknown = 0,
-	/** The connection was gracefully closed by the local user */
+	/** The connection was at least locally accepted, but was closed by the local user via a call to EOS_P2P_CloseConnection / EOS_P2P_CloseConnections. */
 	EOS_CCR_ClosedByLocalUser = 1,
-	/** The connection was gracefully closed by the remote user */
+	/** The connection was at least locally accepted, but was gracefully closed by the remote user via a call to EOS_P2P_CloseConnection / EOS_P2P_CloseConnections. */
 	EOS_CCR_ClosedByPeer = 2,
-	/** The connection timed out */
+	/** The connection was at least locally accepted, but was not remotely accepted in time. */
 	EOS_CCR_TimedOut = 3,
-	/** The connection could not be created due to too many other connections */
+	/** The connection was accepted, but the connection could not be created due to too many other existing connections */
 	EOS_CCR_TooManyConnections = 4,
-	/** The remote user sent an invalid message */
+	/** The connection was accepted, The remote user sent an invalid message */
 	EOS_CCR_InvalidMessage = 5,
-	/** The remote user sent us invalid data */
+	/** The connection was accepted, but the remote user sent us invalid data */
 	EOS_CCR_InvalidData = 6,
-	/** We failed to establish a connection with the remote user */
+	/** The connection was accepted, but we failed to ever establish a connection with the remote user due to connectivity issues. */
 	EOS_CCR_ConnectionFailed = 7,
-	/** The connection was unexpectedly closed */
+	/** The connection was accepted and established, but the peer silently went away. */
 	EOS_CCR_ConnectionClosed = 8,
-	/** We failed to negotiate a connection with the remote user */
+	/** The connection was locally accepted, but we failed to negotiate a connection with the remote user. This most commonly occurs if the local user goes offline or is logged-out during the connection process. */
 	EOS_CCR_NegotiationFailed = 9,
-	/** There was an unexpected error and the connection cannot continue */
+	/** The connection was accepted, but there was an internal error occurred and the connection cannot be created or continue. */
 	EOS_CCR_UnexpectedError = 10
 );
 
@@ -225,52 +330,6 @@ EOS_STRUCT(EOS_P2P_OnRemoteConnectionClosedInfo, (
  * Callback for information related to open connections being closed.
  */
 EOS_DECLARE_CALLBACK(EOS_P2P_OnRemoteConnectionClosedCallback, const EOS_P2P_OnRemoteConnectionClosedInfo* Data);
-
-/** The most recent version of the EOS_P2P_AddNotifyPeerConnectionEstablished API. */
-#define EOS_P2P_ADDNOTIFYPEERCONNECTIONESTABLISHED_API_LATEST 1
-
-/**
- * Structure containing information about which connections should be notified
- */
-EOS_STRUCT(EOS_P2P_AddNotifyPeerConnectionEstablishedOptions, (
-	/** API Version: Set this to EOS_P2P_ADDNOTIFYPEERCONNECTIONESTABLISHED_API_LATEST. */
-	int32_t ApiVersion;
-	/** The Product User ID of the local user who would like to receive notifications */
-	EOS_ProductUserId LocalUserId;
-	/** The optional socket ID, used as a filter for established connections. If NULL, this handler will be called for all sockets */
-	const EOS_P2P_SocketId* SocketId;
-));
-
-/**
- * Type of established connection
- */
-EOS_ENUM(EOS_EConnectionEstablishedType,
-	/** The connection is brand new */
-	EOS_CET_NewConnection = 0,
-	/** The connection is reestablished (reconnection) */
-	EOS_CET_Reconnection = 1
-);
-
-/**
- * Structure containing information about a connection being established
- */
-EOS_STRUCT(EOS_P2P_OnPeerConnectionEstablishedInfo, (
-	/** Client-specified data passed into EOS_P2P_AddNotifyPeerConnectionEstablished */
-	void* ClientData;
-	/** The Product User ID of the local user who is being notified of a connection being established */
-	EOS_ProductUserId LocalUserId;
-	/** The Product User ID of the remote user who this connection was with */
-	EOS_ProductUserId RemoteUserId;
-	/** The socket ID of the connection being established */
-	const EOS_P2P_SocketId* SocketId;
-	/** Information if this is a new connection or reconnection */
-	EOS_EConnectionEstablishedType ConnectionType;
-));
-
-/**
- * Callback for information related to new connections being established
- */
-EOS_DECLARE_CALLBACK(EOS_P2P_OnPeerConnectionEstablishedCallback, const EOS_P2P_OnPeerConnectionEstablishedInfo* Data);
 
 /** The most recent version of the EOS_P2P_AcceptConnection API. */
 #define EOS_P2P_ACCEPTCONNECTION_API_LATEST 1
@@ -353,7 +412,7 @@ EOS_DECLARE_CALLBACK(EOS_P2P_OnQueryNATTypeCompleteCallback, const EOS_P2P_OnQue
 #define EOS_P2P_GETNATTYPE_API_LATEST 1
 
 /**
- * Structure containing information needed to get perviously queried NAT-types
+ * Structure containing information needed to get previously queried NAT-types
  */
 EOS_STRUCT(EOS_P2P_GetNATTypeOptions, (
 	/** API Version: Set this to EOS_P2P_GETNATTYPE_API_LATEST. */
@@ -361,7 +420,18 @@ EOS_STRUCT(EOS_P2P_GetNATTypeOptions, (
 ));
 
 /**
- * Setting for controlling whether relay servers are used
+ * Setting for controlling whether relay servers are used.
+ *
+ * Please see the following EOS_ERelayControl value compatibility-chart to better understand how changing this value
+ * can affect compatibility between clients with different settings.
+ *
+ * +------------------------------+---------------------+-------------------------------+---------------------+
+ * |                              |   EOS_RC_NoRelays   |  EOS_RC_AllowRelays (Default) |  EOS_RC_ForceRelays |
+ * +------------------------------+---------------------+-------------------------------+---------------------+
+ * | EOS_RC_NoRelays              |  Compatible         |  Compatible                   |  Connection Failure |
+ * | EOS_RC_AllowRelays (Default) |  Compatible         |  Compatible                   |  Compatible         |
+ * | EOS_RC_ForceRelays           |  Connection Failure |  Compatible                   |  Compatible         |
+ * +------------------------------+---------------------+-------------------------------+---------------------+
  */
 EOS_ENUM(EOS_ERelayControl,
 	/** Peer connections will never attempt to use relay servers. Clients with restrictive NATs may not be able to connect to peers. */
@@ -383,7 +453,7 @@ EOS_STRUCT(EOS_P2P_SetRelayControlOptions, (
 	int32_t ApiVersion;
 	/**
 	 * The requested level of relay servers for P2P connections. This setting is only applied to new P2P connections, or when existing P2P connections
-	 * reconnect during a temporary connectivity outage. Peers with an incompatible setting to the local setting will not be able to connnect.
+	 * reconnect during a temporary connectivity outage. Peers with an incompatible setting to the local setting will not be able to connect.
 	 */
 	EOS_ERelayControl RelayControl;
 ));

@@ -47,6 +47,17 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_QueryOwnershipToken(EOS_HEcom Handle, const EOS_
 EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlements(EOS_HEcom Handle, const EOS_Ecom_QueryEntitlementsOptions* Options, void* ClientData, const EOS_Ecom_OnQueryEntitlementsCallback CompletionDelegate);
 
 /**
+ * Query the entitlement verification status defined with Epic Online Services.
+ * An optional set of entitlement names can be provided to filter the set of entitlements associated with the account.
+ * The data is return via the callback in the form of a signed JWT that should be verified by an external backend server using a public key for authenticity.
+ *
+ * @param Options structure containing the account and catalog item IDs to retrieve in token form
+ * @param ClientData arbitrary data that is passed back to you in the CompletionDelegate
+ * @param CompletionDelegate a callback that is fired when the async operation completes, either successfully or in error
+ */
+EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlementToken(EOS_HEcom Handle, const EOS_Ecom_QueryEntitlementTokenOptions* Options, void* ClientData, const EOS_Ecom_OnQueryEntitlementTokenCallback CompletionDelegate);
+
+/**
  * Query for a list of catalog offers defined with Epic Online Services.
  * This data will be cached for a limited time and retrieved again from the backend when necessary.
  *
@@ -79,6 +90,35 @@ EOS_DECLARE_FUNC(void) EOS_Ecom_Checkout(EOS_HEcom Handle, const EOS_Ecom_Checko
  * @param CompletionDelegate a callback that is fired when the async operation completes, either successfully or in error
  */
 EOS_DECLARE_FUNC(void) EOS_Ecom_RedeemEntitlements(EOS_HEcom Handle, const EOS_Ecom_RedeemEntitlementsOptions* Options, void* ClientData, const EOS_Ecom_OnRedeemEntitlementsCallback CompletionDelegate);
+
+/**
+ * Fetch the number of entitlements that were redeemed during the last EOS_Ecom_RedeemEntitlements call.
+ *
+ * @param Options structure containing the Epic Account ID
+ *
+ * @see EOS_Ecom_CopyLastRedeemedEntitlementByIndex
+ *
+ * @return the number of the redeemed entitlements.
+ */
+EOS_DECLARE_FUNC(uint32_t) EOS_Ecom_GetLastRedeemedEntitlementsCount(EOS_HEcom Handle, const EOS_Ecom_GetLastRedeemedEntitlementsCountOptions* Options);
+
+/**
+ * Fetches a redeemed entitlement id from a given index.
+ * Only entitlements that were redeemed during the last EOS_Ecom_RedeemEntitlements call can be copied.
+ *
+ * @param Options structure containing the Epic Account ID and index being accessed
+ * @param OutRedeemedEntitlementId The ID of the redeemed entitlement. Must be long enough to hold a string of EOS_ECOM_ENTITLEMENTID_MAX_LENGTH.
+ * @param InOutRedeemedEntitlementIdLength The size of the OutRedeemedEntitlementId in characters.
+ *										   The input buffer should include enough space to be null-terminated.
+ *										   When the function returns, this parameter will be filled with the length of the string copied into OutRedeemedEntitlementId.
+ *
+ * @return EOS_Success if the information is available and passed out in OutRedeemedEntitlementId
+ *         EOS_InvalidParameters if you pass a null pointer for the out parameter
+ *         EOS_NotFound if the entitlement id is not found
+ *
+ * @see EOS_ECOM_ENTITLEMENTID_MAX_LENGTH
+ */
+EOS_DECLARE_FUNC(EOS_EResult) EOS_Ecom_CopyLastRedeemedEntitlementByIndex(EOS_HEcom Handle, const EOS_Ecom_CopyLastRedeemedEntitlementByIndexOptions* Options, char* OutRedeemedEntitlementId, int32_t* InOutRedeemedEntitlementIdLength);
 
 /**
  * Fetch the number of entitlements that are cached for a given local user.

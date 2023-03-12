@@ -57,14 +57,14 @@ EOS_STRUCT(EOS_AntiCheatServer_AddNotifyClientAuthStatusChangedOptions, (
 EOS_STRUCT(EOS_AntiCheatServer_BeginSessionOptions, (
 	/** API Version: Set this to EOS_ANTICHEATSERVER_BEGINSESSION_API_LATEST. */
 	int32_t ApiVersion;
-	/** 
+	/**
 	 * Time in seconds to allow newly registered clients to complete anti-cheat authentication.
 	 * Recommended value: 60
 	 */
 	uint32_t RegisterTimeoutSeconds;
 	/** Optional name of this game server */
 	const char* ServerName;
-	/** 
+	/**
 	 * Gameplay data collection APIs such as LogPlayerTick will be enabled if set to true.
 	 * If you do not use these APIs, it is more efficient to set this value to false.
 	 */
@@ -79,7 +79,7 @@ EOS_STRUCT(EOS_AntiCheatServer_EndSessionOptions, (
 	int32_t ApiVersion;
 ));
 
-#define EOS_ANTICHEATSERVER_REGISTERCLIENT_API_LATEST 1
+#define EOS_ANTICHEATSERVER_REGISTERCLIENT_API_LATEST 2
 EOS_STRUCT(EOS_AntiCheatServer_RegisterClientOptions, (
 	/** API Version: Set this to EOS_ANTICHEATSERVER_REGISTERCLIENT_API_LATEST. */
 	int32_t ApiVersion;
@@ -89,19 +89,23 @@ EOS_STRUCT(EOS_AntiCheatServer_RegisterClientOptions, (
 	EOS_EAntiCheatCommonClientType ClientType;
 	/** Remote user's platform, if known */
 	EOS_EAntiCheatCommonClientPlatform ClientPlatform;
-	/** 
+	/**
+	 * DEPRECATED - New code should set this to null and specify UserId instead.
+	 * 
 	 * Identifier for the remote user. This is typically a string representation of an
 	 * account ID, but it can be any string which is both unique (two different users will never
 	 * have the same string) and consistent (if the same user connects to this game session
 	 * twice, the same string will be used) in the scope of a single protected game session.
 	 */
-	const char* AccountId;
-	/** 
+	const char* AccountId_DEPRECATED;
+	/**
 	 * Optional IP address for the remote user. May be null if not available.
 	 * IPv4 format: "0.0.0.0"
 	 * IPv6 format: "0:0:0:0:0:0:0:0"
 	 */
 	const char* IpAddress;
+	/** The Product User ID for the remote user who is being registered. */
+	EOS_ProductUserId UserId;
 ));
 
 #define EOS_ANTICHEATSERVER_UNREGISTERCLIENT_API_LATEST 1
@@ -116,7 +120,7 @@ EOS_STRUCT(EOS_AntiCheatServer_UnregisterClientOptions, (
 EOS_STRUCT(EOS_AntiCheatServer_ReceiveMessageFromClientOptions, (
 	/** API Version: Set this to EOS_ANTICHEATSERVER_RECEIVEMESSAGEFROMCLIENT_API_LATEST. */
 	int32_t ApiVersion;
-	/** Optional value, if non-null then only messages addressed to this specific client will be returned */
+	/** Locally unique value describing the corresponding remote user, as previously passed to RegisterClient */
 	EOS_AntiCheatCommon_ClientHandle ClientHandle;
 	/** The size of the data received */
 	uint32_t DataLengthBytes;

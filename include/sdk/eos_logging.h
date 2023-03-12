@@ -74,8 +74,8 @@ EOS_ENUM(EOS_ELogCategory,
 	EOS_LC_Leaderboards = 19,
 	/** Logs related to an internal Keychain feature that the authentication interfaces use */
 	EOS_LC_Keychain = 20,
-	/** Logs related to external identity providers */
-	EOS_LC_IdentityProvider = 21,
+	/** Logs related to integrated platforms */
+	EOS_LC_IntegratedPlatform = 21,
 	/** Logs related to Title Storage */
 	EOS_LC_TitleStorage = 22,
 	/** Logs related to the Mods service */
@@ -94,12 +94,8 @@ EOS_ENUM(EOS_ELogCategory,
 	EOS_LC_RTC = 29,
 	/** Logs related to the RTC Admin API */
 	EOS_LC_RTCAdmin = 30,
-	/** Logs related to the Inventory service */
-	EOS_LC_Inventory = 31,
-	/** Logs related to the Receipt Validator API */
-	EOS_LC_ReceiptValidator = 32,
 	/** Logs related to the Custom Invites API */
-	EOS_LC_CustomInvites = 33,
+	EOS_LC_CustomInvites = 31,
 
 	/** Not a real log category. Used by EOS_Logging_SetLogLevel to set the log level for all categories at the same time */
 	EOS_LC_ALL_CATEGORIES = 0x7fffffff

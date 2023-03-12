@@ -84,6 +84,26 @@ EOS_DECLARE_FUNC(EOS_NotificationId) EOS_AntiCheatClient_AddNotifyPeerAuthStatus
 EOS_DECLARE_FUNC(void) EOS_AntiCheatClient_RemoveNotifyPeerAuthStatusChanged(EOS_HAntiCheatClient Handle, EOS_NotificationId NotificationId);
 
 /**
+ * Add a callback when a message must be displayed to the local client informing them on a local integrity violation,
+ * which will prevent further online play.
+ * Mode: Any.
+ *
+ * @param Options Structure containing input data
+ * @param ClientData This value is returned to the caller when NotificationFn is invoked
+ * @param NotificationFn The callback to be fired
+ * @return A valid notification ID if successfully bound, or EOS_INVALID_NOTIFICATIONID otherwise
+ */
+EOS_DECLARE_FUNC(EOS_NotificationId) EOS_AntiCheatClient_AddNotifyClientIntegrityViolated(EOS_HAntiCheatClient Handle, const EOS_AntiCheatClient_AddNotifyClientIntegrityViolatedOptions* Options, void* ClientData, EOS_AntiCheatClient_OnClientIntegrityViolatedCallback NotificationFn);
+
+/**
+ * Remove a previously bound EOS_AntiCheatClient_AddNotifyClientIntegrityViolated handler.
+ * Mode: Any.
+ *
+ * @param NotificationId The previously bound notification ID
+ */
+EOS_DECLARE_FUNC(void) EOS_AntiCheatClient_RemoveNotifyClientIntegrityViolated(EOS_HAntiCheatClient Handle, EOS_NotificationId NotificationId);
+
+/**
  * Begins a multiplayer game session. After this call returns successfully, the client is ready to exchange
  * anti-cheat messages with a game server or peer(s). When leaving one game session and connecting to a
  * different one, a new anti-cheat session must be created by calling EOS_AntiCheatClient_EndSession and EOS_AntiCheatClient_BeginSession again.
@@ -124,6 +144,10 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_AntiCheatClient_EndSession(EOS_HAntiCheatClien
  * session until after restarting the game. Note that this function returns EOS_NotFound
  * when everything is normal and there is no violation to display.
  *
+ * NOTE: This API is deprecated. In order to get client status updates,
+ * use AddNotifyClientIntegrityViolated to register a callback that will
+ * be called when violations are triggered.
+ *
  * @param Options Structure containing input data.
  * @param OutViolationType On success, receives a code describing the violation that occurred.
  * @param OutMessage On success, receives a string describing the violation which should be displayed to the user.
@@ -154,6 +178,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_AntiCheatClient_AddExternalIntegrityCatalog(EO
  *
  * @return EOS_Success - If the message was processed successfully
  *         EOS_InvalidParameters - If input data was invalid
+ *         EOS_InvalidRequest - If message contents were corrupt and could not be processed
  *         EOS_AntiCheat_InvalidMode - If the current mode does not support this function
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_AntiCheatClient_ReceiveMessageFromServer(EOS_HAntiCheatClient Handle, const EOS_AntiCheatClient_ReceiveMessageFromServerOptions* Options);
@@ -165,7 +190,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_AntiCheatClient_ReceiveMessageFromServer(EOS_H
  * Mode: EOS_ACCM_ClientServer.
  *
  * @param Options Structure containing input data.
- * @param OutBufferSizeBytes On success, the OutBuffer length in bytes that is required to call ProtectMessage on the given input size.
+ * @param OutBufferLengthBytes On success, the OutBuffer length in bytes that is required to call ProtectMessage on the given input size.
  *
  * @return EOS_Success - If the output length was calculated successfully
  *         EOS_InvalidParameters - If input data was invalid

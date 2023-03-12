@@ -6,7 +6,7 @@
 /**
  * The RTC Audio Interface. This is used to manage Audio specific RTC features
  *
- * @see EOS_RTC_GetVoiceInterface
+ * @see EOS_RTC_GetAudioInterface
  */
 
 /**
@@ -110,7 +110,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_RTCAudio_SetAudioOutputSettings(EOS_HRTCAudio 
 EOS_DECLARE_FUNC(EOS_EResult) EOS_RTCAudio_SendAudio(EOS_HRTCAudio Handle, const EOS_RTCAudio_SendAudioOptions* Options);
 
 /**
- * Use this function to tweak outgoing audio options per room.
+ * Use this function to tweak outgoing audio options for a room.
  *
  * @note Due to internal implementation details, this function requires that you first register to any notification for room
  *
@@ -124,7 +124,7 @@ EOS_DECLARE_FUNC(EOS_EResult) EOS_RTCAudio_SendAudio(EOS_HRTCAudio Handle, const
 EOS_DECLARE_FUNC(void) EOS_RTCAudio_UpdateSending(EOS_HRTCAudio Handle, const EOS_RTCAudio_UpdateSendingOptions* Options, void* ClientData, const EOS_RTCAudio_OnUpdateSendingCallback CompletionDelegate);
 
 /**
- * Use this function to tweak incoming audio options per room.
+ * Use this function to tweak incoming audio options for a room.
  *
  * @note Due to internal implementation details, this function requires that you first register to any notification for room
  *
@@ -136,6 +136,48 @@ EOS_DECLARE_FUNC(void) EOS_RTCAudio_UpdateSending(EOS_HRTCAudio Handle, const EO
  *         EOS_NotFound if either the local user or specified participant are not in the room
  */
 EOS_DECLARE_FUNC(void) EOS_RTCAudio_UpdateReceiving(EOS_HRTCAudio Handle, const EOS_RTCAudio_UpdateReceivingOptions* Options, void* ClientData, const EOS_RTCAudio_OnUpdateReceivingCallback CompletionDelegate);
+
+/**
+ * Use this function to change outgoing audio volume for a room.
+ *
+ * @note Due to internal implementation details, this function requires that you first register to any notification for room
+ *
+ * @param Options structure containing the parameters for the operation.
+ * @param ClientData Arbitrary data that is passed back in the CompletionDelegate
+ * @param CompletionDelegate The callback to be fired when the operation completes, either successfully or in error
+ * @return EOS_Success if the operation succeeded
+ *         EOS_InvalidParameters if any of the parameters are incorrect
+ *         EOS_NotFound if the local user is not in the room
+ */
+EOS_DECLARE_FUNC(void) EOS_RTCAudio_UpdateSendingVolume(EOS_HRTCAudio Handle, const EOS_RTCAudio_UpdateSendingVolumeOptions* Options, void* ClientData, const EOS_RTCAudio_OnUpdateSendingVolumeCallback CompletionDelegate);
+
+/**
+ * Use this function to change incoming audio volume for a room.
+ *
+ * @note Due to internal implementation details, this function requires that you first register to any notification for room
+ *
+ * @param Options structure containing the parameters for the operation.
+ * @param ClientData Arbitrary data that is passed back in the CompletionDelegate
+ * @param CompletionDelegate The callback to be fired when the operation completes, either successfully or on error
+ * @return EOS_Success if the operation succeeded
+ *         EOS_InvalidParameters if any of the parameters are incorrect
+ *         EOS_NotFound if the local user is not in the room
+ */
+EOS_DECLARE_FUNC(void) EOS_RTCAudio_UpdateReceivingVolume(EOS_HRTCAudio Handle, const EOS_RTCAudio_UpdateReceivingVolumeOptions* Options, void* ClientData, const EOS_RTCAudio_OnUpdateReceivingVolumeCallback CompletionDelegate);
+
+/**
+ * Use this function to change participant audio volume for a room.
+ *
+ * @note Due to internal implementation details, this function requires that you first register to any notification for room
+ *
+ * @param Options structure containing the parameters for the operation.
+ * @param ClientData Arbitrary data that is passed back in the CompletionDelegate
+ * @param CompletionDelegate The callback to be fired when the operation completes, either successfully or in error
+ * @return EOS_Success if the operation succeeded
+ *         EOS_InvalidParameters if any of the parameters are incorrect
+ *         EOS_NotFound if either the local user or specified participant are not in the room
+ */
+EOS_DECLARE_FUNC(void) EOS_RTCAudio_UpdateParticipantVolume(EOS_HRTCAudio Handle, const EOS_RTCAudio_UpdateParticipantVolumeOptions* Options, void* ClientData, const EOS_RTCAudio_OnUpdateParticipantVolumeCallback CompletionDelegate);
 
 /**
  * Register to receive notifications when a room participant audio status is updated (f.e when speaking flag changes).
@@ -150,7 +192,7 @@ EOS_DECLARE_FUNC(void) EOS_RTCAudio_UpdateReceiving(EOS_HRTCAudio Handle, const 
  * @see EOS_INVALID_NOTIFICATIONID
  * @see EOS_RTCAudio_RemoveNotifyParticipantUpdated
  */
-EOS_DECLARE_FUNC(EOS_NotificationId) EOS_RTCAudio_AddNotifyParticipantUpdated(EOS_HRTCAudio Handle, EOS_RTCAudio_AddNotifyParticipantUpdatedOptions* Options, void* ClientData, const EOS_RTCAudio_OnParticipantUpdatedCallback CompletionDelegate);
+EOS_DECLARE_FUNC(EOS_NotificationId) EOS_RTCAudio_AddNotifyParticipantUpdated(EOS_HRTCAudio Handle, const EOS_RTCAudio_AddNotifyParticipantUpdatedOptions* Options, void* ClientData, const EOS_RTCAudio_OnParticipantUpdatedCallback CompletionDelegate);
 
 /**
  * Unregister a previously bound notification handler from receiving participant updated notifications
@@ -165,14 +207,24 @@ EOS_DECLARE_FUNC(void) EOS_RTCAudio_RemoveNotifyParticipantUpdated(EOS_HRTCAudio
  * If the returned NotificationId is valid, you must call EOS_RTCAudio_RemoveNotifyAudioDevicesChanged when you no longer wish
  * to have your CompletionDelegate called.
  *
+ * The library will try to use user selected audio device while following these rules:
+ * - if none of the audio devices has been available and connected before - the library will try to use it;
+ * - if user selected device failed for some reason, default device will be used instead (and user selected device will be memorized);
+ * - if user selected a device but it was not used for some reason (and default was used instead), when devices selection is triggered we will try to use user selected device again;
+ * - triggers to change a device: when new audio device appears or disappears - library will try to use previously user selected;
+ * - if for any reason, a device cannot be used - the library will fallback to using default;
+ * - if a configuration of the current audio device has been changed, it will be restarted.
+ *
  * @param ClientData Arbitrary data that is passed back in the CompletionDelegate
  * @param CompletionDelegate The callback to be fired when an audio device change occurs
  * @return Notification ID representing the registered callback if successful, an invalid NotificationId if not
  *
  * @see EOS_INVALID_NOTIFICATIONID
  * @see EOS_RTCAudio_RemoveNotifyAudioDevicesChanged
+ * @see EOS_RTCAudio_SetAudioInputSettingsOptions
+ * @see EOS_RTCAudio_SetAudioOutputSettingsOptions
  */
-EOS_DECLARE_FUNC(EOS_NotificationId) EOS_RTCAudio_AddNotifyAudioDevicesChanged(EOS_HRTCAudio Handle, EOS_RTCAudio_AddNotifyAudioDevicesChangedOptions* Options, void* ClientData, const EOS_RTCAudio_OnAudioDevicesChangedCallback CompletionDelegate);
+EOS_DECLARE_FUNC(EOS_NotificationId) EOS_RTCAudio_AddNotifyAudioDevicesChanged(EOS_HRTCAudio Handle, const EOS_RTCAudio_AddNotifyAudioDevicesChangedOptions* Options, void* ClientData, const EOS_RTCAudio_OnAudioDevicesChangedCallback CompletionDelegate);
 
 /**
  * Unregister a previously bound notification handler from receiving audio devices notifications
@@ -194,7 +246,7 @@ EOS_DECLARE_FUNC(void) EOS_RTCAudio_RemoveNotifyAudioDevicesChanged(EOS_HRTCAudi
  * @see EOS_INVALID_NOTIFICATIONID
  * @see EOS_RTCAudio_RemoveNotifyAudioInputState
  */
-EOS_DECLARE_FUNC(EOS_NotificationId) EOS_RTCAudio_AddNotifyAudioInputState(EOS_HRTCAudio Handle, EOS_RTCAudio_AddNotifyAudioInputStateOptions* Options, void* ClientData, const EOS_RTCAudio_OnAudioInputStateCallback CompletionDelegate);
+EOS_DECLARE_FUNC(EOS_NotificationId) EOS_RTCAudio_AddNotifyAudioInputState(EOS_HRTCAudio Handle, const EOS_RTCAudio_AddNotifyAudioInputStateOptions* Options, void* ClientData, const EOS_RTCAudio_OnAudioInputStateCallback CompletionDelegate);
 
 /**
  * Unregister a previously bound notification handler from receiving notifications on audio input state changed.
@@ -216,7 +268,7 @@ EOS_DECLARE_FUNC(void) EOS_RTCAudio_RemoveNotifyAudioInputState(EOS_HRTCAudio Ha
  * @see EOS_INVALID_NOTIFICATIONID
  * @see EOS_RTCAudio_RemoveNotifyAudioOutputState
  */
-EOS_DECLARE_FUNC(EOS_NotificationId) EOS_RTCAudio_AddNotifyAudioOutputState(EOS_HRTCAudio Handle, EOS_RTCAudio_AddNotifyAudioOutputStateOptions* Options, void* ClientData, const EOS_RTCAudio_OnAudioOutputStateCallback CompletionDelegate);
+EOS_DECLARE_FUNC(EOS_NotificationId) EOS_RTCAudio_AddNotifyAudioOutputState(EOS_HRTCAudio Handle, const EOS_RTCAudio_AddNotifyAudioOutputStateOptions* Options, void* ClientData, const EOS_RTCAudio_OnAudioOutputStateCallback CompletionDelegate);
 
 /**
  * Unregister a previously bound notification handler from receiving notifications on audio output state changed.
@@ -240,7 +292,7 @@ EOS_DECLARE_FUNC(void) EOS_RTCAudio_RemoveNotifyAudioOutputState(EOS_HRTCAudio H
  * @see EOS_INVALID_NOTIFICATIONID
  * @see EOS_RTCAudio_RemoveNotifyAudioBeforeSend
  */
-EOS_DECLARE_FUNC(EOS_NotificationId) EOS_RTCAudio_AddNotifyAudioBeforeSend(EOS_HRTCAudio Handle, EOS_RTCAudio_AddNotifyAudioBeforeSendOptions* Options, void* ClientData, const EOS_RTCAudio_OnAudioBeforeSendCallback CompletionDelegate);
+EOS_DECLARE_FUNC(EOS_NotificationId) EOS_RTCAudio_AddNotifyAudioBeforeSend(EOS_HRTCAudio Handle, const EOS_RTCAudio_AddNotifyAudioBeforeSendOptions* Options, void* ClientData, const EOS_RTCAudio_OnAudioBeforeSendCallback CompletionDelegate);
 
 /**
  * Unregister a previously bound notification handler from receiving local audio buffers before they are encoded and sent.
@@ -264,7 +316,7 @@ EOS_DECLARE_FUNC(void) EOS_RTCAudio_RemoveNotifyAudioBeforeSend(EOS_HRTCAudio Ha
  * @see EOS_INVALID_NOTIFICATIONID
  * @see EOS_RTCAudio_RemoveNotifyAudioBeforeRender
  */
-EOS_DECLARE_FUNC(EOS_NotificationId) EOS_RTCAudio_AddNotifyAudioBeforeRender(EOS_HRTCAudio Handle, EOS_RTCAudio_AddNotifyAudioBeforeRenderOptions* Options, void* ClientData, const EOS_RTCAudio_OnAudioBeforeRenderCallback CompletionDelegate);
+EOS_DECLARE_FUNC(EOS_NotificationId) EOS_RTCAudio_AddNotifyAudioBeforeRender(EOS_HRTCAudio Handle, const EOS_RTCAudio_AddNotifyAudioBeforeRenderOptions* Options, void* ClientData, const EOS_RTCAudio_OnAudioBeforeRenderCallback CompletionDelegate);
 
 /**
  * Unregister a previously bound notification handler from receiving remote audio buffers before they are rendered.

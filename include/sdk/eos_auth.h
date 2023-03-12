@@ -153,7 +153,6 @@ EOS_DECLARE_FUNC(void) EOS_Auth_QueryIdToken(EOS_HAuth Handle, const EOS_Auth_Qu
 
 /**
  * Verify a given ID token for authenticity and validity.
- * @note Can only be called by dedicated servers.
  *
  * @param Options Structure containing information about the ID token to verify.
  * @param ClientData Arbitrary data that is passed back to you in the CompletionDelegate

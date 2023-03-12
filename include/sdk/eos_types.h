@@ -2,6 +2,7 @@
 #pragma once
 
 #include "eos_common.h"
+#include "eos_integratedplatform_types.h"
 
 #pragma pack(push, 8)
 
@@ -31,13 +32,12 @@ EOS_STRUCT(EOS_Platform_RTCOptions, (
 	void* PlatformSpecificOptions;
 ));
 
-
 #define EOS_COUNTRYCODE_MAX_LENGTH 4
 #define EOS_COUNTRYCODE_MAX_BUFFER_LEN (EOS_COUNTRYCODE_MAX_LENGTH + 1)
 #define EOS_LOCALECODE_MAX_LENGTH 9
 #define EOS_LOCALECODE_MAX_BUFFER_LEN (EOS_LOCALECODE_MAX_LENGTH + 1)
 
-#define EOS_PLATFORM_OPTIONS_API_LATEST 11
+#define EOS_PLATFORM_OPTIONS_API_LATEST 12
 
 /* Platform Creation Flags used in EOS_Platform_Create */
 
@@ -82,7 +82,7 @@ EOS_STRUCT(EOS_Platform_Options, (
 	uint64_t Flags;
 	/** Used by Player Data Storage and Title Storage. Must be null initialized if unused. Cache directory path. Absolute path to the folder that is going to be used for caching temporary data. The path is created if it's missing. */
 	const char* CacheDirectory;
-	/** 
+	/**
 	 * A budget, measured in milliseconds, for EOS_Platform_Tick to do its work. When the budget is met or exceeded (or if no work is available), EOS_Platform_Tick will return.
 	 * This allows your game to amortize the cost of SDK work across multiple frames in the event that a lot of work is queued for processing.
 	 * Zero is interpreted as "perform all available work".
@@ -90,6 +90,125 @@ EOS_STRUCT(EOS_Platform_Options, (
 	uint32_t TickBudgetInMilliseconds;
 	/** RTC options. Setting to NULL will disable RTC features (e.g. voice) */
 	const EOS_Platform_RTCOptions* RTCOptions;
+	/**
+	 * A handle that contains all the options for setting up integrated platforms.
+	 * When set to NULL, the default integrated platform behavior for the host platform will be used.
+	 */
+	EOS_HIntegratedPlatformOptionsContainer IntegratedPlatformOptionsContainerHandle;
+));
+
+/**
+ * All possible states of the application
+ */
+EOS_ENUM(EOS_EApplicationStatus,
+	/** Background constrained */
+	EOS_AS_BackgroundConstrained = 0,
+	/** Background unconstrained */
+	EOS_AS_BackgroundUnconstrained = 1,
+	/** Background suspended */
+	EOS_AS_BackgroundSuspended = 2,
+	/** Foreground */
+	EOS_AS_Foreground = 3
+);
+
+/**
+ * All possible states of the network
+ */
+EOS_ENUM(EOS_ENetworkStatus,
+	/** Network cannot be used. */
+	EOS_NS_Disabled = 0,
+	/** We may not be connected to the internet. The network can still be used, but is expected to probably fail. */
+	EOS_NS_Offline = 1,
+	/** We think we're connected to the internet. */
+	EOS_NS_Online = 2
+);
+
+/**
+ * Possible statuses for the availability of desktop crossplay functionality.
+ *
+ * @see EOS_Platform_GetDesktopCrossplayStatus
+ */
+EOS_ENUM(EOS_EDesktopCrossplayStatus,
+	/**
+	 * Desktop crossplay is ready to use.
+	 */
+	EOS_DCS_OK = 0,
+	/**
+	 * The application was not launched through the Bootstrapper.
+	 */
+	EOS_DCS_ApplicationNotBootstrapped = 1,
+	/**
+	 * The redistributable service is not installed.
+	 */
+	EOS_DCS_ServiceNotInstalled = 2,
+	/**
+	 * The service failed to start.
+	 */
+	EOS_DCS_ServiceStartFailed = 3,
+	/**
+	 * The service was started successfully, but is no longer running in the background, for an unknown reason.
+	 */
+	EOS_DCS_ServiceNotRunning = 4,
+	/**
+	 * The application has explicitly disabled the overlay through SDK initialization flags.
+	 */
+	EOS_DCS_OverlayDisabled = 5,
+	/**
+	 * The overlay is not installed.
+	 *
+	 * As the overlay is automatically installed and kept up-to-date by the redistributable service,
+	 * this indicates that the user may have separately manually removed the installed overlay files.
+	 */
+	EOS_DCS_OverlayNotInstalled = 6,
+	/**
+	 * The overlay was not loaded due to failing trust check on the digital signature of the file on disk.
+	 *
+	 * This error typically indicates one of the following root causes:
+	 * - The Operating System's local certificate store is out of date.
+	 * - The local system clock has skewed and is in the wrong time.
+	 * - The file has been tampered with.
+	 * - The file trust check timed out, either due to an issue with the local system or network connectivity.
+	 *
+	 * The first troubleshooting steps should be to check for any available Operating System updates,
+	 * for example using the Windows Update, as well as verifying that the system time is correctly set.
+	 */
+	EOS_DCS_OverlayTrustCheckFailed = 7,
+	/**
+	 * The overlay failed to load.
+	 */
+	EOS_DCS_OverlayLoadFailed = 8
+);
+
+/** The most recent version of the EOS_Platform_GetDesktopCrossplayStatus API. */
+#define EOS_PLATFORM_GETDESKTOPCROSSPLAYSTATUS_API_LATEST 1
+
+/**
+ * Input parameters for the EOS_Platform_GetDesktopCrossplayStatus function.
+ */
+EOS_STRUCT(EOS_Platform_GetDesktopCrossplayStatusOptions, (
+	/** API Version: Set this to EOS_PLATFORM_GETDESKTOPCROSSPLAYSTATUS_API_LATEST. */
+	int32_t ApiVersion;
+));
+
+/**
+ * Output parameters for the EOS_Platform_GetDesktopCrossplayStatus function.
+ */
+EOS_STRUCT(EOS_Platform_GetDesktopCrossplayStatusInfo, (
+	/**
+	 * Status for the availability of desktop crossplay functionality.
+	 *
+	 * It is recommended to include this value in application logs, and as as part of
+	 * any player-facing error screens to help troubleshooting possible issues.
+	 */
+	EOS_EDesktopCrossplayStatus Status;
+	/**
+	 * This field is set when the Status is EOS_DCS_ServiceStartFailed.
+	 *
+	 * Possible values for this field are not documented. However, it is recommended
+	 * to be also included in application logs, and as part of any player-facing
+	 * error screens.
+	 */
+	int32_t ServiceInitResult;
 ));
 
 #pragma pack(pop)

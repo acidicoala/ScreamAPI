@@ -19,9 +19,12 @@
  * @param CompletionDelegate A callback that is fired when the request to show the friends list has been sent to the Social Overlay, or on an error.
  *
  * @return EOS_Success If the Social Overlay has been notified about the request.
+ *         EOS_IncompatibleVersion if the API version passed in is incorrect.
  *         EOS_InvalidParameters If any of the options are incorrect.
  *         EOS_NotConfigured If the Social Overlay is not properly configured.
  *         EOS_NoChange If the Social Overlay is already visible.
+ *         EOS_ApplicationSuspended If the application is suspended.
+ *         EOS_NetworkDisconnected If the network is disconnected.
  */
 EOS_DECLARE_FUNC(void) EOS_UI_ShowFriends(EOS_HUI Handle, const EOS_UI_ShowFriendsOptions* Options, void* ClientData, const EOS_UI_OnShowFriendsCallback CompletionDelegate);
 
@@ -33,6 +36,7 @@ EOS_DECLARE_FUNC(void) EOS_UI_ShowFriends(EOS_HUI Handle, const EOS_UI_ShowFrien
  * @param CompletionDelegate A callback that is fired when the request to hide the friends list has been processed, or on an error.
  *
  * @return EOS_Success If the Social Overlay has been notified about the request.
+ *         EOS_IncompatibleVersion if the API version passed in is incorrect.
  *         EOS_InvalidParameters If any of the options are incorrect.
  *         EOS_NotConfigured If the Social Overlay is not properly configured.
  *         EOS_NoChange If the Social Overlay is already hidden.
@@ -47,6 +51,15 @@ EOS_DECLARE_FUNC(void) EOS_UI_HideFriends(EOS_HUI Handle, const EOS_UI_HideFrien
  * @return EOS_TRUE If the overlay is visible.
  */
 EOS_DECLARE_FUNC(EOS_Bool) EOS_UI_GetFriendsVisible(EOS_HUI Handle, const EOS_UI_GetFriendsVisibleOptions* Options);
+
+/**
+ * Gets the friends overlay exclusive input state.
+ *
+ * @param Options Structure containing the Epic Account ID of the friends Social Overlay owner.
+ *
+ * @return EOS_TRUE If the overlay has exclusive input.
+ */
+EOS_DECLARE_FUNC(EOS_Bool) EOS_UI_GetFriendsExclusiveInput(EOS_HUI Handle, const EOS_UI_GetFriendsExclusiveInputOptions* Options);
 
 /**
  * Register to receive notifications when the overlay display settings are updated.
@@ -69,7 +82,7 @@ EOS_DECLARE_FUNC(EOS_NotificationId) EOS_UI_AddNotifyDisplaySettingsUpdated(EOS_
 EOS_DECLARE_FUNC(void) EOS_UI_RemoveNotifyDisplaySettingsUpdated(EOS_HUI Handle, EOS_NotificationId Id);
 
 /**
- * Updates the current Toggle Friends Key.  This key can be used by the user to toggle the friends
+ * Updates the current Toggle Friends Key. This key can be used by the user to toggle the friends
  * overlay when available. The default value represents `Shift + F3` as `((int32_t)EOS_UIK_Shift | (int32_t)EOS_UIK_F3)`.
  * The provided key should satisfy EOS_UI_IsValidKeyCombination. The value EOS_UIK_None is specially handled
  * by resetting the key binding to the system default.
@@ -77,6 +90,7 @@ EOS_DECLARE_FUNC(void) EOS_UI_RemoveNotifyDisplaySettingsUpdated(EOS_HUI Handle,
  * @param Options Structure containing the key combination to use.
  *
  * @return EOS_Success If the overlay has been notified about the request.
+ *         EOS_IncompatibleVersion if the API version passed in is incorrect.
  *         EOS_InvalidParameters If any of the options are incorrect.
  *         EOS_NotConfigured If the overlay is not properly configured.
  *         EOS_NoChange If the key combination did not change.
@@ -86,7 +100,7 @@ EOS_DECLARE_FUNC(void) EOS_UI_RemoveNotifyDisplaySettingsUpdated(EOS_HUI Handle,
 EOS_DECLARE_FUNC(EOS_EResult) EOS_UI_SetToggleFriendsKey(EOS_HUI Handle, const EOS_UI_SetToggleFriendsKeyOptions* Options);
 
 /**
- * Returns the current Toggle Friends Key.  This key can be used by the user to toggle the friends
+ * Returns the current Toggle Friends Key. This key can be used by the user to toggle the friends
  * overlay when available. The default value represents `Shift + F3` as `((int32_t)EOS_UIK_Shift | (int32_t)EOS_UIK_F3)`.
  *
  * @param Options Structure containing any options that are needed to retrieve the key.
@@ -101,7 +115,7 @@ EOS_DECLARE_FUNC(EOS_UI_EKeyCombination) EOS_UI_GetToggleFriendsKey(EOS_HUI Hand
  * The modifier key must be one or more of the following: Shift, Control, or Alt.
  *
  * @param KeyCombination The key to test.
- * @return  EOS_TRUE if the provided key combination is valid.
+ * @return EOS_TRUE if the provided key combination is valid.
  */
 EOS_DECLARE_FUNC(EOS_Bool) EOS_UI_IsValidKeyCombination(EOS_HUI Handle, EOS_UI_EKeyCombination KeyCombination);
 
@@ -110,6 +124,7 @@ EOS_DECLARE_FUNC(EOS_Bool) EOS_UI_IsValidKeyCombination(EOS_HUI Handle, EOS_UI_E
  *
  * @param Options Structure containing any options that are needed to set
  * @return EOS_Success If the overlay has been notified about the request.
+ *         EOS_IncompatibleVersion if the API version passed in is incorrect.
  *         EOS_InvalidParameters If any of the options are incorrect.
  *         EOS_NotConfigured If the overlay is not properly configured.
  *         EOS_NoChange If the preferences did not change.
@@ -133,3 +148,42 @@ EOS_DECLARE_FUNC(EOS_UI_ENotificationLocation) EOS_UI_GetNotificationLocationPre
  * @see EOS_Presence_JoinGameAcceptedCallbackInfo
  */
 EOS_DECLARE_FUNC(EOS_EResult) EOS_UI_AcknowledgeEventId(EOS_HUI Handle, const EOS_UI_AcknowledgeEventIdOptions* Options);
+
+/**
+ * Requests that the Social Overlay open and display the "Block User" flow for the specified user.
+ *
+ * @param ClientData Arbitrary data that is passed back to you in the NotificationFn.
+ * @param NotificationFn A callback that is fired when the user exits the Block UI.
+ */
+EOS_DECLARE_FUNC(void) EOS_UI_ShowBlockPlayer(EOS_HUI Handle, const EOS_UI_ShowBlockPlayerOptions* Options, void* ClientData, const EOS_UI_OnShowBlockPlayerCallback CompletionDelegate);
+
+/**
+ * Requests that the Social Overlay open and display the "Report User" flow for the specified user.
+ *
+ * @param ClientData Arbitrary data that is passed back to you in the NotificationFn.
+ * @param NotificationFn A callback that is fired when the user exits the Report UI.
+ */
+EOS_DECLARE_FUNC(void) EOS_UI_ShowReportPlayer(EOS_HUI Handle, const EOS_UI_ShowReportPlayerOptions* Options, void* ClientData, const EOS_UI_OnShowReportPlayerCallback CompletionDelegate);
+
+/**
+ * Sets the bIsPaused state of the overlay.
+ * While true then all notifications will be delayed until after the bIsPaused is false again.
+ * While true then the key and button events will not toggle the overlay.
+ * If the Overlay was visible before being paused then it will be hidden.
+ * If it is known that the Overlay should now be visible after being paused then it will be shown.
+ *
+ * @return EOS_Success If the overlay has been notified about the request.
+ *         EOS_IncompatibleVersion if the API version passed in is incorrect.
+ *         EOS_InvalidParameters If any of the options are incorrect.
+ *         EOS_NotConfigured If the overlay is not properly configured.
+ */
+EOS_DECLARE_FUNC(EOS_EResult) EOS_UI_PauseSocialOverlay(EOS_HUI Handle, const EOS_UI_PauseSocialOverlayOptions* Options);
+
+/**
+ * Gets the bIsPaused state of the overlay as set by any previous calls to EOS_UI_PauseSocialOverlay().
+ *
+ * @return EOS_TRUE If the overlay is paused.
+ *
+ * @see EOS_UI_PauseSocialOverlay
+ */
+EOS_DECLARE_FUNC(EOS_Bool) EOS_UI_IsSocialOverlayPaused(EOS_HUI Handle, const EOS_UI_IsSocialOverlayPausedOptions* Options);
