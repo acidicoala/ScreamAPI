@@ -68,7 +68,7 @@ class ScreamApiConfigV3:
         return str(self.__dict__)
 
     def __init__(self, config_path: Path = None):
-        if config_path is None:
+        if config_path is None or not config_path.exists():
             return
 
         try:
