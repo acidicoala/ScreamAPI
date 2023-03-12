@@ -4,17 +4,10 @@
 #include <game_mode/game_mode.hpp>
 #include <build_config.h>
 
-#include <koalabox/cache.hpp>
 #include <koalabox/config.hpp>
 #include <koalabox/dll_monitor.hpp>
 #include <koalabox/globals.hpp>
-#include <koalabox/loader.hpp>
 #include <koalabox/win_util.hpp>
-
-#include <sdk/eos_ecom.h>
-#include <sdk/eos_metrics.h>
-#include <sdk/eos_logging.h>
-#include <sdk/eos_init.h>
 
 namespace scream_api {
 
@@ -26,8 +19,6 @@ namespace scream_api {
 
     void init(HMODULE self_handle) {
         try {
-            DisableThreadLibraryCalls(self_handle);
-
             koalabox::globals::init_globals(self_handle, PROJECT_NAME);
 
             config::init();

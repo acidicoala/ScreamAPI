@@ -9,7 +9,7 @@ namespace scream_api::config {
     struct MitmProxy {
         int listen_port = 9999;
         bool show_window = false;
-        String extra_args = "";
+        String extra_args;
         Map<String, String> upstream_proxies;
 
         NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
@@ -45,7 +45,7 @@ namespace scream_api::config {
     })
 
     struct Config {
-        int $version = 3;
+        int $version = 4;
         bool logging = false;
         bool eos_logging = false;
         bool block_metrics = false;

@@ -1,37 +1,11 @@
 {
-  "$version": 3,
-  "logging": true,
+  "$version": 4,
+  "logging": false,
   "eos_logging": false,
   "block_metrics": false,
   "default_game_status": "unlocked",
-  "override_game_status": {
-    "game01__32__character__namespace": "original",
-    "game02__32__character__namespace": "unlocked"
-  },
-  "override_dlc_status": {
-    "dlc01___32__character__namespace": "original",
-    "dlc02___32__character__namespace": "unlocked",
-    "dlc03___32__character__namespace": "locked"
-  },
-  "extra_entitlements": {
-    "game01__32__character__namespace": {
-      "entitlements": {
-        "dlc04___32__character__namespace": "Example Entitlement 04"
-      }
-    },
-    "game02__32__character__namespace": {
-      "entitlements": {
-        "dlc05___32__character__namespace": "Example Entitlement 05"
-      }
-    }
-  },
-  "mitmproxy": {
-    "listen_port": 9999,
-    "show_window": true,
-    "extra_args": "--mode upstream:127.0.0.1:8888 --ssl-insecure",
-    "upstream_proxies": {
-      "http": "http://127.0.0.1:8888",
-      "https": "https://127.0.0.1:8888"
-    }
-  }
+  "override_game_status": {},
+  "override_dlc_status": {},
+  "extra_entitlements": {},
+  "mitmproxy": {}
 }

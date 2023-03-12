@@ -14,7 +14,6 @@
 #include <WinReg.hpp>
 
 #include <fstream>
-#include <WinSock2.h>
 #include <ShlObj_core.h>
 #include <winhttp.h>
 #include <commctrl.h>
@@ -42,7 +41,7 @@ namespace store_mode {
         const String version = "9.0.1";
         const String cache_key = "mitmproxy";
         const auto exe_name = cache_key + ".exe";
-        const auto exe_path = koalabox::paths::get_self_path() / exe_name;
+        auto exe_path = koalabox::paths::get_self_path() / exe_name;
         const String expected_exe_md5 = "40b4e945d63b858fc653ca0c0f3a4b98";
         const auto zip_name = fmt::format("mitmproxy-{}-windows.zip", version);
         const auto zip_path = koalabox::paths::get_cache_dir() / zip_name;
@@ -161,8 +160,8 @@ namespace store_mode {
         LOG_INFO("Launched mitmproxy at port {}", port)
 
         // Ensure that mitmproxy exits right after EGS process
-        const auto job = CreateJobObject(NULL, NULL);
-        if (job == NULL) {
+        const auto job = CreateJobObject(nullptr, nullptr);
+        if (job == nullptr) {
             throw KException("Error creating job object: {}", GET_LAST_ERROR());
         }
 
@@ -185,6 +184,39 @@ namespace store_mode {
 
     void configure_proxy(const Path& egl_path) {
         const auto install_certificate = []() {
+            /*const auto cert_string = get_cert_string();
+            LOG_TRACE("Adding cert to system store:\n{}", cert_string)
+
+            Vector<BYTE> binary_buffer(32 * 1024); // 32KB should be more than enough
+            DWORD binary_size = binary_buffer.size();
+            if (not CryptStringToBinaryA(
+                cert_string.c_str(),
+                0,
+                CRYPT_STRING_BASE64_ANY,
+                binary_buffer.data(),
+                &binary_size,
+                NULL,
+                NULL
+            )) {
+                throw Exception("Error converting base64 certificate to binary");
+            }
+
+            // Will return true even if the cert is already installed
+            if (not CertAddEncodedCertificateToSystemStoreA(
+                store_name.c_str(),
+                binary_buffer.data(),
+                binary_size
+            )) {
+                throw util::exception(
+                    "Error adding a certificate to the system '{}' store",
+                    store_name
+                );
+            }
+
+            LOG_DEBUG(
+                "Successfully added a certificate to the system '{}' store (or it was already present)",
+                store_name
+            )*/
             // TODO: Install mitmproxy cert in root store
         };
 
@@ -266,7 +298,22 @@ namespace store_mode {
 
                 const auto flags_exp = exe_flags_key.TryGetStringValue(egl_path.wstring());
                 const auto flags = flags_exp ? STR(flags_exp.GetValue()) : "";
-                if (flags < contains > run_as_admin) {
+                auto is_admin_configured = flags < contains > run_as_admin;
+
+                const auto egl_path_32 =
+                    egl_path.parent_path().parent_path() / "Win32" /
+                    egl_path.filename();
+                const auto flags_32_exp = exe_flags_key.TryGetStringValue(egl_path_32.wstring());
+                const auto flags_32 = flags_32_exp ? STR(flags_32_exp.GetValue()) : "";
+
+                const auto is_64 = egl_path.string() < contains > "Win64";
+                if (is_64) {
+                    // We need to set flags on 32-bit version as well so that it can
+                    // launch 64-bit version.
+                    is_admin_configured &= flags_32 < contains > run_as_admin;
+                }
+
+                if (is_admin_configured) {
                     return;
                 }
 
@@ -279,14 +326,28 @@ namespace store_mode {
                     "of the Properties window)",
                     TDCBF_YES_BUTTON | TDCBF_NO_BUTTON,
                     [&](int chosen_button) {
-                        switch (chosen_button) {
-                            case IDYES: {
-                                const auto new_flags = fmt::format("{} {}", flags, run_as_admin);
-                                exe_flags_key.SetStringValue(egl_path.wstring(), WSTR(new_flags));
-                                break;
+                        if(chosen_button == IDYES){
+                            const auto new_flags = WSTR(
+                                fmt::format("{} {}", flags, run_as_admin)
+                            );
+
+                            LOG_DEBUG("Setting EGL flags: {}", STR(new_flags))
+
+                            exe_flags_key.SetStringValue(
+                                egl_path.wstring(),
+                                new_flags
+                            );
+
+                            if (is_64) {
+                                const auto new_flags_32 = WSTR(
+                                    fmt::format("{} {}", flags_32, run_as_admin)
+                                );
+
+                                exe_flags_key.SetStringValue(
+                                    egl_path_32.wstring(),
+                                    new_flags_32
+                                );
                             }
-                            default:
-                                break;
                         }
                     }
                 );
