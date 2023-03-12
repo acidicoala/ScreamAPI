@@ -1,5 +1,6 @@
 #include <scream_api/scream_api.hpp>
 #include <scream_api/config.hpp>
+#include <scream_api/api.hpp>
 #include <game_mode/game_mode.hpp>
 
 #include <koalabox/http_client.hpp>
@@ -10,19 +11,20 @@
 
 using namespace scream_api;
 
-static Vector<String> entitlements;
+Vector<String> entitlements; // ids
+Map<String, String> entitlement_map;  // id => title
 
 DLL_EXPORT(void) EOS_Ecom_QueryEntitlements(
     EOS_HEcom Handle,
     const EOS_Ecom_QueryEntitlementsOptions* Options,
     void* ClientData,
-    const EOS_Ecom_OnQueryEntitlementsCallback CompletionDelegate
+    const EOS_Ecom_OnQueryEntitlementsCallback CompletionDelegate // NOLINT(misc-misplaced-const)
 ) {
     GET_ORIGINAL_FUNCTION(EOS_Ecom_QueryEntitlements)
 
-    static Set<String> entitlement_set;
-
     LOG_INFO("❓ Game requested {} entitlements:", Options->EntitlementNameCount)
+
+    entitlement_map.clear();
 
     for (uint32_t i = 0; i < Options->EntitlementNameCount; i++) {
         const auto id = Options->EntitlementNames[i];
@@ -35,7 +37,7 @@ DLL_EXPORT(void) EOS_Ecom_QueryEntitlements(
         );
 
         if (owned) {
-            entitlement_set.insert(id);
+            entitlement_map[id] = fmt::format("DLC {}", id);
         }
     }
 
@@ -44,100 +46,83 @@ DLL_EXPORT(void) EOS_Ecom_QueryEntitlements(
         EOS_Ecom_OnQueryEntitlementsCallback CompletionDelegate;
     };
 
-    EOS_Ecom_QueryEntitlements_o(Handle, Options, new Container{ ClientData, CompletionDelegate },
+    EOS_Ecom_QueryEntitlements_o(
+        Handle, Options,
+        new Container{ ClientData, CompletionDelegate },
         [](const EOS_Ecom_QueryEntitlementsCallbackInfo* Data) {
             try {
                 const auto container = static_cast<Container*>(Data->ClientData);
 
                 const auto& namespace_id = scream_api::game_mode::namespace_id;
 
-                // Manually inject entitlements
+                // Inject online entitlements
+                if (namespace_id.empty()) {
+                    LOG_WARN(
+                        "EOS_Ecom_QueryEntitlements callback: namespace_id is not set. "
+                        "Perhaps you should try another loader DLL, "
+                        "so that ScreamAPI is loaded before EOS SDK dll"
+                    )
+                } else if (entitlement_map.empty()) {
+                    const auto entitlements_opt = api::fetch_entitlements(namespace_id);
+
+                    if (entitlements_opt) {
+                        for (const auto& [id, title]: *entitlements_opt) {
+                            const auto is_unlocked = scream_api::config::is_dlc_unlocked(
+                                namespace_id,
+                                id,
+                                false
+                            );
+
+                            if (is_unlocked) {
+                                LOG_DEBUG(
+                                    R"(➕ Adding auto-fetched entitlement: {} - "{}")", id, title
+                                )
+                                entitlement_map[id] = title;
+                            }
+                        }
+                    }
+                }
+
+                // Inject extra entitlements
                 const auto& extra = CONFIG.extra_entitlements;
                 if (extra.contains(namespace_id)) {
                     const auto& game = extra.at(namespace_id);
 
-                    for (auto& [id, name]: game.entitlements) {
-                        LOG_DEBUG(R"(Adding entitlement from config: {} - "{}")", id, name)
-
-                        entitlement_set.insert(id);
-                    }
-                }
-
-
-                // Automatically inject entitlements
-                if (namespace_id.empty()) {
-                    LOG_WARN("EOS_Ecom_QueryEntitlements callback: namespace_id is not set")
-                } else {
-                    nlohmann::json payload = {
-                        { "query",     R"(query($namespace: String!) {
-                        Catalog {
-                            catalogOffers(
-                                namespace: $namespace
-                                params: {
-                                    count: 1000,
-                                }
-                            ) {
-                                elements {
-                                    items {
-                                        id
-                                        title
-                                        name
-                                    }
-                                }
-                            }
-                        }
-                    })" },
-                        { "variables", {{ "namespace", namespace_id }}}
-                    };
-
-                    try {
-                        const auto json = koalabox::http_client::post_json(
-                            "https://graphql.epicgames.com/graphql",
-                            payload
+                    for (auto& [id, title]: game.entitlements) {
+                        const auto is_unlocked = scream_api::config::is_dlc_unlocked(
+                            namespace_id,
+                            id,
+                            true
                         );
 
-                        LOG_DEBUG("Response json:\n{}", json.dump(2))
+                        if (is_unlocked) {
+                            LOG_DEBUG(R"(Adding entitlement from config: {} - "{}")", id, title)
 
-                        const auto elements = json["data"]["Catalog"]["catalogOffers"]["elements"];
-
-                        for (const auto& element: elements) {
-                            for (const auto& items: element) {
-                                for (const auto& item: items) {
-                                    String id(item["id"]);
-
-                                    const auto owned = scream_api::config::is_dlc_unlocked(
-                                        namespace_id,
-                                        id,
-                                        true
-                                    );
-
-                                    if(owned){
-                                        LOG_DEBUG("Adding auto-fetched entitlement: {}", id)
-                                        entitlement_set.insert(id);
-                                    }
-                                }
-                            }
+                            entitlement_map[id] = title;
                         }
-                    } catch (const Exception& e) {
-                        LOG_ERROR("Error fetching entitlement ids: {}", e.what())
                     }
                 }
 
-                entitlements = std::vector(entitlement_set.begin(), entitlement_set.end());
+                entitlements.clear();
+
+                auto ids = std::views::keys(entitlement_map);
+                entitlements = { ids.begin(), ids.end() };
 
                 LOG_INFO("🍀 ScreamAPI prepared {} entitlements:", entitlements.size())
-                for (const auto& entitlement: entitlements) {
-                    LOG_INFO("  ✅ {}", entitlement)
+                for (const auto& id: entitlements) {
+                    LOG_INFO(R"(  ✅ {} = "{}")", id, entitlement_map[id])
                 }
 
-                const_cast<EOS_Ecom_QueryEntitlementsCallbackInfo*>(Data)->ResultCode = EOS_EResult::EOS_Success;
-                const_cast<EOS_Ecom_QueryEntitlementsCallbackInfo*>(Data)->ClientData = container->ClientData;
+                auto* mData = const_cast<EOS_Ecom_QueryEntitlementsCallbackInfo*>(Data);
+
+                mData->ResultCode = EOS_EResult::EOS_Success;
+                mData->ClientData = container->ClientData;
 
                 container->CompletionDelegate(Data);
 
                 delete container;
-            } catch (const Exception& ex) {
-                koalabox::util::panic("EOS_Ecom_QueryEntitlements callback error: {}", ex.what());
+            } catch (const Exception& e) {
+                LOG_ERROR("EOS_Ecom_QueryEntitlements callback error: {}", e.what())
             }
         }
     );
@@ -161,8 +146,10 @@ DLL_EXPORT(EOS_EResult) EOS_Ecom_CopyEntitlementByIndex(
 ) {
     const auto index = Options->EntitlementIndex;
     if (index >= entitlements.size()) {
-        LOG_WARN("Game requested invalid entitlement index: {}. Max size: {}", index,
-            entitlements.size())
+        LOG_WARN(
+            "Game requested invalid entitlement index: {}. Max size: {}",
+            index, entitlements.size()
+        )
 
         return EOS_EResult::EOS_NotFound;
     }
@@ -177,7 +164,7 @@ DLL_EXPORT(EOS_EResult) EOS_Ecom_CopyEntitlementByIndex(
         .EntitlementId = id,
         .CatalogItemId = id,
         .ServerIndex = -1,
-        .bRedeemed = true, // TODO: Make it configurable?
+        .bRedeemed = false,
         .EndTimestamp = -1,
     };
 

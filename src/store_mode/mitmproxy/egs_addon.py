@@ -1,15 +1,14 @@
 from __future__ import annotations
 
 import http
-import inspect
 import json
 import re
-from threading import Thread
 import urllib
 from enum import StrEnum
 from http import client
 from logging import *
 from pathlib import Path
+from threading import Thread
 from typing import TypedDict
 from urllib import request
 from urllib.parse import urlparse
@@ -21,9 +20,8 @@ from mitmproxy.http import HTTPFlow
 log = getLogger('EpicAddon')
 
 
-# TODO: Convert to TypedDict
 class ScreamApiConfigV3:
-    class Game(TypedDict):
+    class Game:
         entitlements: dict[str, str]  # dlc_id => name
 
     class ItemStatus(StrEnum):
@@ -67,31 +65,33 @@ class ScreamApiConfigV3:
         return is_unlocked
 
     def __str__(self):
-        d = {}
-        for key, value in inspect.getmembers(self):
-            if not callable(value) and not key.startswith("_"):
-                d[key] = value
+        return str(self.__dict__)
 
-        return str(d)
-
-    @staticmethod
-    def parse(config_path: Path) -> ScreamApiConfigV3:
-        instance = ScreamApiConfigV3()
+    def __init__(self, config_path: Path = None):
+        if config_path is None:
+            return
 
         try:
             with open(config_path) as file:
-                raw_json: dict = json.load(file)
+                c: dict = json.load(file)
 
-                instance.logging = raw_json["logging"]
-                instance.eos_logging = raw_json["eos_logging"]
-                instance.default_game_status = raw_json["default_game_status"]
-                instance.override_game_status = raw_json["override_game_status"]
-                instance.override_dlc_status = raw_json["override_dlc_status"]
-                instance.extra_entitlements = raw_json["extra_entitlements"]
-                instance.mitmproxy.__dict__.update(raw_json["mitmproxy"])
+                self.logging = c.get('logging', self.logging)
+                self.eos_logging = c.get('eos_logging', self.eos_logging)
+                self.default_game_status = c.get('default_game_status', self.default_game_status)
+                self.override_game_status = c.get('override_game_status', self.override_game_status)
+                self.override_dlc_status = c.get('override_dlc_status', self.override_dlc_status)
+                self.mitmproxy.__dict__.update(c.get('mitmproxy', self.mitmproxy.__dict__))
 
-        finally:
-            return instance
+                if 'extra_entitlements' in c:
+                    for key, value in c['extra_entitlements'].items():
+                        self.extra_entitlements[key] = ScreamApiConfigV3.Game()
+                        self.extra_entitlements[key].__dict__.update(value)
+
+        except Exception as e:
+            FileLogger.init(Paths.get_log_path())
+            log.error("Error parsing config")
+            log.exception(e)
+            log.handlers.clear()
 
 
 class FileLogger:
@@ -154,7 +154,7 @@ class Entitlement(TypedDict):
 class EgsAddon:
     config = ScreamApiConfigV3()
     api_cache: dict[str, dict] = {}
-    # flask_thread: Thread
+    flask_thread: Thread
 
     api_host = r"api\.epicgames\.dev"
     ecom_host = r"ecommerceintegration.*\.epicgames\.com"
@@ -191,7 +191,7 @@ class EgsAddon:
             log.exception(e)
 
     def __update_config(self):
-        self.config = ScreamApiConfigV3.parse(Paths.get_config_path())
+        self.config = ScreamApiConfigV3(Paths.get_config_path())
 
     @staticmethod
     def __is_response_ok(flow: HTTPFlow):
@@ -280,7 +280,7 @@ class EgsAddon:
 
         # Add extra entitlements if necessary
         if (game := self.config.extra_entitlements.get(game_id)) is not None:
-            for dlc_id, dlc_name in game["entitlements"].items():
+            for dlc_id, dlc_name in game.entitlements.items():
                 if any(e['catalogItemId'].lower() == dlc_id.lower() for e in entitlements):
                     continue  # Skip existing entitlements
 
@@ -308,7 +308,7 @@ class EgsAddon:
                       Catalog {\
                           catalogOffers(\
                               namespace: $namespace\
-                              params: { count: 1000}\
+                              params: { count: 1000 }\
                           ) {\
                               elements {\
                                   items { \

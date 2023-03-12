@@ -17,6 +17,7 @@
 #include <ShlObj_core.h>
 #include <winhttp.h>
 #include <commctrl.h>
+#include <wincrypt.h>
 
 #pragma comment(lib, "WinHttp.lib")
 #pragma comment(lib, "comctl32.lib")
@@ -184,40 +185,38 @@ namespace store_mode {
 
     void configure_proxy(const Path& egl_path) {
         const auto install_certificate = []() {
-            /*const auto cert_string = get_cert_string();
-            LOG_TRACE("Adding cert to system store:\n{}", cert_string)
+            const auto user_dir = koalabox::paths::get_user_dir();
+            const auto ca_path = user_dir / ".mitmproxy" / "mitmproxy-ca-cert.pem";
+            const auto ca_string = koalabox::io::read_file(ca_path);
+            LOG_TRACE("Adding cert to system store:\n{}", ca_string)
 
-            Vector<BYTE> binary_buffer(32 * 1024); // 32KB should be more than enough
+            Vector<uint8_t> binary_buffer(32 * 1024); // 32KB should be more than enough
             DWORD binary_size = binary_buffer.size();
-            if (not CryptStringToBinaryA(
-                cert_string.c_str(),
+            if (not CryptStringToBinary(
+                WSTR(ca_string).c_str(),
                 0,
-                CRYPT_STRING_BASE64_ANY,
+                CRYPT_STRING_BASE64HEADER,
                 binary_buffer.data(),
                 &binary_size,
-                NULL,
-                NULL
+                nullptr,
+                nullptr
             )) {
-                throw Exception("Error converting base64 certificate to binary");
+                throw KException("Error converting base64 certificate to binary", GET_LAST_ERROR());
             }
 
             // Will return true even if the cert is already installed
-            if (not CertAddEncodedCertificateToSystemStoreA(
-                store_name.c_str(),
+            if (not CertAddEncodedCertificateToSystemStore(
+                TEXT("ROOT"),
                 binary_buffer.data(),
                 binary_size
             )) {
-                throw util::exception(
-                    "Error adding a certificate to the system '{}' store",
-                    store_name
+                throw KException(
+                    "Error adding a certificate to the system 'ROOT' store: {}",
+                    GET_LAST_ERROR()
                 );
             }
 
-            LOG_DEBUG(
-                "Successfully added a certificate to the system '{}' store (or it was already present)",
-                store_name
-            )*/
-            // TODO: Install mitmproxy cert in root store
+            LOG_DEBUG("Mitmproxy certificate authority is present in the system 'ROOT' store")
         };
 
         const auto setup_system_proxy = [&]() {
@@ -326,7 +325,7 @@ namespace store_mode {
                     "of the Properties window)",
                     TDCBF_YES_BUTTON | TDCBF_NO_BUTTON,
                     [&](int chosen_button) {
-                        if(chosen_button == IDYES){
+                        if (chosen_button == IDYES) {
                             const auto new_flags = WSTR(
                                 fmt::format("{} {}", flags, run_as_admin)
                             );

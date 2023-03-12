@@ -1,6 +1,25 @@
-=== The plan
+= 🐨 ScreamAPI ♨
 
-Example upstream proxy setup (e.g. Fiddler) (link to res/config.json)
+_Legit DLC Unlocker for Epic Online Services_
+
+image::https://www.gstatic.com/android/keyboard/emojikitchen/20201001/u1f428/u1f428_u2615.png[,256,align="center"]
+
+== ✨ Features
+
+* 🔓 Legit DLC Unlocking
+* 🛅 Entitlements emulation
+* 📝 Config-less operation
+* Multiple installation methods:
+** 🛍️ Store mode
+** 🎮 Game mode
+*** 🪝 Hook mode
+*** 🔀 Proxy mode
+
+== 🔗 Links
+
+* 📥 https://github.com/acidicoala/ScreamAPI/releases/latest[Download the latest release]
+
+* 💬 https://cs.rin.ru/forum/viewtopic.php?p=2161197#p2161197[ScreamAPI forum topic]
 
 == Config
 
