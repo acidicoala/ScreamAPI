@@ -45,6 +45,7 @@ namespace scream_api::game_mode {
             HOOK(EOS_Ecom_GetEntitlementsByNameCount)
             HOOK(EOS_Ecom_GetEntitlementsCount)
             HOOK(EOS_Ecom_GetItemReleaseCount)
+            HOOK(EOS_Ecom_QueryEntitlementToken)
             HOOK(EOS_Ecom_QueryEntitlements)
             HOOK(EOS_Ecom_QueryOwnership)
             HOOK(EOS_Ecom_QueryOwnershipToken)

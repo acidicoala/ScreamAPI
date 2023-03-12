@@ -14,6 +14,68 @@ using namespace scream_api;
 Vector<String> entitlements; // ids
 Map<String, String> entitlement_map;  // id => title
 
+// This hook does not perform any unlocking yet.
+// It is implemented to collect debug logs for potential improvements.
+EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlementToken(
+    EOS_HEcom Handle,
+    const EOS_Ecom_QueryEntitlementTokenOptions* Options,
+    void* ClientData,
+    const EOS_Ecom_OnQueryEntitlementTokenCallback CompletionDelegate // NOLINT(misc-misplaced-const)
+) {
+    GET_ORIGINAL_FUNCTION(EOS_Ecom_QueryEntitlementToken)
+
+    const auto orig = [&]() {
+        EOS_Ecom_QueryEntitlementToken_o(Handle, Options, ClientData, CompletionDelegate);
+    };
+
+    if (not Options) {
+        return orig();
+    }
+
+    LOG_DEBUG("{} -> EntitlementNameCount: {}", __func__, Options->EntitlementNameCount)
+
+    const auto names = Options->EntitlementNames;
+
+    if (not names) {
+        return orig();
+    }
+
+    for (uint32_t i = 0; i < Options->EntitlementNameCount; i++) {
+        const auto name = names[i];
+
+        if (name) {
+            LOG_DEBUG("  EntitlementName: {}", name)
+        }
+    }
+
+    struct Container {
+        void* ClientData;
+        EOS_Ecom_OnQueryEntitlementTokenCallback CompletionDelegate;
+    };
+
+    EOS_Ecom_QueryEntitlementToken_o(
+        Handle, Options,
+        new Container{ ClientData, CompletionDelegate },
+        [](const EOS_Ecom_QueryEntitlementTokenCallbackInfo* Data) {
+            const auto container = static_cast<Container*>(Data->ClientData);
+
+            LOG_DEBUG(
+                "EOS_Ecom_QueryEntitlementToken callback result : {}, token: {}",
+                (uint32_t) Data->ResultCode, Data->EntitlementToken
+            )
+
+            auto* mData = const_cast<EOS_Ecom_QueryEntitlementTokenCallbackInfo*>(Data);
+
+            mData->ResultCode = EOS_EResult::EOS_Success;
+            mData->ClientData = container->ClientData;
+
+            container->CompletionDelegate(Data);
+
+            delete container;
+        }
+    );
+}
+
 DLL_EXPORT(void) EOS_Ecom_QueryEntitlements(
     EOS_HEcom Handle,
     const EOS_Ecom_QueryEntitlementsOptions* Options,
