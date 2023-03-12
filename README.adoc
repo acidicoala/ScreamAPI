@@ -1,8 +1,8 @@
-= 🐨 ScreamAPI ♨
+= 🐨 ScreamAPI 😱
 
 _Legit DLC Unlocker for Epic Online Services_
 
-image::https://www.gstatic.com/android/keyboard/emojikitchen/20201001/u1f428/u1f428_u2615.png[,256,align="center"]
+image::https://www.gstatic.com/android/keyboard/emojikitchen/20201001/u1f917/u1f917_u1f428.png[,256,align="center"]
 
 == ✨ Features
 
@@ -21,7 +21,21 @@ image::https://www.gstatic.com/android/keyboard/emojikitchen/20201001/u1f428/u1f
 
 * 💬 https://cs.rin.ru/forum/viewtopic.php?p=2161197#p2161197[ScreamAPI forum topic]
 
-== Config
+== 📖 Introduction
+
+=== What is SmokeAPI?
+// TODO
+
+== 🛠 Installation Instructions
+// TODO
+=== 🛍️ Store mode
+// TODO
+=== 🎮 Game mode
+// TODO
+
+
+== ⚙ Configuration
+// TODO
 
 .Complete example
 [%collapsible]
@@ -68,17 +82,17 @@ image::https://www.gstatic.com/android/keyboard/emojikitchen/20201001/u1f428/u1f
 ----
 ====
 
-== Dev commands
+== Extra info
 
-(Requires admin)
+// TODO: When does ScreamAPI fetch online entitlements?
 
-Check proxy: `netsh winhttp show proxy`
-Enable proxy: `netsh winhttp set proxy 127.0.0.1:9999`
-Disable proxy: `netsh winhttp reset`
+== 🏗️ Building from source
+
+// TODO: Refer to SmokeAPI https://github.com/acidicoala/SmokeAPI#%EF%B8%8F-building-from-source
 
 == 📚 Open-Source libraries
 
-This project makes use of the open source projects specified in https://github.com/acidicoala/KoalaBox[KoalaBox Readme]
+This project makes use of the open source projects specified in the https://github.com/acidicoala/KoalaBox#-open-source-libraries[KoalaBox Readme]
 
 == 📄 License
 

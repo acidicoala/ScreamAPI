@@ -16,7 +16,7 @@ Map<String, String> entitlement_map;  // id => title
 
 // This hook does not perform any unlocking yet.
 // It is implemented to collect debug logs for potential improvements.
-EOS_DECLARE_FUNC(void) EOS_Ecom_QueryEntitlementToken(
+DLL_EXPORT(void) EOS_Ecom_QueryEntitlementToken(
     EOS_HEcom Handle,
     const EOS_Ecom_QueryEntitlementTokenOptions* Options,
     void* ClientData,
