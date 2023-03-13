@@ -21,7 +21,7 @@ image::https://www.gstatic.com/android/keyboard/emojikitchen/20201001/u1f917/u1f
 :forum-topic: https://cs.rin.ru/forum/viewtopic.php?p=2161197#p2161197[ScreamAPI forum topic]
 
 * 📥 https://github.com/acidicoala/ScreamAPI/releases/latest[Download the latest release]
-* 💬 {forum-topic}[ScreamAPI forum topic]
+* 💬 {forum-topic}
 * 🗂️ https://scream-db.web.app[DLC Database]
 
 == 📖 Introduction
