@@ -15,7 +15,7 @@ from urllib.parse import urlparse
 
 from flask import Flask
 from mitmproxy import ctx
-from mitmproxy.http import HTTPFlow
+from mitmproxy.http import HTTPFlow, Response
 
 log = getLogger('EpicAddon')
 
@@ -36,6 +36,7 @@ class ScreamApiConfigV3:
 
     logging: bool = False
     eos_logging: bool = False
+    block_metrics: bool = False
     default_game_status: ItemStatus = ItemStatus.UNLOCKED
     override_game_status: dict[str, ItemStatus] = {}
     override_dlc_status: dict[str, ItemStatus] = {}
@@ -77,6 +78,7 @@ class ScreamApiConfigV3:
 
                 self.logging = c.get('logging', self.logging)
                 self.eos_logging = c.get('eos_logging', self.eos_logging)
+                self.block_metrics = c.get('block_metrics', self.block_metrics)
                 self.default_game_status = c.get('default_game_status', self.default_game_status)
                 self.override_game_status = c.get('override_game_status', self.override_game_status)
                 self.override_dlc_status = c.get('override_dlc_status', self.override_dlc_status)
@@ -180,6 +182,13 @@ class EgsAddon:
 
         log.info(f"EGS addon for mitmproxy initialized with config: {self.config}")
 
+    async def request(self, flow: HTTPFlow):
+        try:
+            self.__intercept_playtime(flow)
+        except Exception as e:
+            log.error("EGS addon request error")
+            log.exception(e)
+
     async def response(self, flow: HTTPFlow):
         # log.debug(f'EpicAddon. Path: {flow.request.path}')
         try:
@@ -188,6 +197,7 @@ class EgsAddon:
             self.__intercept_ownership(flow)
             self.__intercept_entitlements(flow)
         except Exception as e:
+            log.error("EGS addon response error")
             log.exception(e)
 
     def __update_config(self):
@@ -219,7 +229,7 @@ class EgsAddon:
             return
 
         log.info(f"Intercepted ownership request. Query: {flow.request.query}")
-        log.info(f"Original ownership response:\n{self.get_pretty_response(flow)}")
+        log.info(f"Original ownership response:\n{self.__get_pretty_response(flow)}")
 
         items: list[Item] = flow.response.json()
 
@@ -232,7 +242,7 @@ class EgsAddon:
 
         flow.response.text = json.dumps(items)
 
-        log.info(f"Modified ownership response:\n{self.get_pretty_response(flow)}")
+        log.info(f"Modified ownership response:\n{self.__get_pretty_response(flow)}")
 
     def __intercept_entitlements(self, flow: HTTPFlow):
         if not self.__host_and_path_match(flow, self.api_host, self.modern_entitlement_path) and \
@@ -243,7 +253,7 @@ class EgsAddon:
             return
 
         log.info(f'Intercepted entitlements request. Query: {flow.request.query}')
-        log.info(f'Original entitlements response:\n{self.get_pretty_response(flow)}')
+        log.info(f'Original entitlements response:\n{self.__get_pretty_response(flow)}')
 
         original_entitlements = flow.response.json()
 
@@ -262,7 +272,7 @@ class EgsAddon:
                     e['catalogItemId'].lower() == dlc_id.lower() for e in original_entitlements
                 )
                 active = self.config.is_dlc_unlocked(game_id, dlc_id, original_unlocked)
-                entitlement = self.new_entitlement("query", game_id, dlc_id, dlc_name, active)
+                entitlement = self.__new_entitlement("query", game_id, dlc_id, dlc_name, active)
                 entitlements.append(entitlement)
         else:
             # We need to fetch entitlement IDs from the Epic Games API
@@ -275,7 +285,7 @@ class EgsAddon:
                         dlc_name = item["title"]
                         active = self.config.is_dlc_unlocked(game_id, dlc_id, False)
                         entitlements.append(
-                            self.new_entitlement("api", game_id, dlc_id, dlc_name, active)
+                            self.__new_entitlement("api", game_id, dlc_id, dlc_name, active)
                         )
 
         # Add extra entitlements if necessary
@@ -285,7 +295,7 @@ class EgsAddon:
                     continue  # Skip existing entitlements
 
                 active = self.config.is_dlc_unlocked(game_id, dlc_id, True)
-                entitlement = self.new_entitlement("extra", game_id, dlc_id, dlc_name, active)
+                entitlement = self.__new_entitlement("extra", game_id, dlc_id, dlc_name, active)
                 entitlements.append(entitlement)
 
         # Filter entitlements that are not unlocked
@@ -297,7 +307,32 @@ class EgsAddon:
 
         flow.response.text = json.dumps(entitlements)
 
-        log.info(f"Modified entitlements response:\n{self.get_pretty_response(flow)}")
+        log.info(f"Modified entitlements response:\n{self.__get_pretty_response(flow)}")
+
+    def __intercept_playtime(self, flow: HTTPFlow):
+        if not flow.request.path.startswith('/library/api/public/playtime/'):
+            return
+
+        if not self.config.block_metrics:
+            return
+
+        original_playtime = json.loads(flow.request.text)
+        flow.request.text = '{}'  # Just in case
+
+        correlation_id = flow.request.headers.get('X-Epic-Correlation-ID')
+        if m := re.match(r"UE4-(\w+)", correlation_id):
+            device_id = m.group(1)
+        else:
+            device_id = '123456789abcdef01234567890abcdef'
+
+        flow.response = Response.make(204)
+        flow.response.headers.add('x-epic-device-id', device_id)
+        flow.response.headers.add('x-epic-correlation-id', correlation_id)
+        flow.response.headers.add('x-envoy-upstream-service-time', '10')  # ?
+        flow.response.headers.add('server', 'istio-envoy')
+
+        log.info('Blocked playtime request from Epic Games')
+        log.debug(f'Original playtime: \n{json.dumps(original_playtime, indent=2)}')
 
     def get_api_data(self, game_id: str):
         if game_id.lower() in self.api_cache:
@@ -326,7 +361,7 @@ class EgsAddon:
 
         log.info(f"Making DLC data request to Epic Games API for game id: {game_id}")
 
-        res = self.post_request("https://graphql.epicgames.com/graphql", payload)
+        res = self.__post_request("https://graphql.epicgames.com/graphql", payload)
 
         if res is not None:
             log.debug(f"Epic Games GraphQL API response: {json.dumps(res, indent=2)}")
@@ -338,7 +373,7 @@ class EgsAddon:
         return res
 
     # Because we don't want the headache of managing 3rd part libs as an addon script...
-    def post_request(self, url: str, data: dict | list):
+    def __post_request(self, url: str, data: dict | list):
         try:
             req = urllib.request.Request(
                 url=url,
@@ -362,11 +397,11 @@ class EgsAddon:
             return None
 
     @staticmethod
-    def get_pretty_response(flow: HTTPFlow):
+    def __get_pretty_response(flow: HTTPFlow):
         return json.dumps(flow.response.json(), indent=2)
 
     @staticmethod
-    def new_entitlement(
+    def __new_entitlement(
             tag: str,
             game_id: str,
             dlc_id: str,

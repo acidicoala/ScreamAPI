@@ -1,4 +1,4 @@
-= 🐨 ScreamAPI 😱
+= 🐨 ScreamAPI 😊
 
 _Legit DLC Unlocker for Epic Online Services_
 
@@ -8,6 +8,7 @@ image::https://www.gstatic.com/android/keyboard/emojikitchen/20201001/u1f917/u1f
 
 * 🔓 Legit DLC Unlocking
 * 🛅 Entitlements emulation
+* ⌚ Playtime blocking
 * 📝 Config-less operation
 * Multiple installation methods:
 ** 🛍️ Store mode
@@ -17,27 +18,234 @@ image::https://www.gstatic.com/android/keyboard/emojikitchen/20201001/u1f917/u1f
 
 == 🔗 Links
 
-* 📥 https://github.com/acidicoala/ScreamAPI/releases/latest[Download the latest release]
+:forum-topic: https://cs.rin.ru/forum/viewtopic.php?p=2161197#p2161197[ScreamAPI forum topic]
 
-* 💬 https://cs.rin.ru/forum/viewtopic.php?p=2161197#p2161197[ScreamAPI forum topic]
+* 📥 https://github.com/acidicoala/ScreamAPI/releases/latest[Download the latest release]
+* 💬 {forum-topic}[ScreamAPI forum topic]
+* 🗂️ https://scream-db.web.app[DLC Database]
 
 == 📖 Introduction
 
-=== What is SmokeAPI?
-// TODO
+.What is ScreamAPI?
+[%collapsible]
+====
+ScreamAPI is a DLC unlocker for the games that are legitimately owned in your Epic Games account.
+It attempts to fool games that use Epic Online Services Software Development Kit (EOSSDK) into thinking that you own the desired DLCs.
+However, ScreamAPI does not modify the rest of the EOSSDK, hence features like multiplayer, achievements, etc. remain fully functional.
+====
+
+.Which games are supported?
+[%collapsible]
+====
+Only the games that use Epic Online Services Software Development Kit (EOS SDK) for the DLC ownership verification are supported.
+So if a game's installation directory does not contain any _EOSSDK-WinXX-Shipping.dll_ files, then it's definitely not supported.
+Even if the game uses EOS SDK DLL, it's not guaranteed to be supported because each game might implement its own additional verification checks.
+Therefore, you have to first research the game's topic, to see if it supports unlocking.
+
+Additionally, there are several points to bear in mind when it comes to ScreamAPI and Epic Games Store:
+
+* ScreamAPI most definitely will not work with games that use 3rd party DRM, such as games from Ubisoft, Rockstar, etc.
+Furthermore, ScreamAPI is also unlikely to unlock anything in Free-To-Play games since they typically store all player data on the corresponding game server and hence all the checks are server-side.
+* ScreamAPI will not work with games that employ additional ownership protection or if the game is using alternative DLC verification mechanism (like Borderlands 3).
+However, it can unlock DLCs in Denuvo-protected games if there are no other integrity checks (like Death Stranding)
+* ScreamAPI is unlikely to work with games that use an anti-cheat, since they typically detect any DLL/EXE that has been tampered with.
+Sometimes it is possible to disable an anti-cheat, but that typically entails the loss of online capabilities.
+Search in the respective game topic for more information about how to disable anti-cheat.
+* Some games include the DLC files in their base game, regardless of whether you own the DLC or not (like World War Z).
+This is the ideal scenario for ScreamAPI.
+However, some games download additional files only after a user has bought the corresponding DLC (like Civilization VI).
+In this case, not only you will need to install ScreamAPI, but you also have to get the additional DLC files elsewhere and put them into the game folder.
+* Some games don't use any DRM at all, in which case ScreamAPI is useless.
+All you need to do is to get the DLC files elsewhere and put them into the game folder.
+====
 
 == 🛠 Installation Instructions
-// TODO
-=== 🛍️ Store mode
-// TODO
-=== 🎮 Game mode
-// TODO
 
+WARNING: Please proceed with installation at your own risk.
+Usage of this unlocker entails breaking one or more terms of service, which might result in a permanent loss of your account.
+
+:screamapi_release: https://github.com/acidicoala/ScreamAPI/releases/latest[ScreamAPI Releases]
+
+ScreamAPI supports 2 main modes of installation: *Store* mode and *Game* mode, which are described in the next section.
+
+=== 🛍️ Store mode
+
+NOTE: It is worth noting that the following instructions describe a _manual_ installation method.
+You can benefit from _automatic_ installation and GUI configuration by using https://github.com/acidicoala/Koalageddon2#readme[Koalageddon v2].
+
+In this installation mode, ScreamAPI is loaded into the Epic Games Launcher (EGL) process, which makes it able to affect all Epic Games Store (EGS) games.
+
+:egl-dir: the EGL directoryfootnote:fn-egl-dir[The root directory where the EGL is installed]
+
+. Download the latest Koaloader release zip from https://github.com/acidicoala/Koaloader/releases/latest[Koaloader Releases].
+. From Koaloader archive unpack `version.dll` from `version-32`, and place it in {egl-dir}.
+. In {egl-dir} create the following Koaloader configuration file:
++
+.`Koaloader.config.json`
+[%collapsible]
+====
+[source,json]
+----
+{
+  "auto_load": false,
+  "targets": [
+    "EpicGamesLauncher.exe"
+  ],
+  "modules": [
+    {
+      "path": "ScreamAPI.dll",
+      "required": true
+    }
+  ]
+}
+----
+====
+. Download the latest ScreamAPI release zip from {screamapi_release}.
+. From ScreamAPI archive unpack `EOSSDK-Win64-Shipping.dll`, rename it to `ScreamAPI.dll`, and place it in {egl-dir}.
+
+After that, you will need to run the EGL with administrator rights to benefit from automatic proxy configuration.
+
+=== 🎮 Game mode
+
+In this installation mode, ScreamAPI is loaded into a game process, which limits it to that particular game only.
+This mode itself supports 2 modes: hook mode and proxy mode.
+Try installing the unlocker in hook mode first.
+If it doesn't work, try installing it in proxy mode.
+
+==== 🪝 Hook mode
+
+. Download the latest Koaloader release zip from https://github.com/acidicoala/Koaloader/releases/latest[Koaloader Releases].
+. From Koaloader archive unpack `version.dll` from version-32/64, depending on the game bitness, and place it next to the game exe file.
+. Download the latest ScreamAPI release zip from {screamapi_release}.
+. From ScreamAPI archive unpack `EOSSDK-Win32-Shipping.dll`/`EOSSDK-Win64-Shipping.dll`, depending on the game bitness, rename it to `ScreamAPI.dll`, and place it next to the game exe file.
+
+==== 🔀 Proxy mode
+
+. Find `EOSSDK-Win32-Shipping.dll` / `EOSSDK-Win64-Shipping.dll` file in game directory, and rename it to `EOSSDK-Win32-Shipping_o.dll` / `EOSSDK-Win64-Shipping_o.dll`.
+. Download the latest ScreamAPI release zip from  {screamapi_release}.
+. From ScreamAPI archive unpack `EOSSDK-Win32-Shipping.dll`/`EOSSDK-Win64-Shipping.dll`, depending on the game bitness, and place it next to the original EOSSDK-Win64-Shipping DLL file.
+
+If the unlocker is not working as expected, then please fully read the https://gist.github.com/acidicoala/2c131cb90e251f97c0c1dbeaf2c174dc[Generic Unlocker Installation Instructions] before seeking support in the {forum-topic}.
 
 == ⚙ Configuration
-// TODO
+:fn-app-id: footnote:fn-app-id[App/DLC IDs can be obtained from https://scream-db.web.app.]
+
+ScreamAPI does not require any manual configuration.
+By default, it uses the most reasonable options and tries to unlock all DLCs that it can.
+However, there might be circumstances in which you need more custom-tailored behaviour, such as disabling certain DLCs, or selectively enabling just a few of them.
+In this case you can use a configuration file link:res/ScreamAPI.config.json[ScreamAPI.config.json] that you can find here in this repository or in the release zip.
+To use it, simply place it next to the ScreamAPI DLL.
+It will be read upon each launch of a game or the store.
+In the absence of the config file, default values specified below will be used.
+The configuration file is expected to conform to the Json standard.
+
+`logging`:: Toggles generation of a `ScreamAPI.log.log` file.
++
+[horizontal]
+Type::: Boolean
+Default::: `false`
+
+`eos_logging`:: *_Game mode only_*.
+Enables or disables interception of EOS SDK logs.
+Can cause issues when enabled in *hook* mode.
++
+[horizontal]
+Type::: Boolean
+Default::: `false`
+
+`block_metrics`:: Blocks reporting of analytics and usage metrics by the game to Epic Online Services.
+Metrics sent by EOS SDK itself remain unaffected.
++
+[horizontal]
+Type::: Boolean
+Default::: `false`
+
+`default_app_status`:: This option sets the default DLC unlocking behaviour.
++
+[horizontal]
+Possible values:::
++
+[horizontal]
+`original`:::: Leaves DLC unlock status unmodified, unless specified otherwise.
+`unlocked`:::: Unlocks all DLCs in all games, unless specified otherwise.
+Type::: String
+Default::: `unlocked`
+
+`override_app_status`:: This option overrides the status of all DLCs that belong to a specified item ID{fn-app-id}.
++
+[horizontal]
+Possible values::: An object with key-value pairs, where the key corresponds to the item ID, and value to the app status.
+Possible app status values are defined in the `default_app_status` option.
+Type::: Object
+Default::: `{}`
+
+`override_dlc_status`:: This option overrides the status of individual DLCs, regardless of the corresponding app status.
++
+[horizontal]
+Possible values::: An object with key-value pairs, where the key corresponds to the item ID, and value to the app status.
+Possible app status values are defined in the `default_app_status` option.
+Furthermore, it is possible to lock even the legitimately locked DLCs by setting the corresponding app status value to `locked`.
+Type::: Object
+Default::: `{}`
+
+=== Advanced options
+
+`$version`:: A technical field reserved for use by tools like GUI config editors.
+Do not modify this value.
++
+[horizontal]
+Type::: Integer
+Default::: `4`
+
+`extra_entitlements`:: An object with key-value pairs, where the key corresponds to a DLC ID{fn-app-id}, and value to an optional DLC name.
+When a game requests all entitlements owned by the player, ScreamAPI will inject these extra entitlements in addition to all requested/online entitlements.
++
+[horizontal]
+Type::: Object
+Default::: `{}`
+
+`mitmproxy`:: *_Store mode only_*.
+An object that configures mitmproxy used by ScreamAPI.
+Possible properties are described in the following section
++
+[horizontal]
+Type::: Object
+Default::: `{}`
+
+==== Mitmproxy options
+
+`listen_port`:: A port that mitmproxy will use to listen for incoming connections.
+Can be changed in case the default one is used by other software.
++
+[horizontal]
+Type::: Integer
+Default::: `9999`
+
+`show_window`:: Shows or hides an interactive mitmproxy terminal window.
++
+[horizontal]
+Type::: Boolean
+Default::: `false`
+
+`extra_args`:: Specifies command-line arguments that will be provided to mitmproxy when launched by ScreamAPI.
+For example, this could be used to specify an upstream proxy.
++
+[horizontal]
+Type::: String
+Default::: `""`
+
+`upstream_proxies`:: When performing API requests to EGS servers ScreamAPI will disregard system proxy settings in order to avoid being intercepted by itself, which would otherwise result in a deadlock.
+However, if you wish those requests to go through an upstream proxy, you can use this option.
+The value should conform to the format expected by the https://docs.python.org/3/library/urllib.request.html#proxyhandler-objects[Python's `ProxyHandler` constructor].
++
+[horizontal]
+Type::: Object
+Default::: `{}`
+
+Below you can find an example config where nearly each option has been customized
 
 .Complete example
+
 [%collapsible]
 ====
 [source,json]
@@ -65,12 +273,13 @@ image::https://www.gstatic.com/android/keyboard/emojikitchen/20201001/u1f917/u1f
     },
     "game02__32__character__namespace": {
       "entitlements": {
-        "dlc05___32__character__namespace": "Example Entitlement 05"
+        "dlc05___32__character__namespace": "Example Entitlement 05",
+        "dlc06___32__character__namespace": "Example Entitlement 06"
       }
     }
   },
   "mitmproxy": {
-    "listen_port": 9999,
+    "listen_port": 9876,
     "show_window": true,
     "extra_args": "--mode upstream:127.0.0.1:8888 --ssl-insecure",
     "upstream_proxies": {
@@ -84,11 +293,16 @@ image::https://www.gstatic.com/android/keyboard/emojikitchen/20201001/u1f917/u1f
 
 == Extra info
 
-// TODO: When does ScreamAPI fetch online entitlements?
+=== When does ScreamAPI handle entitlement requests?
+
+When a game requests a list of entitlements that user owns, it may specify an optional list of entitlement IDs.
+The EOS SDK is supposed to respond only with entitlements that match these IDs.
+Hence, ScreamAPI can use this information to generate a response which contains all entitlements specified by the game.
+However, if a game does not provide a list of entitlement IDs then ScreamAPI has to resort to making a request to EGS servers to retrieve all declared DLCs, whose IDs will be used to generate a response.
 
 == 🏗️ Building from source
 
-// TODO: Refer to SmokeAPI https://github.com/acidicoala/SmokeAPI#%EF%B8%8F-building-from-source
+Refer to https://github.com/acidicoala/SmokeAPI#%EF%B8%8F-building-from-source[SmokeAPI Readme] for instructions, as they are the equivalent.
 
 == 📚 Open-Source libraries
 
