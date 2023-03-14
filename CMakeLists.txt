@@ -57,3 +57,5 @@ string(HEX "${EGS_ADDON_UTF8}" EGS_ADDON_HEX)
 string(REGEX REPLACE "([0-9a-f][0-9a-f])" "0x\\1," EGS_ADDON_HEX ${EGS_ADDON_HEX})
 
 configure_build_config(extra_build_config)
+
+configure_output_name(${EOSSDK_DLL})
